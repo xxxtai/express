@@ -4,7 +4,8 @@ import com.xxxtai.controller.Algorithm;
 import com.xxxtai.controller.SchedulingAGVRunnable;
 import com.xxxtai.main.Main;
 import com.xxxtai.model.*;
-import com.xxxtai.myToolKit.AbsoluteToRelativeCoordinates;
+import com.xxxtai.toolKit.AbsoluteToRelativeCoordinates;
+import com.xxxtai.toolKit.Common;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -172,7 +173,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 	}
 	 
 	
-	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SettingGui settingGui, DrawingGui drawingGui){
+	public void getGuiInstance(Main main, SettingGui settingGui, DrawingGui drawingGui){
 		schedulingGuiBtn.addActionListener(e -> {
             StringBuilder strBuf = new StringBuilder();
             strBuf.append("/*************************************************\n");
@@ -215,18 +216,8 @@ public abstract class SchedulingGui extends JPanel implements Gui{
             strBuf.append("*************************************************/\n");
             System.out.println(strBuf.toString());
         });
-		settingGuiBtn.addActionListener(e -> {
-            main.getContentPane().removeAll();
-            main.getContentPane().add(settingGui);
-            main.repaint();
-            main.validate();
-        });
-		drawingGuiBtn.addActionListener(e -> {
-            main.getContentPane().removeAll();
-            main.getContentPane().add(drawingGui);
-            main.repaint();
-            main.validate();
-        });
+		settingGuiBtn.addActionListener(e -> Common.changePanel(main, settingGui));
+		drawingGuiBtn.addActionListener(e -> Common.changePanel(main, drawingGui));
 	}
 	
 	public ArrayList<Car> getAGVArray(){

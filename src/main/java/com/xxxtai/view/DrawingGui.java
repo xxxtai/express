@@ -6,6 +6,7 @@ import com.xxxtai.model.Edge;
 import com.xxxtai.model.Exit;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Node;
+import com.xxxtai.toolKit.Common;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.Number;
@@ -231,25 +232,9 @@ public class DrawingGui extends JPanel implements Gui{
 	}
 	
 	
-	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SettingGui settingGui, DrawingGui drawingGui){
-		schedulingGuiBtn.addActionListener(e -> {
-            main.getContentPane().removeAll();
-            main.getContentPane().add(schedulingGui);
-            main.repaint();
-            main.validate();
-        });
-		settingGuiBtn.addActionListener(e -> {
-            main.getContentPane().removeAll();
-            main.getContentPane().add(settingGui);
-            main.repaint();
-            main.validate();
-        });
-		drawingGuiBtn.addActionListener(e -> {
-            main.getContentPane().removeAll();
-            main.getContentPane().add(drawingGui);
-            main.repaint();
-            main.validate();
-        });
+	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SettingGui settingGui){
+		schedulingGuiBtn.addActionListener(e -> Common.changePanel(main, schedulingGui));
+		settingGuiBtn.addActionListener(e -> Common.changePanel(main, settingGui));
 	}
 	
 	

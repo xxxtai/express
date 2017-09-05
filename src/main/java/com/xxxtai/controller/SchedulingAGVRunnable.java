@@ -3,7 +3,7 @@ package com.xxxtai.controller;
 import com.xxxtai.model.Car;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Path;
-import com.xxxtai.myToolKit.AbsoluteToRelativeCoordinates;
+import com.xxxtai.toolKit.AbsoluteToRelativeCoordinates;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

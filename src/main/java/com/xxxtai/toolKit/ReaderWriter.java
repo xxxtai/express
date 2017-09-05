@@ -1,4 +1,4 @@
-package com.xxxtai.myToolKit;
+package com.xxxtai.toolKit;
 
 public class ReaderWriter {
 	public static byte[] hexString2Bytes(String src) {

@@ -25,11 +25,6 @@ public class Main extends JFrame{
 
 	public Main(){
 		super("AGV快递分拣系统");
-		
-		
-		
-		
-		
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,9 +38,9 @@ public class Main extends JFrame{
 	    });
 	}
 	private void init(){
-		graphingGui.getGuiInstance(Main.this, schedulingGui, settingGui, graphingGui);
-		settingGui.getGuiInstance(Main.this, schedulingGui, settingGui, graphingGui);
-		schedulingGui.getGuiInstance(Main.this, schedulingGui, settingGui, graphingGui);
+		graphingGui.getGuiInstance(Main.this, schedulingGui, settingGui);
+		settingGui.getGuiInstance(Main.this, schedulingGui, graphingGui);
+		schedulingGui.getGuiInstance(Main.this, settingGui, graphingGui);
 		
 		this.getContentPane().add(schedulingGui);
 		this.repaint();

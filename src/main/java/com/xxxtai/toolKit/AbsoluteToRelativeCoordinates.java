@@ -1,4 +1,4 @@
-package com.xxxtai.myToolKit;
+package com.xxxtai.toolKit;
 
 import com.xxxtai.model.Edge;
 import com.xxxtai.model.Graph;
