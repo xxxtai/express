@@ -7,9 +7,9 @@ public class Edge {
 	public final Node START_NODE;
 	public final Node END_NODE;
 	public final int REAL_DISTANCE;
-	public final int CARD_NUM;
+	public final Integer CARD_NUM;
 	public final Queue<Car> waitQueue;
-	private boolean isRemove;
+	private boolean remove;
 	private boolean locked;
 	
 	public Edge(Node startNode, Node endNode, int distance, int cardNum){
@@ -21,15 +21,15 @@ public class Edge {
 	}
 	
 	public boolean isRemove(){
-		return this.isRemove;
+		return this.remove;
 	}
 	
 	public void setRemoved(){
-		this.isRemove = true;
+		this.remove = true;
 	}
 	
 	public void cannelRemove(){
-		this.isRemove = false;
+		this.remove = false;
 	}
 	
 	public void setLocked(){

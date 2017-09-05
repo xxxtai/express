@@ -6,7 +6,7 @@ import java.util.Queue;
 public class Node {
 	public final int X;
 	public final int Y;
-	public final int CARD_NUM;
+	public final Integer CARD_NUM;
 	public final String FUNCTION;
 	public final Queue<Car> waitQueue;
 	private boolean locked;

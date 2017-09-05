@@ -1,6 +1,7 @@
 package com.xxxtai.model;
 
 import com.xxxtai.controller.CommunicationWithAGVRunnable;
+import com.xxxtai.toolKit.Orientation;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ public interface Car {
 	
 	 void judgeOrientation();
 	
-	 AGVCar.Orientation getOrientation();
+	 Orientation getOrientation();
 	
 	 int getX();
 	
@@ -37,7 +38,7 @@ public interface Car {
 	
 	 long getLastCommunicationTime();
 	
-	 void setlastCommunicationTime(long time);
+	 void setLastCommunicationTime(long time);
 	
 	 CommunicationWithAGVRunnable getCommunicationWithAGVRunnable();
 

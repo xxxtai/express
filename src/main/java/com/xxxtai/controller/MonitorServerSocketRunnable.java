@@ -21,20 +21,18 @@ public abstract class MonitorServerSocketRunnable implements Runnable{
 		}catch(Exception e){
 			e.printStackTrace();			
 		}
-		executorService = Executors.newFixedThreadPool(20);//idea
+		executorService = Executors.newFixedThreadPool(20);
 		
 	}
 
 	@Override
 	public void run(){
-		System.out.println();
 		while(true){
-			Socket socket = null;			
 			try{
 				if(serverSocket != null){
-					socket = serverSocket.accept();		
+					Socket socket = serverSocket.accept();
 					System.out.println("socket connect:" + socket);
-					CommunicationWithAGVRunnable runnable = getCommunicationWithAGVRunnable();//this.context.getBean("communicationWithAGVRunnable",CommunicationWithAGVRunnable.class);
+					CommunicationWithAGVRunnable runnable = getCommunicationWithAGVRunnable();
 					runnable.setSocket(socket);
 					executorService.execute(runnable);
 				}

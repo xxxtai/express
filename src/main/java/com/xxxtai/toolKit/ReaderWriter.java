@@ -13,21 +13,20 @@ public class ReaderWriter {
         return ret;
     }
 
-	public static byte uniteBytes(byte src0, byte src1) { 
-			byte _b0 = Byte.decode("0x" + new String(new byte[] {src0})).byteValue(); 
+	private static byte uniteBytes(byte src0, byte src1) {
+			byte _b0 = Byte.decode("0x" + new String(new byte[]{src0}));
 			_b0 = (byte) (_b0 << 4); 
-			byte _b1 = Byte.decode("0x" + new String(new byte[] { src1 })).byteValue(); 
-			byte ret = (byte) (_b0 ^ _b1); 
-			return ret; 
+			byte _b1 = Byte.decode("0x" + new String(new byte[]{src1}));
+			return (byte) (_b0 ^ _b1);
 	}
 
 	public static String bytes2HexString( byte[] b) { 
 		StringBuilder buff = new StringBuilder();
-		for (int i = 0; i < b.length; i++) { 
-			String hex = Integer.toHexString(b[i] & 0xFF); 
-			if (hex.length() == 1) { 
-				hex = '0' + hex; 
-			} 
+		for (byte aB : b) {
+			String hex = Integer.toHexString(aB & 0xFF);
+			if (hex.length() == 1) {
+				hex = '0' + hex;
+			}
 			buff.append(hex.toUpperCase());
 		} 
 		return buff.toString();

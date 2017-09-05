@@ -1,21 +1,20 @@
 package com.xxxtai.model;
 
 import com.xxxtai.controller.CommunicationWithAGVRunnable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.xxxtai.toolKit.Orientation;
+import com.xxxtai.toolKit.State;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Resource;
 import java.awt.*;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+@Slf4j(topic = "debug")
 public class AGVCar implements Car{
-	private static Logger logger = LoggerFactory.getLogger("main.logger");
 	@Resource
 	private Graph graph;
 	private CommunicationWithAGVRunnable communicationWithAGVRunnable;
-	public enum Orientation{LEFT, RIGHT,UP,DOWN}
-	public enum State{STOP, FORWARD, BACKWARD, SHIPMENT, UNLOADING, NULL}
 	private Orientation orientation = Orientation.LEFT;
 	private Point position = new Point(-200, -200);
 	private boolean finishEdge;
@@ -33,12 +32,11 @@ public class AGVCar implements Car{
 	private TrafficControl trafficControl;
 	
 	public AGVCar(){
-		logger.debug("kkk");
+		log.debug("kkk");
 	}
 
 	public void init(int num){
 		this.AGVNum = num;
-//		System.out.print(this.getAGVNUM()+",");
 	}
 	
 	public void setReceiveCardNum(int cardNum){
@@ -104,10 +102,11 @@ public class AGVCar implements Car{
 	public void heartBeat(){
 		if(this.count_3s == 60){
 			this.count_3s = 0;
-			if(this.AGVNum < 16)
-				sendMessageToAGV("AA0"+ Integer.toHexString(this.AGVNum) +"DD");
-			else
-				sendMessageToAGV("AA" + Integer.toHexString(this.AGVNum)+"DD");
+			if(this.AGVNum < 16) {
+				sendMessageToAGV("AA0" + Integer.toHexString(this.AGVNum) + "DD");
+			}else {
+				sendMessageToAGV("AA" + Integer.toHexString(this.AGVNum) + "DD");
+			}
 		}else{
 			this.count_3s++;
 		}
@@ -143,7 +142,7 @@ public class AGVCar implements Car{
 			try {
 				this.communicationWithAGVRunnable.write(message);
 			} catch (SocketException e) {
-				e.printStackTrace();
+				log.error("exception:", e);
 			}
 		}		
 	}
@@ -169,7 +168,7 @@ public class AGVCar implements Car{
 		return this.lastCommunicationTime;
 	}
 	
-	public void setlastCommunicationTime(long time){
+	public void setLastCommunicationTime(long time){
 		this.lastCommunicationTime = time;
 	}
 	

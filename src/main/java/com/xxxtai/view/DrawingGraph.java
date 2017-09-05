@@ -1,6 +1,7 @@
 package com.xxxtai.view;
 
 import com.xxxtai.model.*;
+import com.xxxtai.toolKit.Orientation;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -86,16 +87,16 @@ public class DrawingGraph {
 				upImage = upImageG;
 				downImage = downImageG;
 			}
-			if(AGVArray.get(i).getOrientation() == AGVCar.Orientation.LEFT){
+			if(AGVArray.get(i).getOrientation() == Orientation.LEFT){
 				g.drawImage(leftImage,AGVArray.get(i).getX() - 20, AGVArray.get(i).getY() - 17, 40, 34, panel);
 				g.drawString(String.valueOf(i+1), AGVArray.get(i).getX(), AGVArray.get(i).getY()+9);
-			}else if(AGVArray.get(i).getOrientation() == AGVCar.Orientation.RIGHT){
+			}else if(AGVArray.get(i).getOrientation() == Orientation.RIGHT){
 				g.drawImage(rightImage,AGVArray.get(i).getX() - 20, AGVArray.get(i).getY() - 17, 40, 34, panel);
 				g.drawString(String.valueOf(i+1), AGVArray.get(i).getX()-10, AGVArray.get(i).getY()+9);
-			}else if(AGVArray.get(i).getOrientation() == AGVCar.Orientation.UP){
+			}else if(AGVArray.get(i).getOrientation() == Orientation.UP){
 				g.drawImage(upImage,AGVArray.get(i).getX() - 17, AGVArray.get(i).getY() - 20, 34, 40, panel);
 				g.drawString(String.valueOf(i+1), AGVArray.get(i).getX()-10, AGVArray.get(i).getY()+10);
-			}else if(AGVArray.get(i).getOrientation() == AGVCar.Orientation.DOWN){
+			}else if(AGVArray.get(i).getOrientation() == Orientation.DOWN){
 				g.drawImage(downImage,AGVArray.get(i).getX() - 17, AGVArray.get(i).getY() - 20, 34, 40, panel);
 				g.drawString(String.valueOf(i+1), AGVArray.get(i).getX()-5, AGVArray.get(i).getY()+5);
 			}			
