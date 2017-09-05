@@ -3,26 +3,24 @@ package com.xxxtai.controller;
 import com.xxxtai.model.Edge;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Path;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class Dijkstra implements Algorithm{
 	public final static int MAXINT = 655535;
-	private int[][] graphArray; 
-	@Autowired
-	Graph graph;
+	@Resource
+	private Graph graph;
 	private int size;
-	private ArrayList<Path> sArray;
-	private ArrayList<Path> uArray;
 
 	@PostConstruct
 	public void init(){
 		size = graph.getNodeArraySize();
-		graphArray = new int[size][size];
+		int[][] graphArray = new int[size][size];
 		for(int i = 0; i < size; i++){
 			for(int j = 0; j < size; j++){
 				graphArray[i][j] = MAXINT;
@@ -38,9 +36,9 @@ public class Dijkstra implements Algorithm{
 		Edge removeEdge = changeEdgeArray(END_NODE_CARD_NUM, isBackToEntrance );
 
 		boolean adjoin = false;
-		sArray = new ArrayList();
+		List<Path> sArray = new ArrayList<>();
 		sArray.add(new Path(startEdge.END_NODE.CARD_NUM, startEdge.END_NODE.CARD_NUM));
-		uArray = new ArrayList();
+		List<Path> uArray = new ArrayList<>();
 		for(int i = 0; i < size; i++){//初始化
 			if(startEdge.START_NODE.CARD_NUM == i+1){
 				uArray.add(new Path(startEdge.END_NODE.CARD_NUM, i + 1));
@@ -99,19 +97,19 @@ public class Dijkstra implements Algorithm{
 			}	
 		}//end while
 		Path returnPath = null;
-		for(int i = 0; i < sArray.size(); i++){
-			if(sArray.get(i).END_NODE_NUM == END_NODE_CARD_NUM){
-				returnPath = sArray.get(i);
-				if(true){//!startEdge.END_NODE.functionNode
+		for (Path aSArray : sArray) {
+			if (aSArray.END_NODE_NUM == END_NODE_CARD_NUM) {
+				returnPath = aSArray;
+				if (true) {//!startEdge.END_NODE.functionNode
 					ArrayList<Integer> tempArray = new ArrayList<Integer>(returnPath.getRoute());
 					returnPath.getRoute().clear();
 					returnPath.getRoute().add(startEdge.START_NODE.CARD_NUM);
-					for(int j = 0; j < tempArray.size(); j++){
-						returnPath.getRoute().add(tempArray.get(j));
+					for (Integer aTempArray : tempArray) {
+						returnPath.getRoute().add(aTempArray);
 					}
-					
+
 				}
-					
+
 			}
 		}
 		if(removeEdge != null)
@@ -121,7 +119,7 @@ public class Dijkstra implements Algorithm{
 	
 	
 	
-	public Edge changeEdgeArray(int endNodeCARD_NUM, boolean isBackToEntrance){
+	private Edge changeEdgeArray(int endNodeCARD_NUM, boolean isBackToEntrance){
 		Edge removeEdge = null;
 		if(!graph.getNodeMap().get(endNodeCARD_NUM).FUNCTION.equals("交汇点")){
 			Edge edge = graph.getEdgeMap().get(graph.getNodeMap().get(endNodeCARD_NUM).CARD_NUM);
@@ -141,7 +139,7 @@ public class Dijkstra implements Algorithm{
 		return removeEdge;
 	}
 	
-	public void recoverEdgeArray(Edge removeEdge){
+	private void recoverEdgeArray(Edge removeEdge){
 		removeEdge.cannelRemove();
 		graph.getEdgeMap().remove(0);
 		graph.getEdgeMap().remove(-1);

@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class FileNameDialog extends JDialog{
+class FileNameDialog extends JDialog{
 	/**
 	 * 
 	 */
@@ -15,7 +15,7 @@ public class FileNameDialog extends JDialog{
 	private MyTextField inputCityName;
 	private FileNameDialogListener dialogListener;
 	
-	public FileNameDialog(String cityName){
+	FileNameDialog(String cityName){
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setSize(screenSize.width/4, screenSize.height/4);
 		this.setLocation(3*screenSize.width/8, 3*screenSize.height/8);
@@ -30,17 +30,9 @@ public class FileNameDialog extends JDialog{
 
 		comfirmBtn = new RoundButton("确认");
 		cancelBtn = new RoundButton("取消");
-		comfirmBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				dialogListener.getFileName(inputCityName.getText(), true);
-			}
-		});
+		comfirmBtn.addActionListener(e -> dialogListener.getFileName(inputCityName.getText(), true));
 		
-		cancelBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				dialogListener.getFileName("",false);
-			}
-		});
+		cancelBtn.addActionListener(e -> dialogListener.getFileName("",false));
 
 		mainPanel.add(label);
 		mainPanel.add(inputCityName);
@@ -52,7 +44,7 @@ public class FileNameDialog extends JDialog{
 		this.setAlwaysOnTop(true);
 	}
 	
-	public void setOnDialogListener(FileNameDialogListener listener){
+	void setOnDialogListener(FileNameDialogListener listener){
 		this.dialogListener = listener;
 	}
 }

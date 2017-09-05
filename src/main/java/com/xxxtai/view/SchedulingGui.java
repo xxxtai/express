@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 public abstract class SchedulingGui extends JPanel implements Gui{
 	private static final long serialVersionUID = 1L;
 	private RoundButton schedulingGuiBtn;
-	private RoundButton setingGuiBtn;
+	private RoundButton settingGuiBtn;
 	private RoundButton drawingGuiBtn;
 	@Resource
 	private Graph graph;
@@ -33,7 +33,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 	private Runnable monitorServerSocketRunnable;
 	@Resource
 	private SchedulingAGVRunnable schedulingAGVRunnable;
-	public static final ArrayList<Car> AGVArray =new ArrayList<Car>();
+	public static final ArrayList<Car> AGVArray =new ArrayList<>();
 	private Timer timer;
 	private ExecutorService executors;
 	
@@ -45,8 +45,8 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 		schedulingGuiBtn.setForeground(new Color(30, 144, 255));
 		schedulingGuiBtn.setBackground(Color.WHITE);
 		
-		setingGuiBtn = new RoundButton("设置界面");
-		setingGuiBtn.setBounds(screenSize.width/3, 0, screenSize.width/3, screenSize.height/20);
+		settingGuiBtn = new RoundButton("设置界面");
+		settingGuiBtn.setBounds(screenSize.width/3, 0, screenSize.width/3, screenSize.height/20);
 
 		drawingGuiBtn = new RoundButton("制图界面");
 		drawingGuiBtn.setBounds(2*screenSize.width/3, 0, screenSize.width/3, screenSize.height/20);
@@ -57,7 +57,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 
 		this.setLayout(null);
 		this.add(schedulingGuiBtn);
-		this.add(setingGuiBtn);
+		this.add(settingGuiBtn);
 		this.add(drawingGuiBtn);
 		this.add(stateLabel);
 		
@@ -71,7 +71,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 							Path path = algorithm.findRoute(AGVArray.get(0).getAtEdge(), node.CARD_NUM, true);
 							if(path != null ){
 								System.out.println();
-								System.out.print(AGVArray.get(0).getAGVNUM() + "AGVRoute:");
+								System.out.print(AGVArray.get(0).getAGVNum() + "AGVRoute:");
 								for(Integer n : path.getRoute()){
 									System.out.print(n + "/");
 								}
@@ -93,7 +93,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 							Path path1 = algorithm.findRoute(AGVArray.get(1).getAtEdge(), node.CARD_NUM, false);
 							if(path1 != null){
 								System.out.println();
-								System.out.print(AGVArray.get(1).getAGVNUM() + "AGVroute:");
+								System.out.print(AGVArray.get(1).getAGVNum() + "AGVroute:");
 								for(Integer n : path1.getRoute()){
 									System.out.print(n + "/");
 								}
@@ -115,7 +115,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 							Path path1 = algorithm.findRoute(AGVArray.get(2).getAtEdge(), node.CARD_NUM, false);
 							if(path1 != null){
 								System.out.println();
-								System.out.print(AGVArray.get(2).getAGVNUM() + "AGVroute:");
+								System.out.print(AGVArray.get(2).getAGVNum() + "AGVroute:");
 								for(Integer n : path1.getRoute()){
 									System.out.print(n + "/");
 								}
@@ -172,67 +172,61 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 	}
 	 
 	
-	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SetingGui setingGui, DrawingGui drawingGui){
-		schedulingGuiBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				StringBuffer strBuf = new StringBuffer();
-				strBuf.append("/*************************************************\n");
-				strBuf.append("边 被 占 用 信 息 ：\n");
-				for(Edge edge :graph.getEdgeArray()){
-					if(!edge.waitQueue.isEmpty()){
-						strBuf.append(edge.CARD_NUM+"边被");
-						for(Car car : edge.waitQueue)
-							strBuf.append(car.getAGVNUM()+",");	
-						strBuf.append("AGV占用！！");
-						if(!edge.isLocked())
-							strBuf.append(edge.CARD_NUM+"边的waitQueue不为空，但未被锁住");
-						strBuf.append("\n");
-					}else{
-						if(edge.isLocked()){
-							strBuf.append(edge.CARD_NUM+"边被锁住，但waitQueue为空");
-							strBuf.append("\n");
-						}
-					}
-					
-				}
-				strBuf.append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-				strBuf.append("点  被 占 用 信 息 ：\n");
-				for(Node node :graph.getNodeArray()){
-					if(!node.waitQueue.isEmpty()){
-						strBuf.append(node.CARD_NUM+"点被");
-						for(Car car : node.waitQueue)
-							strBuf.append(car.getAGVNUM()+",");	
-						strBuf.append("AGV占用！！");
-						if(!node.isLocked())
-							strBuf.append(node.CARD_NUM+"边的waitQueue不为空，但未被锁住");
-						strBuf.append("\n");
-					}else{
-						if(node.isLocked()){
-							strBuf.append(node.CARD_NUM+"边的waitQueue为空，但被锁住");
-							strBuf.append("\n");
-						}							
-					}					
-				}
-				strBuf.append("*************************************************/\n");
-				System.out.println(strBuf.toString());
-			}
-		});
-		setingGuiBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				main.getContentPane().removeAll();
-				main.getContentPane().add(setingGui);
-				main.repaint();
-				main.validate();
-			}
-		});
-		drawingGuiBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				main.getContentPane().removeAll();
-				main.getContentPane().add(drawingGui);
-				main.repaint();
-				main.validate();
-			}
-		});		
+	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SettingGui settingGui, DrawingGui drawingGui){
+		schedulingGuiBtn.addActionListener(e -> {
+            StringBuilder strBuf = new StringBuilder();
+            strBuf.append("/*************************************************\n");
+            strBuf.append("边 被 占 用 信 息 ：\n");
+            for(Edge edge :graph.getEdgeArray()){
+                if(!edge.waitQueue.isEmpty()){
+                    strBuf.append(edge.CARD_NUM).append("边被");
+                    for(Car car : edge.waitQueue)
+                        strBuf.append(car.getAGVNum()).append(",");
+                    strBuf.append("AGV占用！！");
+                    if(!edge.isLocked())
+                        strBuf.append(edge.CARD_NUM).append("边的waitQueue不为空，但未被锁住");
+                    strBuf.append("\n");
+                }else{
+                    if(edge.isLocked()){
+                        strBuf.append(edge.CARD_NUM).append("边被锁住，但waitQueue为空");
+                        strBuf.append("\n");
+                    }
+                }
+
+            }
+            strBuf.append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            strBuf.append("点  被 占 用 信 息 ：\n");
+            for(Node node :graph.getNodeArray()){
+                if(!node.waitQueue.isEmpty()){
+                    strBuf.append(node.CARD_NUM).append("点被");
+                    for(Car car : node.waitQueue)
+                        strBuf.append(car.getAGVNum()).append(",");
+                    strBuf.append("AGV占用！！");
+                    if(!node.isLocked())
+                        strBuf.append(node.CARD_NUM).append("边的waitQueue不为空，但未被锁住");
+                    strBuf.append("\n");
+                }else{
+                    if(node.isLocked()){
+                        strBuf.append(node.CARD_NUM).append("边的waitQueue为空，但被锁住");
+                        strBuf.append("\n");
+                    }
+                }
+            }
+            strBuf.append("*************************************************/\n");
+            System.out.println(strBuf.toString());
+        });
+		settingGuiBtn.addActionListener(e -> {
+            main.getContentPane().removeAll();
+            main.getContentPane().add(settingGui);
+            main.repaint();
+            main.validate();
+        });
+		drawingGuiBtn.addActionListener(e -> {
+            main.getContentPane().removeAll();
+            main.getContentPane().add(drawingGui);
+            main.repaint();
+            main.validate();
+        });
 	}
 	
 	public ArrayList<Car> getAGVArray(){

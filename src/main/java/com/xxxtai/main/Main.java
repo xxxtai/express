@@ -2,12 +2,12 @@ package com.xxxtai.main;
 
 import com.xxxtai.view.DrawingGui;
 import com.xxxtai.view.SchedulingGui;
-import com.xxxtai.view.SetingGui;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.xxxtai.view.SettingGui;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -16,11 +16,11 @@ import java.awt.event.WindowEvent;
 @Component
 public class Main extends JFrame{
 	private static final long serialVersionUID = 1L;
-	@Autowired
+	@Resource
 	private SchedulingGui schedulingGui;
-	@Autowired
-	private SetingGui setingGui;
-	@Autowired
+	@Resource
+	private SettingGui settingGui;
+	@Resource
 	private DrawingGui graphingGui;
 
 	public Main(){
@@ -42,10 +42,10 @@ public class Main extends JFrame{
 	          }
 	    });
 	}
-	public void init(){
-		graphingGui.getGuiInstance(Main.this, schedulingGui, setingGui, graphingGui);
-		setingGui.getGuiInstance(Main.this, schedulingGui, setingGui, graphingGui);
-		schedulingGui.getGuiInstance(Main.this, schedulingGui, setingGui, graphingGui);		
+	private void init(){
+		graphingGui.getGuiInstance(Main.this, schedulingGui, settingGui, graphingGui);
+		settingGui.getGuiInstance(Main.this, schedulingGui, settingGui, graphingGui);
+		schedulingGui.getGuiInstance(Main.this, schedulingGui, settingGui, graphingGui);
 		
 		this.getContentPane().add(schedulingGui);
 		this.repaint();
@@ -53,10 +53,10 @@ public class Main extends JFrame{
 	}
 	
 	public void exit(){
-		Object[] option = {"ȷ��", "ȡ��"};
-		JOptionPane pane = new JOptionPane("ȷ�Ϲر���", JOptionPane.QUESTION_MESSAGE, 
+		Object[] option = {"exit", "confirm"};
+		JOptionPane pane = new JOptionPane(" ", JOptionPane.QUESTION_MESSAGE,
 				JOptionPane.YES_NO_OPTION, null, option, option[1]);
-		JDialog dialog = pane.createDialog(this, "����");
+		JDialog dialog = pane.createDialog(this, "  ");
 		dialog.setVisible(true);
 		Object result = pane.getValue();
 		if(result == null || result == option[1]){

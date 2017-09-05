@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @Component
-public class SetingGui extends JPanel implements Gui{
+public class SettingGui extends JPanel implements Gui{
 	
 	/**
 	 * 
@@ -19,7 +19,7 @@ public class SetingGui extends JPanel implements Gui{
 	private RoundButton drawingGuiBtn;
 	private RoundButton setingGuiBtn;
 
-	public SetingGui(){
+	public SettingGui(){
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		schedulingGuiBtn = new RoundButton("调度界面");
 		schedulingGuiBtn.setBounds(0, 0, screenSize.width/3, screenSize.height/20);
@@ -47,31 +47,25 @@ public class SetingGui extends JPanel implements Gui{
 	
 	}
 	
-	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SetingGui setingGui, DrawingGui drawingGui){
-		schedulingGuiBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				main.getContentPane().removeAll();
-				main.getContentPane().add(schedulingGui);
-				main.repaint();
-				main.validate();
-			}
-		});
-		setingGuiBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				main.getContentPane().removeAll();
-				main.getContentPane().add(setingGui);
-				main.repaint();
-				main.validate();
-			}
-		});
-		drawingGuiBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				main.getContentPane().removeAll();
-				main.getContentPane().add(drawingGui);
-				main.repaint();
-				main.validate();
-			}
-		});		
+	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SettingGui settingGui, DrawingGui drawingGui){
+		schedulingGuiBtn.addActionListener(e -> {
+            main.getContentPane().removeAll();
+            main.getContentPane().add(schedulingGui);
+            main.repaint();
+            main.validate();
+        });
+		setingGuiBtn.addActionListener(e -> {
+            main.getContentPane().removeAll();
+            main.getContentPane().add(settingGui);
+            main.repaint();
+            main.validate();
+        });
+		drawingGuiBtn.addActionListener(e -> {
+            main.getContentPane().removeAll();
+            main.getContentPane().add(drawingGui);
+            main.repaint();
+            main.validate();
+        });
 	}
 
 }

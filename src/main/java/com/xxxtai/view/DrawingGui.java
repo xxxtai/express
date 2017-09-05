@@ -12,9 +12,9 @@ import jxl.write.Number;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -47,9 +47,9 @@ public class DrawingGui extends JPanel implements Gui{
 	private RoundButton confirmBtn;
 	private RoundButton confirmAddExitBtn;
 
-	@Autowired
+	@Resource
 	private Graph graph;
-	@Autowired
+	@Resource
 	private DrawingGraph drawingGraph;
 	private Timer timer;
 	private boolean isImportGraph;
@@ -258,7 +258,7 @@ public class DrawingGui extends JPanel implements Gui{
 	}
 	
 	
-	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SetingGui setingGui, DrawingGui drawingGui){
+	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SettingGui settingGui, DrawingGui drawingGui){
 		schedulingGuiBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				main.getContentPane().removeAll();
@@ -270,7 +270,7 @@ public class DrawingGui extends JPanel implements Gui{
 		setingGuiBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				main.getContentPane().removeAll();
-				main.getContentPane().add(setingGui);
+				main.getContentPane().add(settingGui);
 				main.repaint();
 				main.validate();
 			}

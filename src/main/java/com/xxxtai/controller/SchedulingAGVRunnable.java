@@ -4,7 +4,6 @@ import com.xxxtai.model.Car;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Path;
 import com.xxxtai.myToolKit.AbsoluteToRelativeCoordinates;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -18,8 +17,8 @@ import java.util.Queue;
  */
 @Component
 public class SchedulingAGVRunnable implements Runnable{
-    public List<Car> AGVArray;
-    @Autowired
+    private List<Car> AGVArray;
+    @Resource
     private Graph graph;
     @Resource(name = "dijkstra")
     private Algorithm algorithm;
@@ -39,7 +38,7 @@ public class SchedulingAGVRunnable implements Runnable{
                 e.printStackTrace();
             }
             for (Car car: AGVArray){
-                if(car.getAtEdge() != null && !car.isOnduty()){
+                if(car.getAtEdge() != null && !car.isOnDuty()){
                     int minEntrance = 0;
                     for (Map.Entry<Integer, Queue<Car>> entry : graph.getEntranceMap().entrySet()){
                         if (minEntrance == 0 || entry.getValue().size() < graph.getEntranceMap().get(minEntrance).size()){
@@ -50,7 +49,7 @@ public class SchedulingAGVRunnable implements Runnable{
                     Path path = algorithm.findRoute(car.getAtEdge(), minEntrance, true);
                     if(path != null ) {
                         System.out.println();
-                        System.out.print(car.getAGVNUM() + "AGVRoute:");
+                        System.out.print(car.getAGVNum() + "AGVRoute:");
                         for (Integer n : path.getRoute()) {
                             System.out.print(n + "/");
                         }
@@ -63,7 +62,7 @@ public class SchedulingAGVRunnable implements Runnable{
                     }
                 }
 
-                if(car.getAtEdge() != null && car.isOnduty() && car.isOnEntrance()){
+                if(car.getAtEdge() != null && car.isOnDuty() && car.isOnEntrance()){
 
                 }
             }

@@ -10,7 +10,7 @@ public class RoundButton extends JButton {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public RoundButton(String label) {
+	RoundButton(String label) {
         super(label);
         Dimension size = getPreferredSize();//Dimension 类封装单个对象中组件的宽度和高度（精确到整数
 //        size.width = size.height = Math.max(size.width, size.height);

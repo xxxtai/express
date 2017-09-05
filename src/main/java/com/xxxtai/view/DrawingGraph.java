@@ -1,9 +1,9 @@
 package com.xxxtai.view;
 
 import com.xxxtai.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 public class DrawingGraph {
-	@Autowired
+	@Resource
 	private Graph graph;
 	private Image leftImageG;
 	
@@ -89,7 +89,7 @@ public class DrawingGraph {
 			if(AGVArray.get(i).getOrientation() == AGVCar.Orientation.LEFT){
 				g.drawImage(leftImage,AGVArray.get(i).getX() - 20, AGVArray.get(i).getY() - 17, 40, 34, panel);
 				g.drawString(String.valueOf(i+1), AGVArray.get(i).getX(), AGVArray.get(i).getY()+9);
-			}else if(AGVArray.get(i).getOrientation() == AGVCar.Orientation.RIGTH){
+			}else if(AGVArray.get(i).getOrientation() == AGVCar.Orientation.RIGHT){
 				g.drawImage(rightImage,AGVArray.get(i).getX() - 20, AGVArray.get(i).getY() - 17, 40, 34, panel);
 				g.drawString(String.valueOf(i+1), AGVArray.get(i).getX()-10, AGVArray.get(i).getY()+9);
 			}else if(AGVArray.get(i).getOrientation() == AGVCar.Orientation.UP){

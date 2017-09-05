@@ -3,33 +3,33 @@ package com.xxxtai.model;
 import com.xxxtai.controller.CommunicationWithAGVRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.awt.*;
 import java.net.SocketException;
 import java.util.ArrayList;
 
 public class AGVCar implements Car{
 	private static Logger logger = LoggerFactory.getLogger("main.logger");
-	@Autowired
+	@Resource
 	private Graph graph;
 	private CommunicationWithAGVRunnable communicationWithAGVRunnable;
-	public enum Orientation{LEFT,RIGTH,UP,DOWN}
+	public enum Orientation{LEFT, RIGHT,UP,DOWN}
 	public enum State{STOP, FORWARD, BACKWARD, SHIPMENT, UNLOADING, NULL}
 	private Orientation orientation = Orientation.LEFT;
 	private Point position = new Point(-200, -200);
 	private boolean finishEdge;
 	private State state = State.STOP;
 	private Edge atEdge;
-	private int FORWARDPIX = 7;
-	public int AGVNUM;
+	private static final int FORWARD_PIX = 7;
+	private int AGVNum;
 	private int readCardNum;
 	private int lastReadCardNum;
-	private int stopcardNum;
-	private boolean isOnduty;
+	private int stopCardNum;
+	private boolean onDuty;
 	private int count_3s;
 	private long lastCommunicationTime;
-	@Autowired
+	@Resource
 	private TrafficControl trafficControl;
 	
 	public AGVCar(){
@@ -37,7 +37,7 @@ public class AGVCar implements Car{
 	}
 
 	public void init(int num){
-		this.AGVNUM = num;
+		this.AGVNum = num;
 //		System.out.print(this.getAGVNUM()+",");
 	}
 	
@@ -57,15 +57,15 @@ public class AGVCar implements Car{
 			}
 		}		
 		this.lastReadCardNum = this.readCardNum;
-		if(cardNum == this.stopcardNum){
-			Node n = graph.getNodeMap().get(this.stopcardNum);
+		if(cardNum == this.stopCardNum){
+			Node n = graph.getNodeMap().get(this.stopCardNum);
 			this.position.x = n.X;
 			this.position.y = n.Y;
 			this.state = State.STOP;
 		}
 		if(trafficControl.isStopToWait(cardNum, false)){
 			sendMessageToAGV("CC02DD");
-			System.out.println("命令"+this.AGVNUM+"AGV停下来");
+			System.out.println("命令"+this.AGVNum+"AGV停下来");
 		}
 	}	
 	
@@ -74,13 +74,13 @@ public class AGVCar implements Car{
 			if(atEdge.START_NODE.X == atEdge.END_NODE.X){
 				if(atEdge.START_NODE.Y < atEdge.END_NODE.Y ){
 					if(this.position.y < atEdge.END_NODE.Y){
-						this.position.y +=FORWARDPIX;
+						this.position.y += FORWARD_PIX;
 					}else{
 						finishEdge = true;
 					}	
 				}else if(atEdge.START_NODE.Y > atEdge.END_NODE.Y ){
 					if(this.position.y > atEdge.END_NODE.Y){
-						this.position.y -=FORWARDPIX;
+						this.position.y -= FORWARD_PIX;
 					}else{
 						finishEdge = true;
 					}
@@ -88,12 +88,12 @@ public class AGVCar implements Car{
 			}else if(atEdge.START_NODE.Y == atEdge.END_NODE.Y){
 				if(atEdge.START_NODE.X < atEdge.END_NODE.X ){
 					if(this.position.x < atEdge.END_NODE.X)
-						this.position.x +=FORWARDPIX;
+						this.position.x += FORWARD_PIX;
 					else
 						finishEdge = true;
 				}else if(atEdge.START_NODE.X > atEdge.END_NODE.X){
 					if(this.position.x > atEdge.END_NODE.X)
-						this.position.x -=FORWARDPIX;
+						this.position.x -= FORWARD_PIX;
 					else
 						finishEdge = true;
 				}
@@ -104,10 +104,10 @@ public class AGVCar implements Car{
 	public void heartBeat(){
 		if(this.count_3s == 60){
 			this.count_3s = 0;
-			if(this.AGVNUM < 16)
-				sendMessageToAGV("AA0"+ Integer.toHexString(this.AGVNUM) +"DD");
+			if(this.AGVNum < 16)
+				sendMessageToAGV("AA0"+ Integer.toHexString(this.AGVNum) +"DD");
 			else
-				sendMessageToAGV("AA" + Integer.toHexString(this.AGVNUM)+"DD");
+				sendMessageToAGV("AA" + Integer.toHexString(this.AGVNum)+"DD");
 		}else{
 			this.count_3s++;
 		}
@@ -131,7 +131,7 @@ public class AGVCar implements Car{
 			} 	
 		}else if(atEdge.START_NODE.Y == atEdge.END_NODE.Y){
 			if(atEdge.START_NODE.X < atEdge.END_NODE.X){
-				orientation = Orientation.RIGTH;
+				orientation = Orientation.RIGHT;
 			}else{
 				orientation = Orientation.LEFT;
 			} 				
@@ -160,9 +160,9 @@ public class AGVCar implements Car{
 	}
 	
 	public void setRouteNodeNumArray(ArrayList<Integer> arrayList){
-		this.stopcardNum = arrayList.get(arrayList.size()-1);
+		this.stopCardNum = arrayList.get(arrayList.size()-1);
 		this.trafficControl.setRouteNodeNumArray(arrayList,this);
-		this.isOnduty = true;
+		this.onDuty = true;
 	}
 	
 	public long getLastCommunicationTime(){
@@ -181,8 +181,8 @@ public class AGVCar implements Car{
 		return this.communicationWithAGVRunnable;
 	}
 	
-	public int getAGVNUM(){
-		return this.AGVNUM;
+	public int getAGVNum(){
+		return this.AGVNum;
 	}
 	
 	public Edge getAtEdge(){
@@ -209,12 +209,12 @@ public class AGVCar implements Car{
 		return this.readCardNum;
 	}
 
-	public boolean isOnduty(){
-		return this.isOnduty;
+	public boolean isOnDuty(){
+		return this.onDuty;
 	}
 
-	public void setOnduty(boolean f){
-		this.isOnduty = f;
+	public void setOnDuty(boolean f){
+		this.onDuty = f;
 	}
 
 	public boolean isOnEntrance(){

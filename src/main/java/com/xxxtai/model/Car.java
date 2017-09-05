@@ -5,7 +5,7 @@ import com.xxxtai.controller.CommunicationWithAGVRunnable;
 import java.util.ArrayList;
 
 public interface Car {	
-	public void init(int num);
+	void init(int num);
 	
 	 void setReceiveCardNum(int cardNum);
 	
@@ -27,7 +27,7 @@ public interface Car {
 	
 	 void sendMessageToAGV(String route);
 	
-	 int getAGVNUM();
+	 int getAGVNum();
 	
 	 Edge getAtEdge();
 	
@@ -45,9 +45,9 @@ public interface Car {
 	
 	 int getReadCardNum();
 
-	 boolean isOnduty();
+	 boolean isOnDuty();
 
-	 void setOnduty(boolean f);
+	 void setOnDuty(boolean f);
 
 	 boolean isOnEntrance();
 

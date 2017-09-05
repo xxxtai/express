@@ -12,7 +12,6 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class CommunicationWithAGVRunnable implements Runnable{
-	private int AGVNum;
 	private Socket socket;
 	private InputStream inputStream;
 	private OutputStream outputStream;
@@ -21,7 +20,7 @@ public class CommunicationWithAGVRunnable implements Runnable{
 	public CommunicationWithAGVRunnable(){
 	}
 	
-	public void setSocket(Socket socket){
+	void setSocket(Socket socket){
 		this.socket = socket;
 		try {
 			this.inputStream = this.socket.getInputStream();
@@ -32,19 +31,19 @@ public class CommunicationWithAGVRunnable implements Runnable{
 	}
 	@Override
 	public void run() {
-		StringBuffer strBuf = new StringBuffer();
-		strBuf.append(this.hashCode()+" CommunicationWithAGV Runnable start\n");
-		String revMessage = null;
+		StringBuilder strBuf = new StringBuilder();
+		strBuf.append(this.hashCode()).append(" CommunicationWithAGV Runnable start\n");
+		String revMessage;
 		while(true){			
 			if((revMessage = read()) != null){				
-				strBuf.append("receive msg:"+revMessage);
+				strBuf.append("receive msg:").append(revMessage);
 				if(revMessage.endsWith("BB")){
-					this.AGVNum = Integer.parseInt(revMessage.substring(0, 2), 16);					
+					int AGVNum = Integer.parseInt(revMessage.substring(0, 2), 16);
 					for(Car car : SchedulingGui.AGVArray){
-						if(car.getAGVNUM() == this.AGVNum){
+						if(car.getAGVNum() == AGVNum){
 							car.setCommunicationWithAGVRunnable(this);
 							this.car = car;
-							strBuf.append(" confirmed AGVNum :" + this.AGVNum+"号AGV");
+							strBuf.append(" confirmed AGVNum :").append(AGVNum).append("号AGV");
 							System.out.println(strBuf.toString());
 							break;
 						}						
@@ -105,7 +104,7 @@ public class CommunicationWithAGVRunnable implements Runnable{
 		}	
 	}
 	
-	public String read(){
+	private String read(){
 		boolean readSuccess = false;
 		boolean foundStart = false;
 		String message = "";
