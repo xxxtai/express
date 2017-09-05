@@ -47,7 +47,7 @@ public class RoundButton extends JButton {
     }
 
     // Hit detection.
-    Shape shape;
+    private Shape shape;
     public boolean contains(int x, int y) {
         // If the button has changed size, make a new shape object.
         if (shape == null || !shape.getBounds().equals(getBounds())) {

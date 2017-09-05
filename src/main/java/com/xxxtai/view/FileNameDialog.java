@@ -2,16 +2,12 @@ package com.xxxtai.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 class FileNameDialog extends JDialog{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private RoundButton comfirmBtn;
-	private RoundButton cancelBtn;
 	private MyTextField inputCityName;
 	private FileNameDialogListener dialogListener;
 	
@@ -28,15 +24,15 @@ class FileNameDialog extends JDialog{
 		inputCityName = new MyTextField("");
 		inputCityName.setFont(new Font("宋体",Font.BOLD, 30));
 
-		comfirmBtn = new RoundButton("确认");
-		cancelBtn = new RoundButton("取消");
-		comfirmBtn.addActionListener(e -> dialogListener.getFileName(inputCityName.getText(), true));
+		RoundButton confirmBtn = new RoundButton("确认");
+		RoundButton cancelBtn = new RoundButton("取消");
+		confirmBtn.addActionListener(e -> dialogListener.getFileName(inputCityName.getText(), true));
 		
 		cancelBtn.addActionListener(e -> dialogListener.getFileName("",false));
 
 		mainPanel.add(label);
 		mainPanel.add(inputCityName);
-		mainPanel.add(comfirmBtn);
+		mainPanel.add(confirmBtn);
 		mainPanel.add(cancelBtn);
 		this.getContentPane().add(mainPanel);
 		this.setVisible(true);

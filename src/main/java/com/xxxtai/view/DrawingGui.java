@@ -17,8 +17,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -32,26 +30,21 @@ import static com.xxxtai.controller.Dijkstra.MAXINT;
 
 @Component
 public class DrawingGui extends JPanel implements Gui{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(DrawingGui.class.getName());
 	private RoundButton schedulingGuiBtn;
-	private RoundButton setingGuiBtn;
+	private RoundButton settingGuiBtn;
 	private RoundButton drawingGuiBtn;
 	private RoundButton importGraphBtn;
 	private MyTextField inputRowField;
 	private MyTextField inputColumnField;
 	private MyTextField inputRealdisField;
-	private RoundButton confirmBtn;
 	private RoundButton confirmAddExitBtn;
 
 	@Resource
 	private Graph graph;
 	@Resource
 	private DrawingGraph drawingGraph;
-	private Timer timer;
 	private boolean isImportGraph;
 
 	public DrawingGui(){
@@ -59,8 +52,8 @@ public class DrawingGui extends JPanel implements Gui{
 		schedulingGuiBtn = new RoundButton("调度界面");
 		schedulingGuiBtn.setBounds(0, 0, screenSize.width/3, screenSize.height/20);
 		
-		setingGuiBtn = new RoundButton("设置界面");
-		setingGuiBtn.setBounds(screenSize.width/3, 0, screenSize.width/3, screenSize.height/20);
+		settingGuiBtn = new RoundButton("设置界面");
+		settingGuiBtn.setBounds(screenSize.width/3, 0, screenSize.width/3, screenSize.height/20);
 
 		drawingGuiBtn = new RoundButton("制图界面");
 		drawingGuiBtn.setBounds(2*screenSize.width/3, 0, screenSize.width/3, screenSize.height/20);
@@ -73,33 +66,21 @@ public class DrawingGui extends JPanel implements Gui{
 		inputColumnField.setBounds(5*screenSize.width/12, 4*screenSize.height/15, screenSize.width/6, screenSize.height/20);
 		inputRealdisField = new MyTextField("        距离");
 		inputRealdisField.setBounds(5*screenSize.width/12, 5*screenSize.height/15, screenSize.width/6, screenSize.height/20);
-		confirmBtn = new RoundButton("确认");
+		RoundButton confirmBtn = new RoundButton("确认");
 		confirmBtn.setBounds(5*screenSize.width/12, 6*screenSize.height/15, screenSize.width/6, screenSize.height/20);
-		confirmBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				createNewGraph(screenSize);
-			}
-		});
+		confirmBtn.addActionListener(e -> createNewGraph(screenSize));
 
 		importGraphBtn = new RoundButton("导入地图");
 		importGraphBtn.setBounds(10*screenSize.width/12, 13*screenSize.height/15, screenSize.width/9, screenSize.height/20);
-		importGraphBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				importExistGraph();
-			}
-		});
+		importGraphBtn.addActionListener(e -> importExistGraph());
 
 		confirmAddExitBtn = new RoundButton("确认添加");
 		confirmAddExitBtn.setBounds(10*screenSize.width/12, 14*screenSize.height/15, screenSize.width/9, screenSize.height/20);
-		confirmAddExitBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				writeExcel(graph);
-			}
-		});
+		confirmAddExitBtn.addActionListener(e -> writeExcel(graph));
 
 		this.setLayout(null);
 		this.add(schedulingGuiBtn);
-		this.add(setingGuiBtn);
+		this.add(settingGuiBtn);
 		this.add(drawingGuiBtn);
 		this.add(inputColumnField);
 		this.add(inputRealdisField);
@@ -114,15 +95,12 @@ public class DrawingGui extends JPanel implements Gui{
 				super.mouseClicked(e);
 				if (e.getButton() == MouseEvent.BUTTON3){
 					FileNameDialog dialog = new FileNameDialog("请输入城市名称:");
-					dialog.setOnDialogListener(new FileNameDialogListener() {
-						@Override
-						public void getFileName(String cityName, boolean buttonState) {
-							dialog.dispose();
-							if (buttonState){
-								addExit(e, cityName);
-							}
-						}
-					});
+					dialog.setOnDialogListener((cityName, buttonState) -> {
+                        dialog.dispose();
+                        if (buttonState){
+                            addExit(e, cityName);
+                        }
+                    });
 
 				}
 
@@ -136,24 +114,19 @@ public class DrawingGui extends JPanel implements Gui{
 			drawingGraph.drawingMap(g);
 	}
 
-	public void importExistGraph(){
+	private void importExistGraph(){
 		isImportGraph = true;
-		timer = new Timer(50, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				repaint();
-			}
-		});
+		Timer timer = new Timer(50, e -> repaint());
 		timer.start();
 		this.removeAll();
 		this.add(schedulingGuiBtn);
-		this.add(setingGuiBtn);
+		this.add(settingGuiBtn);
 		this.add(drawingGuiBtn);
 		this.add(confirmAddExitBtn);
 		this.add(importGraphBtn);
 	}
 
-	public void addExit(MouseEvent e , String cityName){
+	private void addExit(MouseEvent e, String cityName){
 		ArrayList<Node> xNode = new ArrayList<>();
 		ArrayList<Node> yNode = new ArrayList<>();
 		for (Node node : graph.getNodeArray()){
@@ -197,7 +170,7 @@ public class DrawingGui extends JPanel implements Gui{
 		graph.addExit(new Exit(cityName , Arrays.asList(minxNode, nextxMinNode, minyNode, nextyMinNode)));
 	}
 	
-	public void createNewGraph(Dimension screenSize){
+	private void createNewGraph(Dimension screenSize){
 
 		int row = Integer.valueOf(inputRowField.getText());
 		int column = Integer.valueOf(inputColumnField.getText());
@@ -259,34 +232,28 @@ public class DrawingGui extends JPanel implements Gui{
 	
 	
 	public void getGuiInstance(Main main, SchedulingGui schedulingGui, SettingGui settingGui, DrawingGui drawingGui){
-		schedulingGuiBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				main.getContentPane().removeAll();
-				main.getContentPane().add(schedulingGui);
-				main.repaint();
-				main.validate();
-			}
-		});
-		setingGuiBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				main.getContentPane().removeAll();
-				main.getContentPane().add(settingGui);
-				main.repaint();
-				main.validate();
-			}
-		});
-		drawingGuiBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				main.getContentPane().removeAll();
-				main.getContentPane().add(drawingGui);
-				main.repaint();
-				main.validate();
-			}
-		});		
+		schedulingGuiBtn.addActionListener(e -> {
+            main.getContentPane().removeAll();
+            main.getContentPane().add(schedulingGui);
+            main.repaint();
+            main.validate();
+        });
+		settingGuiBtn.addActionListener(e -> {
+            main.getContentPane().removeAll();
+            main.getContentPane().add(settingGui);
+            main.repaint();
+            main.validate();
+        });
+		drawingGuiBtn.addActionListener(e -> {
+            main.getContentPane().removeAll();
+            main.getContentPane().add(drawingGui);
+            main.repaint();
+            main.validate();
+        });
 	}
 	
 	
-	public static void writeExcel(Graph graph){		
+	private static void writeExcel(Graph graph){
 		try{
 			File file = new File("C:\\Users\\xxxta\\work\\Graph.xls");
 			InputStream inputStream = new FileInputStream(file.getPath());

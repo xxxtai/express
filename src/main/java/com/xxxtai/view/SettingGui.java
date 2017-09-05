@@ -5,8 +5,6 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 @Component
 public class SettingGui extends JPanel implements Gui{
