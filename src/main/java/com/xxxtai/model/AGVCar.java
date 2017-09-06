@@ -11,7 +11,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import java.net.SocketException;
 
-@Slf4j(topic = "debug")
+@Slf4j(topic = "develop")
 public class AGVCar implements Car{
 	@Resource
 	private Graph graph;
@@ -62,11 +62,10 @@ public class AGVCar implements Car{
 			this.position.x = n.x;
 			this.position.y = n.y;
 			this.state = State.STOP;
-			return;
 		}
 		if(trafficControl.isStopToWait(cardNum, false)){
 			sendMessageToAGV("CC02DD");
-			System.out.println("命令"+this.AGVNum+"AGV停下来");
+			log.info("命令"+this.AGVNum+"AGV停下来");
 		}
 	}	
 	

@@ -86,7 +86,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 		timer.start();
 		executors.execute(monitorServerSocketRunnable);
 		schedulingAGV.setAGVArray(AGVArray);
-		executors.execute(schedulingAGV);
+//		executors.execute(schedulingAGV);
 	}
 	@Override
 	public void paint(Graphics g){

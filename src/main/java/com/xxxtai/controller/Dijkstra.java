@@ -50,7 +50,7 @@ public class Dijkstra implements Algorithm{
 			for(Edge edge : graph.getEdgeArray()){
 				if((edge.START_NODE.cardNum == startEdge.END_NODE.cardNum && edge.END_NODE.cardNum == (i+1))
 						||(edge.END_NODE.cardNum == startEdge.END_NODE.cardNum && edge.START_NODE.cardNum == (i+1) )){//|| (graph.getEdge(j).endNode.cardNum == startNode && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
-					if(!edge.isLocked() && !edge.isRemove()){//当边和点被占用或被移除后，认为不联通
+					if( !edge.isRemove()){//当边和点被占用或被移除后，认为不联通!edge.isLocked() &&
 						uArray.get(i).setRealDis(edge.REAL_DISTANCE);
 						uArray.get(i).addRouteNode(i+1);
 						adjoin = true;
@@ -87,7 +87,7 @@ public class Dijkstra implements Algorithm{
 					if((edge.START_NODE.cardNum == tempStart && edge.END_NODE.cardNum == (i+1))
 							||(edge.END_NODE.cardNum == tempStart && edge.START_NODE.cardNum == (i+1) )){//|| (graph.getEdge(j).endNode.cardNum == tempStart && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
 						if(edge.REAL_DISTANCE + sArray.get(sArray.size() - 1).getRealDis() < uArray.get(i).getRealDis()
-								&& !edge.isRemove() && !edge.isLocked()){//当边和点被占用或被移除后，认为不联通
+								&& !edge.isRemove() ){//当边和点被占用或被移除后，认为不联通&& !edge.isLocked()
 							uArray.get(i).setRealDis(edge.REAL_DISTANCE + sArray.get(sArray.size() - 1).getRealDis());
 							uArray.get(i).newRoute(sArray.get(sArray.size()-1).getRoute());
 							uArray.get(i).addRouteNode(i+1);							

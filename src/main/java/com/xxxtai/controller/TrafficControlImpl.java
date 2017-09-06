@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 @Scope("prototype")
-@Slf4j(topic = "debug")
+@Slf4j(topic = "develop")
 public class TrafficControlImpl implements TrafficControl {
 	private List<Integer> routeNodeNumArray;
 	private Node lastLockedNode;
@@ -45,18 +45,19 @@ public class TrafficControlImpl implements TrafficControl {
 				this.lastLockedEdge = this.lockedEdge;
 				this.lastLockedNode = this.lockedNode;
 			}
-
-			tryUnlockNode(cardNum);
-			return tryLockNodeEdge(cardNum);
-		} else {
+			StringBuilder logMessage = new StringBuilder();
+			logMessage.append(car.getAGVNum()).append("AGV receive cardNum:").append(cardNum);
+			tryUnlockNode(logMessage);
+			return tryLockNodeEdge(cardNum, logMessage);
+		} else if (cardNum != routeNodeNumArray.get(2)){
 			log.error("不应该出现的情况! AGVNum:" + this.car.getAGVNum() + " cardNum:" + cardNum
 					+ " lastLockedEdge:" + lastLockedEdge
 					+ " lastLockedNode:" + lastLockedNode);
-			return false;
 		}
+		return false;
 	}
 
-	private boolean tryLockNodeEdge(int cardNum){
+	private boolean tryLockNodeEdge(int cardNum, StringBuilder logMessage){
 		Edge onTheEdge = graph.getEdgeMap().get(cardNum);
 		Node nextStartNode = null;
 		Node nextEndNode = null;
@@ -86,7 +87,7 @@ public class TrafficControlImpl implements TrafficControl {
 					nextEdge = edge;
 				}
 			}
-		} else {
+		} else if (cardNum != routeNodeNumArray.get(routeNodeNumArray.size() - 1)){
 			log.warn("不应该出现的情况！");
 		}
 		if(nextEdge != null){
@@ -96,27 +97,27 @@ public class TrafficControlImpl implements TrafficControl {
 				synchronized(this.lockedEdge.CARD_NUM){
 					if(this.lockedEdge.isLocked()){
 						this.lockedEdge.waitQueue.offer(car);
-						log.info("{}AGV receive cardNum:{} >>> 等待通过，因为{}边被{}AGV占用",
-								car.getAGVNum(), cardNum, lockedEdge.CARD_NUM, lockedEdge.waitQueue.peek().getAGVNum());
+						logMessage.append("等待通过，因为").append(lockedEdge.CARD_NUM).append("边被").append(lockedEdge.waitQueue.peek().getAGVNum()).append("AGV占用");
+						log.info(logMessage.toString());
 						return true;
 					}else if(this.lockedNode.isLocked()){
 						this.lockedEdge.waitQueue.offer(car);
 						this.lockedEdge.setLocked();
 						this.lockedNode.waitQueue.offer(car);
-						log.info("{}AGV receive cardNum:{} >>> 占用{}边,等待通过，因为{}点被{}AGV占用",
-								car.getAGVNum(), cardNum, lockedEdge.CARD_NUM, lockedNode.getCardNum(), lockedNode.waitQueue.peek().getAGVNum());
+						logMessage.append("占用").append(lockedEdge.CARD_NUM).append("边,等待通过，因为").append(lockedNode.getCardNum()).append("点被").append(lockedNode.waitQueue.peek().getAGVNum()).append("AGV占用");
+						log.info(logMessage.toString());
 						return true;
 					}else{
 						this.lockedEdge.waitQueue.offer(car);
 						this.lockedEdge.setLocked();
 						this.lockedNode.waitQueue.offer(car);
 						this.lockedNode.setLocked();
-						log.info("{}AGV receive cardNum:{} >>> 占用{}边和{}点，并通过",
-								car.getAGVNum(), cardNum, this.lockedEdge.CARD_NUM, this.lockedNode.cardNum);
+						logMessage.append("占用").append(this.lockedEdge.CARD_NUM).append("边和").append(this.lockedNode.cardNum).append("点，并通过");
 					}
 				}
 			}
 		}
+		log.info(logMessage.toString());
 		return false;
 	}
 	
@@ -150,7 +151,7 @@ public class TrafficControlImpl implements TrafficControl {
 		this.lastLockedNode = this.lockedNode;
 	}
 	
-	private void tryUnlockNode(int cardNum){
+	private void tryUnlockNode(StringBuilder logMessage){
 		if(this.lockedNode != null && this.lockedNode.isLocked()){
 			Car myself = this.lockedNode.waitQueue.poll();
 			if(myself.getAGVNum() != car.getAGVNum()){
@@ -161,12 +162,12 @@ public class TrafficControlImpl implements TrafficControl {
 				if(carTmp.getTrafficControl().getLockedEdge().isLocked() &&
 						carTmp.getTrafficControl().getLockedEdge().waitQueue.peek().getAGVNum() == carTmp.getAGVNum()){
 					carTmp.sendMessageToAGV("CC01DD");
-					log.info("{}AGV receive cardNum:{} >>> 解除占用{}点 >>> {}AGV前进占用 >>>", car.getAGVNum(), cardNum, this.lockedNode.cardNum, carTmp.getAGVNum());
+					logMessage.append(" >>> 解除占用").append(this.lockedNode.cardNum).append("点 >>> ").append(carTmp.getAGVNum()).append("AGV前进占用 >>>");
 				}else{
 					log.error("不应该出现的情况！ {}AGV没有锁住{}边，就想通过！", carTmp.getAGVNum(),carTmp.getTrafficControl().getLockedEdge().CARD_NUM);
 				}
 			}else{
-				log.info("{}AGV receive cardNum:{} >>> {}点完全被解除占用 >>>",car.getAGVNum(), cardNum, this.lockedNode.cardNum);
+				logMessage.append(" >>> ").append(this.lockedNode.cardNum).append("点完全被解除占用 >>>");
 				this.lockedNode.unlock();
 				this.lockedNode = null;
 			}
