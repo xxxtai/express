@@ -39,38 +39,40 @@ public class TrafficControlComponent implements TrafficControl{
 			tryUnlockNode(logMessage);
 
 			Edge onTheEdge = graph.getEdgeMap().get(cardNum);			
-			Node strNode = null;
-			Node endNode = null;
+			Node nextStartNode = null;
+			Node nextEndNode = null;
 			Edge nextEdge = null;
 			
 			for(int i = 0; i < this.routeNodeNumArray.size(); i++){
 				if((this.routeNodeNumArray.get(i).equals(onTheEdge.END_NODE.CARD_NUM) && this.routeNodeNumArray.get(i+1).equals(onTheEdge.START_NODE.CARD_NUM))
 						||(this.routeNodeNumArray.get(i).equals(onTheEdge.START_NODE.CARD_NUM) && this.routeNodeNumArray.get(i+1).equals(onTheEdge.END_NODE.CARD_NUM))){
-					strNode = graph.getNodeMap().get(this.routeNodeNumArray.get(i+1));					
+					nextStartNode = graph.getNodeMap().get(this.routeNodeNumArray.get(i+1));
 					if((i+1) != this.routeNodeNumArray.size()-2){
-						endNode = graph.getNodeMap().get(this.routeNodeNumArray.get(i+2));
+						nextEndNode = graph.getNodeMap().get(this.routeNodeNumArray.get(i+2));
 					}else{
 						Edge edgeTmp = graph.getEdgeMap().get(this.routeNodeNumArray.get(this.routeNodeNumArray.size()-1));
-						if(edgeTmp.START_NODE.CARD_NUM.equals(strNode.CARD_NUM)) {
-							endNode = edgeTmp.END_NODE;
+						if(edgeTmp.START_NODE.CARD_NUM.equals(nextStartNode.CARD_NUM)) {
+							nextEndNode = edgeTmp.END_NODE;
 						} else {
-							endNode = edgeTmp.START_NODE;
+							nextEndNode = edgeTmp.START_NODE;
 						}
 					}
 				}
 			}
 			
-			if(strNode != null && endNode != null) {
-				for (Edge e : graph.getEdgeArray()) {
-					if ((e.START_NODE.CARD_NUM.equals(strNode.CARD_NUM)  && e.END_NODE.CARD_NUM.equals(endNode.CARD_NUM))
-							|| (e.END_NODE.CARD_NUM.equals(strNode.CARD_NUM) && e.START_NODE.CARD_NUM.equals(endNode.CARD_NUM))) {
-						nextEdge = e;
+			if(nextStartNode != null && nextEndNode != null) {
+				for (Edge edge : graph.getEdgeArray()) {
+					if ((edge.START_NODE.CARD_NUM.equals(nextStartNode.CARD_NUM)  && edge.END_NODE.CARD_NUM.equals(nextEndNode.CARD_NUM))
+							|| (edge.END_NODE.CARD_NUM.equals(nextStartNode.CARD_NUM) && edge.START_NODE.CARD_NUM.equals(nextEndNode.CARD_NUM))) {
+						nextEdge = edge;
 					}
 				}
+			} else {
+				log.error("");
 			}
-			if( nextEdge != null){
+			if(nextEdge != null){
 				this.lockedEdge = nextEdge;
-				this.lockedNode = strNode;				
+				this.lockedNode = nextStartNode;
 				synchronized(this.lockedNode.CARD_NUM){
 					synchronized(this.lockedEdge.CARD_NUM){
 						if(this.lockedEdge.isLocked()){
@@ -107,11 +109,11 @@ public class TrafficControlComponent implements TrafficControl{
 			log.error(car.getAGVNum() + "AGV通过交汇点准备解除lockedEdge,但是该AGV不在waitqueue顶端");
 		}
 		
-		if(!this.lastLockedEdge.waitQueue.isEmpty()){		
+		if(!this.lastLockedEdge.waitQueue.isEmpty()){
 			Car carTmp = this.lastLockedEdge.waitQueue.peek();
 			synchronized(carTmp.getTrafficControl().getLockedNode().CARD_NUM){
 				if(!carTmp.getTrafficControl().getLockedNode().isLocked()){
-					carTmp.getTrafficControl().getLockedNode().setLocked();						
+					carTmp.getTrafficControl().getLockedNode().setLocked();
 					carTmp.sendMessageToAGV("CC01DD");
 					logMessage.append(car.getAGVNum()).append("AGV解除占用").append(this.lastLockedEdge.CARD_NUM).append("边>>>").append(carTmp.getAGVNum()).append("AGV前进占用").append(this.lastLockedEdge.CARD_NUM).append("边");
 				}else{
@@ -125,7 +127,7 @@ public class TrafficControlComponent implements TrafficControl{
 			this.lastLockedEdge = null;
 		}		
 		this.lastLockedEdge = this.lockedEdge;
-		this.lastLockedNode = this.lockedNode;		
+		this.lastLockedNode = this.lockedNode;
 	}
 	
 	private void tryUnlockNode(StringBuilder logMessage){

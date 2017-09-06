@@ -42,24 +42,25 @@ public class AGVCar implements Car{
 	public void setReceiveCardNum(int cardNum){
 		this.readCardNum = cardNum;
 		Edge edge = null;
-		Node node = graph.getNodeMap().get(this.lastReadCardNum);		
+		Node node = graph.getNodeMap().get(this.lastReadCardNum);
 		if(node != null){
 			edge = graph.getEdgeMap().get(cardNum);
 		}
 		
 		if(node != null && edge != null){
-			if(edge.START_NODE.CARD_NUM == node.CARD_NUM){
+			if(edge.START_NODE.CARD_NUM.equals(node.CARD_NUM)){
 				setAtEdge(edge);
-			}else if(edge.END_NODE.CARD_NUM == node.CARD_NUM){
+			}else if(edge.END_NODE.CARD_NUM.equals(node.CARD_NUM)){
 				setAtEdge(new Edge(edge.END_NODE, edge.START_NODE, edge.REAL_DISTANCE, edge.CARD_NUM));
 			}
-		}		
+		}
 		this.lastReadCardNum = this.readCardNum;
 		if(cardNum == this.stopCardNum){
 			Node n = graph.getNodeMap().get(this.stopCardNum);
 			this.position.x = n.X;
 			this.position.y = n.Y;
 			this.state = State.STOP;
+			return;
 		}
 		if(trafficControl.isStopToWait(cardNum, false)){
 			sendMessageToAGV("CC02DD");

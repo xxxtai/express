@@ -94,7 +94,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 	public void paint(Graphics g){
 		super.paint(g);
 		drawingGraph.drawingMap(g);
-		drawingGraph.drawingAGV(g, AGVArray,this);	
+		drawingGraph.drawingAGV(g, AGVArray,this);
 	}
 	
 	public void getGuiInstance(Main main, SettingGui settingGui, DrawingGui drawingGui){
