@@ -1,9 +1,9 @@
 package com.xxxtai.model;
 
-import com.xxxtai.controller.CommunicationWithAGVRunnable;
+import com.xxxtai.controller.Communication;
+import com.xxxtai.controller.TrafficControl;
 import com.xxxtai.toolKit.Orientation;
-
-import java.util.ArrayList;
+import java.util.List;
 
 public interface Car {	
 	void init(int num);
@@ -24,7 +24,7 @@ public interface Car {
 	
 	 int getY();
 	
-	 void setCommunicationWithAGVRunnable(CommunicationWithAGVRunnable communicationWithAGVRunnable);
+	 void setCommunication(Communication communication);
 	
 	 void sendMessageToAGV(String route);
 	
@@ -34,13 +34,13 @@ public interface Car {
 	
 	 void setState(int state);
 	
-	 void setRouteNodeNumArray(ArrayList<Integer> arrayList);
+	 void setRouteNodeNumArray(List<Integer> arrayList);
 	
 	 long getLastCommunicationTime();
 	
 	 void setLastCommunicationTime(long time);
 	
-	 CommunicationWithAGVRunnable getCommunicationWithAGVRunnable();
+	 Communication getCommunication();
 
 	 TrafficControl getTrafficControl();
 	

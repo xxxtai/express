@@ -3,7 +3,8 @@ package com.xxxtai.controller;
 import com.xxxtai.model.Car;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Path;
-import com.xxxtai.toolKit.AbsoluteToRelativeCoordinates;
+import com.xxxtai.toolKit.Absolute2Relative;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -16,14 +17,15 @@ import java.util.Queue;
  * Created by Tai on 2017/5/18.
  */
 @Component
-public class SchedulingAGVRunnable implements Runnable{
+@Slf4j
+public class SchedulingAGV implements Runnable{
     private List<Car> AGVArray;
     @Resource
     private Graph graph;
     @Resource(name = "dijkstra")
     private Algorithm algorithm;
 
-    public SchedulingAGVRunnable(){
+    public SchedulingAGV(){
     }
 
     public void setAGVArray(ArrayList<Car> AGVArray){
@@ -45,7 +47,7 @@ public class SchedulingAGVRunnable implements Runnable{
                             minEntrance = entry.getKey();
                         }
                     }
-                    System.out.println("jjjjjjj"+minEntrance);
+                    log.debug("派遣车辆" + car.getAGVNum() + "去" + minEntrance);
                     Path path = algorithm.findRoute(car.getAtEdge(), minEntrance, true);
                     if(path != null ) {
                         System.out.println();
@@ -54,7 +56,7 @@ public class SchedulingAGVRunnable implements Runnable{
                             System.out.print(n + "/");
                         }
                         System.out.print("--relative：");
-                        String routeString = AbsoluteToRelativeCoordinates.convert(graph, path);
+                        String routeString = Absolute2Relative.convert(graph, path);
                         System.out.println(routeString);
                         car.sendMessageToAGV(routeString);
                         car.setRouteNodeNumArray(path.getRoute());

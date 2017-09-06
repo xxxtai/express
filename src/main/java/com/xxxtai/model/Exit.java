@@ -15,8 +15,8 @@ public class Exit {
         int x = 0;
         int y = 0;
         for (int i = 0; i < 4; i++){
-            x+=exitNode.get(i).X;
-            y+=exitNode.get(i).Y;
+            x+=exitNode.get(i).x;
+            y+=exitNode.get(i).y;
         }
         this.X = x/4;
         this.Y = y/4;

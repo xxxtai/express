@@ -2,22 +2,20 @@ package com.xxxtai.controller;
 
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public abstract class MonitorServerSocketRunnable implements Runnable{	
-	private Logger logger = LoggerFactory.getLogger("main.logger");
-	private ServerSocket serverSocket;
+@Slf4j
+public abstract class ServerSocket implements Runnable{
+	private java.net.ServerSocket serverSocket;
 	private ExecutorService executorService;
 
-	public MonitorServerSocketRunnable(){
+	public ServerSocket(){
 		try{
-			serverSocket = new ServerSocket(8001);
+			serverSocket = new java.net.ServerSocket(8001);
 		}catch(Exception e){
 			e.printStackTrace();			
 		}
@@ -32,16 +30,16 @@ public abstract class MonitorServerSocketRunnable implements Runnable{
 				if(serverSocket != null){
 					Socket socket = serverSocket.accept();
 					System.out.println("socket connect:" + socket);
-					CommunicationWithAGVRunnable runnable = getCommunicationWithAGVRunnable();
+					Communication runnable = getCommunicationRunnable();
 					runnable.setSocket(socket);
 					executorService.execute(runnable);
 				}
 			}catch(Exception e){
 				e.printStackTrace();
-				logger.error("{}", e);
+				log.error("{}", e);
 			}
 		}
 	}
 
-	public abstract CommunicationWithAGVRunnable getCommunicationWithAGVRunnable();
+	public abstract Communication getCommunicationRunnable();
 }

@@ -7,6 +7,7 @@ import com.xxxtai.model.Exit;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Node;
 import com.xxxtai.toolKit.Common;
+import com.xxxtai.toolKit.NodeFunction;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.Number;
@@ -131,44 +132,44 @@ public class DrawingGui extends JPanel implements Gui{
 		ArrayList<Node> xNode = new ArrayList<>();
 		ArrayList<Node> yNode = new ArrayList<>();
 		for (Node node : graph.getNodeArray()){
-			if (Math.abs(node.X - e.getX()) < 60){
+			if (Math.abs(node.x - e.getX()) < 60){
 				xNode.add(node);
 			}
 
-			if(Math.abs(node.Y - e.getY()) < 60){
+			if(Math.abs(node.y - e.getY()) < 60){
 				yNode.add(node);
 			}
 
 		}
 
-		Node minxNode = new Node(0,MAXINT,MAXINT,"");
-		Node nextxMinNode = new Node(0,MAXINT,MAXINT,"");
+		Node minxNode = new Node(0,MAXINT,MAXINT, NodeFunction.NULL);
+		Node nextMinNode = new Node(0,MAXINT,MAXINT,NodeFunction.NULL);
 		for (Node node : xNode){
-			if(Math.abs(node.Y - e.getY()) < Math.abs(minxNode.Y - e.getY())){
+			if(Math.abs(node.y - e.getY()) < Math.abs(minxNode.y - e.getY())){
 				minxNode = node;
 			}
 		}
 		xNode.remove(minxNode);
 		for (Node node : xNode){
-			if(Math.abs(node.Y - e.getY()) < Math.abs(nextxMinNode.Y - e.getY())){
-				nextxMinNode = node;
+			if(Math.abs(node.y - e.getY()) < Math.abs(nextMinNode.y - e.getY())){
+				nextMinNode = node;
 			}
 		}
 
-		Node minyNode = new Node(0,MAXINT,MAXINT,"");
-		Node nextyMinNode = new Node(0,MAXINT,MAXINT,"");
+		Node minyNode = new Node(0,MAXINT,MAXINT, NodeFunction.NULL);
+		Node nextyMinNode = new Node(0,MAXINT,MAXINT,NodeFunction.NULL);
 		for (Node node : yNode){
-			if(Math.abs(node.X - e.getX()) < Math.abs(minyNode.X - e.getX())){
+			if(Math.abs(node.x - e.getX()) < Math.abs(minyNode.x - e.getX())){
 				minyNode = node;
 			}
 		}
 		yNode.remove(minyNode);
 		for (Node node : yNode){
-			if(Math.abs(node.X - e.getX()) < Math.abs(nextyMinNode.X - e.getX())){
+			if(Math.abs(node.x - e.getX()) < Math.abs(nextyMinNode.x - e.getX())){
 				nextyMinNode = node;
 			}
 		}
-		graph.addExit(new Exit(cityName , Arrays.asList(minxNode, nextxMinNode, minyNode, nextyMinNode)));
+		graph.addExit(new Exit(cityName , Arrays.asList(minxNode, nextMinNode, minyNode, nextyMinNode)));
 	}
 	
 	private void createNewGraph(Dimension screenSize){
@@ -201,7 +202,7 @@ public class DrawingGui extends JPanel implements Gui{
 		graph.getNewGraph();
 		for(int i = 0; i < row; i++){
 			for(int j = 0; j < column; j++){
-				graph.addNode( ++nodeNum, rlMargin + j*width, topMargin + i*height,  "交汇点");
+				graph.addNode( ++nodeNum, rlMargin + j*width, topMargin + i*height,  NodeFunction.Junction.getValue());
 				if(graph.getNodeArraySize() > 1 && (nodeNum - 1)%column != 0){
 					graph.addEdge(nodeNum - 1, nodeNum, realdis, ++cardNum);
 				}
@@ -216,7 +217,7 @@ public class DrawingGui extends JPanel implements Gui{
 		}
 		
 		for(Edge edge : graph.getEdgeArray()){
-			graph.addNode(edge.CARD_NUM, (edge.START_NODE.X+edge.END_NODE.X)/2, (edge.START_NODE.Y+edge.END_NODE.Y)/2, "停车点");
+			graph.addNode(edge.CARD_NUM, (edge.START_NODE.x +edge.END_NODE.x)/2, (edge.START_NODE.y +edge.END_NODE.y)/2, NodeFunction.Parking.getValue());
 		}
 		
 		try{
@@ -248,10 +249,10 @@ public class DrawingGui extends JPanel implements Gui{
 			WritableSheet wsNode = wwb.createSheet("nodes", 0);
 			int i = 0;
 			for(Node node : graph.getNodeArray()){				
-				Number numberNum = new Number(0, i, node.CARD_NUM);
-				Number numberX = new Number(1, i, node.X);
-				Number numberY = new Number(2, i, node.Y);
-				Label functionString = new Label(3, i, node.FUNCTION);
+				Number numberNum = new Number(0, i, node.cardNum);
+				Number numberX = new Number(1, i, node.x);
+				Number numberY = new Number(2, i, node.y);
+				Label functionString = new Label(3, i, node.getFunction().getValue().toString());
 				wsNode.addCell(numberX);
 				wsNode.addCell(numberY);
 				wsNode.addCell(numberNum);
@@ -262,8 +263,8 @@ public class DrawingGui extends JPanel implements Gui{
 			WritableSheet wsEdge = wwb.createSheet("edges", 1);
 			i = 0;
 			for(Edge edge: graph.getEdgeArray()){
-				Number numberStrNode = new Number(0, i, edge.START_NODE.CARD_NUM);
-				Number numberEndNode = new Number(1, i, edge.END_NODE.CARD_NUM);
+				Number numberStrNode = new Number(0, i, edge.START_NODE.cardNum);
+				Number numberEndNode = new Number(1, i, edge.END_NODE.cardNum);
 				Number numberDis = new Number(2, i, edge.REAL_DISTANCE);
 				Number cardNum = new Number(3, i, edge.CARD_NUM);
 				wsEdge.addCell(numberStrNode);

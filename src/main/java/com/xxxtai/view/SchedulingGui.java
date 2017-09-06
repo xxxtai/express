@@ -1,18 +1,16 @@
 package com.xxxtai.view;
 
 import com.xxxtai.controller.Algorithm;
-import com.xxxtai.controller.SchedulingAGVRunnable;
+import com.xxxtai.controller.SchedulingAGV;
 import com.xxxtai.main.Main;
 import com.xxxtai.model.*;
-import com.xxxtai.toolKit.AbsoluteToRelativeCoordinates;
+import com.xxxtai.toolKit.Absolute2Relative;
 import com.xxxtai.toolKit.Common;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -33,7 +31,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 	@Resource
 	private Runnable monitorServerSocketRunnable;
 	@Resource
-	private SchedulingAGVRunnable schedulingAGVRunnable;
+	private SchedulingAGV schedulingAGV;
 	public static final ArrayList<Car> AGVArray =new ArrayList<>();
 	private Timer timer;
 	private ExecutorService executors;
@@ -87,8 +85,8 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 		
 		timer.start();
 		executors.execute(monitorServerSocketRunnable);
-		schedulingAGVRunnable.setAGVArray(AGVArray);
-		executors.execute(schedulingAGVRunnable);
+		schedulingAGV.setAGVArray(AGVArray);
+		executors.execute(schedulingAGV);
 	}
 	@Override
 	public void paint(Graphics g){
@@ -123,16 +121,16 @@ public abstract class SchedulingGui extends JPanel implements Gui{
             strBuf.append("点  被 占 用 信 息 ：\n");
             for(Node node :graph.getNodeArray()){
                 if(!node.waitQueue.isEmpty()){
-                    strBuf.append(node.CARD_NUM).append("点被");
+                    strBuf.append(node.cardNum).append("点被");
                     for(Car car : node.waitQueue)
                         strBuf.append(car.getAGVNum()).append(",");
                     strBuf.append("AGV占用！！");
                     if(!node.isLocked())
-                        strBuf.append(node.CARD_NUM).append("边的waitQueue不为空，但未被锁住");
+                        strBuf.append(node.cardNum).append("边的waitQueue不为空，但未被锁住");
                     strBuf.append("\n");
                 }else{
                     if(node.isLocked()){
-                        strBuf.append(node.CARD_NUM).append("边的waitQueue为空，但被锁住");
+                        strBuf.append(node.cardNum).append("边的waitQueue为空，但被锁住");
                         strBuf.append("\n");
                     }
                 }
@@ -149,8 +147,8 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 			int x = e.getX();
 			int y = e.getY();
 			for(Node node : graph.getNodeArray()){
-				if(Math.abs(x - node.X) < 40 && Math.abs(y - node.Y) < 40){
-					Path path = algorithm.findRoute(AGVArray.get(0).getAtEdge(), node.CARD_NUM, true);
+				if(Math.abs(x - node.x) < 40 && Math.abs(y - node.y) < 40){
+					Path path = algorithm.findRoute(AGVArray.get(0).getAtEdge(), node.cardNum, true);
 					if(path != null ){
 						System.out.println();
 						System.out.print(AGVArray.get(0).getAGVNum() + "AGVRoute:");
@@ -158,7 +156,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 							System.out.print(n + "/");
 						}
 						System.out.print("--relative：");
-						String routeString = AbsoluteToRelativeCoordinates.convert(graph, path);
+						String routeString = Absolute2Relative.convert(graph, path);
 						System.out.println(routeString);
 						AGVArray.get(0).sendMessageToAGV(routeString);
 						AGVArray.get(0).setRouteNodeNumArray(path.getRoute());
@@ -171,8 +169,8 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 			int x = e.getX();
 			int y = e.getY();
 			for(Node node : graph.getNodeArray()){
-				if(Math.abs(x - node.X) < 40 && Math.abs(y - node.Y) < 40){
-					Path path1 = algorithm.findRoute(AGVArray.get(1).getAtEdge(), node.CARD_NUM, false);
+				if(Math.abs(x - node.x) < 40 && Math.abs(y - node.y) < 40){
+					Path path1 = algorithm.findRoute(AGVArray.get(1).getAtEdge(), node.cardNum, false);
 					if(path1 != null){
 						System.out.println();
 						System.out.print(AGVArray.get(1).getAGVNum() + "AGVroute:");
@@ -180,7 +178,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 							System.out.print(n + "/");
 						}
 						System.out.print("--relative：");
-						String routeString1 = AbsoluteToRelativeCoordinates.convert(graph, path1);
+						String routeString1 = Absolute2Relative.convert(graph, path1);
 						System.out.println(routeString1);
 						AGVArray.get(1).sendMessageToAGV(routeString1);
 						AGVArray.get(1).setRouteNodeNumArray(path1.getRoute());
@@ -193,8 +191,8 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 			int x = e.getX();
 			int y = e.getY();
 			for(Node node : graph.getNodeArray()){
-				if(Math.abs(x - node.X) < 40 && Math.abs(y - node.Y) < 40){
-					Path path1 = algorithm.findRoute(AGVArray.get(2).getAtEdge(), node.CARD_NUM, false);
+				if(Math.abs(x - node.x) < 40 && Math.abs(y - node.y) < 40){
+					Path path1 = algorithm.findRoute(AGVArray.get(2).getAtEdge(), node.cardNum, false);
 					if(path1 != null){
 						System.out.println();
 						System.out.print(AGVArray.get(2).getAGVNum() + "AGVroute:");
@@ -202,7 +200,7 @@ public abstract class SchedulingGui extends JPanel implements Gui{
 							System.out.print(n + "/");
 						}
 						System.out.print("---relative：");
-						String routeString1 = AbsoluteToRelativeCoordinates.convert(graph, path1);
+						String routeString1 = Absolute2Relative.convert(graph, path1);
 						System.out.println(routeString1);
 						AGVArray.get(2).sendMessageToAGV(routeString1);
 						AGVArray.get(2).setRouteNodeNumArray(path1.getRoute());

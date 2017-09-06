@@ -28,7 +28,7 @@ public class Dijkstra implements Algorithm{
 		}
 		
 		for(Edge edge : graph.getEdgeArray()){
-			graphArray[edge.START_NODE.CARD_NUM-1][edge.END_NODE.CARD_NUM-1]=edge.REAL_DISTANCE;
+			graphArray[edge.START_NODE.cardNum -1][edge.END_NODE.cardNum -1]=edge.REAL_DISTANCE;
 		}	
 	}
 	
@@ -37,19 +37,19 @@ public class Dijkstra implements Algorithm{
 
 		boolean adjoin = false;
 		List<Path> sArray = new ArrayList<>();
-		sArray.add(new Path(startEdge.END_NODE.CARD_NUM, startEdge.END_NODE.CARD_NUM));
+		sArray.add(new Path(startEdge.END_NODE.cardNum, startEdge.END_NODE.cardNum));
 		List<Path> uArray = new ArrayList<>();
 		for(int i = 0; i < size; i++){//初始化
-			if(startEdge.START_NODE.CARD_NUM == i+1){
-				uArray.add(new Path(startEdge.END_NODE.CARD_NUM, i + 1));
+			if(startEdge.START_NODE.cardNum == i+1){
+				uArray.add(new Path(startEdge.END_NODE.cardNum, i + 1));
 				uArray.get(i).setRealDis(MAXINT);
 				continue;
 			}
 				
-			uArray.add(new Path(startEdge.END_NODE.CARD_NUM, i + 1));
+			uArray.add(new Path(startEdge.END_NODE.cardNum, i + 1));
 			for(Edge edge : graph.getEdgeArray()){
-				if((edge.START_NODE.CARD_NUM == startEdge.END_NODE.CARD_NUM && edge.END_NODE.CARD_NUM == (i+1))
-						||(edge.END_NODE.CARD_NUM == startEdge.END_NODE.CARD_NUM && edge.START_NODE.CARD_NUM == (i+1) )){//|| (graph.getEdge(j).endNode.CARD_NUM == startNode && graph.getEdge(j).startNode.CARD_NUM == (i+1) && graph.getEdge(j).twoWay)
+				if((edge.START_NODE.cardNum == startEdge.END_NODE.cardNum && edge.END_NODE.cardNum == (i+1))
+						||(edge.END_NODE.cardNum == startEdge.END_NODE.cardNum && edge.START_NODE.cardNum == (i+1) )){//|| (graph.getEdge(j).endNode.cardNum == startNode && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
 					if(!edge.isLocked() && !edge.isRemove()){//当边和点被占用或被移除后，认为不联通
 						uArray.get(i).setRealDis(edge.REAL_DISTANCE);
 						uArray.get(i).addRouteNode(i+1);
@@ -62,7 +62,7 @@ public class Dijkstra implements Algorithm{
 			adjoin = false;
 		}
 
-		uArray.get(startEdge.END_NODE.CARD_NUM - 1).setRemove();
+		uArray.get(startEdge.END_NODE.cardNum - 1).setRemove();
 		int removedCount = 1;
 		
 		while(uArray.size() != removedCount){//
@@ -84,8 +84,8 @@ public class Dijkstra implements Algorithm{
 			int tempStart = sArray.get(sArray.size()-1).END_NODE_NUM;
 			for(int i = 0; i < size; i++){
 				for(Edge edge : graph.getEdgeArray()){
-					if((edge.START_NODE.CARD_NUM == tempStart && edge.END_NODE.CARD_NUM == (i+1))
-							||(edge.END_NODE.CARD_NUM == tempStart && edge.START_NODE.CARD_NUM == (i+1) )){//|| (graph.getEdge(j).endNode.CARD_NUM == tempStart && graph.getEdge(j).startNode.CARD_NUM == (i+1) && graph.getEdge(j).twoWay)
+					if((edge.START_NODE.cardNum == tempStart && edge.END_NODE.cardNum == (i+1))
+							||(edge.END_NODE.cardNum == tempStart && edge.START_NODE.cardNum == (i+1) )){//|| (graph.getEdge(j).endNode.cardNum == tempStart && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
 						if(edge.REAL_DISTANCE + sArray.get(sArray.size() - 1).getRealDis() < uArray.get(i).getRealDis()
 								&& !edge.isRemove() && !edge.isLocked()){//当边和点被占用或被移除后，认为不联通
 							uArray.get(i).setRealDis(edge.REAL_DISTANCE + sArray.get(sArray.size() - 1).getRealDis());
@@ -103,7 +103,7 @@ public class Dijkstra implements Algorithm{
 				if (true) {//!startEdge.END_NODE.functionNode
 					ArrayList<Integer> tempArray = new ArrayList<Integer>(returnPath.getRoute());
 					returnPath.getRoute().clear();
-					returnPath.getRoute().add(startEdge.START_NODE.CARD_NUM);
+					returnPath.getRoute().add(startEdge.START_NODE.cardNum);
 					for (Integer aTempArray : tempArray) {
 						returnPath.getRoute().add(aTempArray);
 					}
@@ -121,18 +121,18 @@ public class Dijkstra implements Algorithm{
 	
 	private Edge changeEdgeArray(int endNodeCARD_NUM, boolean isBackToEntrance){
 		Edge removeEdge = null;
-		if(!graph.getNodeMap().get(endNodeCARD_NUM).FUNCTION.equals("交汇点")){
-			Edge edge = graph.getEdgeMap().get(graph.getNodeMap().get(endNodeCARD_NUM).CARD_NUM);
+		if(!graph.getNodeMap().get(endNodeCARD_NUM).getFunction().equals("交汇点")){
+			Edge edge = graph.getEdgeMap().get(graph.getNodeMap().get(endNodeCARD_NUM).cardNum);
 			edge.setRemoved();
 			removeEdge = edge;
 			if(isBackToEntrance){
-				if (graph.getNodeMap().get(endNodeCARD_NUM).X < edge.START_NODE.X )
-					graph.addEdge(edge.START_NODE.CARD_NUM, endNodeCARD_NUM, edge.REAL_DISTANCE/2, 0);
+				if (graph.getNodeMap().get(endNodeCARD_NUM).x < edge.START_NODE.x)
+					graph.addEdge(edge.START_NODE.cardNum, endNodeCARD_NUM, edge.REAL_DISTANCE/2, 0);
 				else
-					graph.addEdge(endNodeCARD_NUM, edge.END_NODE.CARD_NUM, edge.REAL_DISTANCE/2, -1);
+					graph.addEdge(endNodeCARD_NUM, edge.END_NODE.cardNum, edge.REAL_DISTANCE/2, -1);
 			}else{
-				graph.addEdge(edge.START_NODE.CARD_NUM, endNodeCARD_NUM, edge.REAL_DISTANCE/2, 0);
-				graph.addEdge(endNodeCARD_NUM, edge.END_NODE.CARD_NUM, edge.REAL_DISTANCE/2, -1);
+				graph.addEdge(edge.START_NODE.cardNum, endNodeCARD_NUM, edge.REAL_DISTANCE/2, 0);
+				graph.addEdge(endNodeCARD_NUM, edge.END_NODE.cardNum, edge.REAL_DISTANCE/2, -1);
 			}
 
 		}

@@ -7,8 +7,8 @@ import com.xxxtai.model.Path;
 
 import java.util.ArrayList;
 
-public class AbsoluteToRelativeCoordinates {
-	private AbsoluteToRelativeCoordinates(){}
+public class Absolute2Relative {
+	private Absolute2Relative(){}
 	
 	public static String convert(Graph graph, Path path){
 		ArrayList<Integer> route = path.getRoute();
@@ -16,16 +16,16 @@ public class AbsoluteToRelativeCoordinates {
 		buffer.append("AA");
 		
 		for(int i = 0; i+2 < route.size(); i++){
-			if(graph.getNodeMap().get(route.get(i)).X == graph.getNodeMap().get(route.get(i+1)).X){
-				if(graph.getNodeMap().get(route.get(i)).Y < graph.getNodeMap().get(route.get(i+1)).Y){//down
+			if(graph.getNodeMap().get(route.get(i)).x == graph.getNodeMap().get(route.get(i+1)).x){
+				if(graph.getNodeMap().get(route.get(i)).y < graph.getNodeMap().get(route.get(i+1)).y){//down
 					//System.out.print("方向下/");
-					if(graph.getNodeMap().get(route.get(i+2)).X > graph.getNodeMap().get(route.get(i+1)).X){
+					if(graph.getNodeMap().get(route.get(i+2)).x > graph.getNodeMap().get(route.get(i+1)).x){
 						//左1
 						System.out.print(route.get(i+1) + "的命令左");
 						//System.out.println(commondString(graph, route.get(i), route.get(i+1), 1));
 						buffer.append(commondString(graph, route.get(i), route.get(i+1), 1));
 						buffer.append("FF");
-					}else if(graph.getNodeMap().get(route.get(i+2)).X == graph.getNodeMap().get(route.get(i+1)).X){
+					}else if(graph.getNodeMap().get(route.get(i+2)).x == graph.getNodeMap().get(route.get(i+1)).x){
 						//前3
 						System.out.print(route.get(i+1) + "的命令前/");
 						//System.out.println(commondString(graph, route.get(i), route.get(i+1), 3));
@@ -38,15 +38,15 @@ public class AbsoluteToRelativeCoordinates {
 						buffer.append(commondString(graph, route.get(i), route.get(i+1), 2));
 						buffer.append("FF");
 					}
-				}else if(graph.getNodeMap().get(route.get(i)).Y > graph.getNodeMap().get(route.get(i+1)).Y){//up
+				}else if(graph.getNodeMap().get(route.get(i)).y > graph.getNodeMap().get(route.get(i+1)).y){//up
 					//System.out.print("方向上/");
-					if(graph.getNodeMap().get(route.get(i+2)).X > graph.getNodeMap().get(route.get(i+1)).X){
+					if(graph.getNodeMap().get(route.get(i+2)).x > graph.getNodeMap().get(route.get(i+1)).x){
 						//右
 						System.out.print(route.get(i+1) + "的命令右/");
 						//System.out.println(commondString(graph, route.get(i), route.get(i+1), 2));
 						buffer.append(commondString(graph, route.get(i), route.get(i+1), 2));
 						buffer.append("FF");
-					}else if(graph.getNodeMap().get(route.get(i+2)).X == graph.getNodeMap().get(route.get(i+1)).X){
+					}else if(graph.getNodeMap().get(route.get(i+2)).x == graph.getNodeMap().get(route.get(i+1)).x){
 						//前
 						System.out.print(route.get(i+1) + "的命令前/");
 						//System.out.println(commondString(graph, route.get(i), route.get(i+1), 3));
@@ -60,16 +60,16 @@ public class AbsoluteToRelativeCoordinates {
 						buffer.append("FF");
 					}
 				}
-			}else if(graph.getNodeMap().get(route.get(i)).Y == graph.getNodeMap().get(route.get(i+1)).Y){//right and left
-				if(graph.getNodeMap().get(route.get(i)).X < graph.getNodeMap().get(route.get(i+1)).X){//right
+			}else if(graph.getNodeMap().get(route.get(i)).y == graph.getNodeMap().get(route.get(i+1)).y){//right and left
+				if(graph.getNodeMap().get(route.get(i)).x < graph.getNodeMap().get(route.get(i+1)).x){//right
 					//System.out.print("方向右/");
-					if(graph.getNodeMap().get(route.get(i+2)).Y > graph.getNodeMap().get(route.get(i+1)).Y){
+					if(graph.getNodeMap().get(route.get(i+2)).y > graph.getNodeMap().get(route.get(i+1)).y){
 						//右
 						System.out.print(route.get(i+1) + "的命令右/");
 					//	System.out.println(commondString(graph, route.get(i), route.get(i+1), 2));
 						buffer.append(commondString(graph, route.get(i), route.get(i+1), 2));
 						buffer.append("FF");
-					}else if(graph.getNodeMap().get(route.get(i+2)).Y == graph.getNodeMap().get(route.get(i+1)).Y){
+					}else if(graph.getNodeMap().get(route.get(i+2)).y == graph.getNodeMap().get(route.get(i+1)).y){
 						//前
 						System.out.print(route.get(i+1) + "的命令前/");
 						//System.out.println(commondString(graph, route.get(i), route.get(i+1), 3));
@@ -82,15 +82,15 @@ public class AbsoluteToRelativeCoordinates {
 						buffer.append(commondString(graph, route.get(i), route.get(i+1), 1));
 						buffer.append("FF");
 					}
-				}else if(graph.getNodeMap().get(route.get(i)).X > graph.getNodeMap().get(route.get(i+1)).X){//leftleftleftleftleftleft
+				}else if(graph.getNodeMap().get(route.get(i)).x > graph.getNodeMap().get(route.get(i+1)).x){//leftleftleftleftleftleft
 					//System.out.print("方向左/");
-					if(graph.getNodeMap().get(route.get(i+2)).Y > graph.getNodeMap().get(route.get(i+1)).Y){
+					if(graph.getNodeMap().get(route.get(i+2)).y > graph.getNodeMap().get(route.get(i+1)).y){
 						//左
 						System.out.print(route.get(i+1) + "的命令左/");
 						//System.out.println(commondString(graph, route.get(i), route.get(i+1), 1));
 						buffer.append(commondString(graph, route.get(i), route.get(i+1), 1));
 						buffer.append("FF");
-					}else if(graph.getNodeMap().get(route.get(i+2)).Y == graph.getNodeMap().get(route.get(i+1)).Y){
+					}else if(graph.getNodeMap().get(route.get(i+2)).y == graph.getNodeMap().get(route.get(i+1)).y){
 						//前
 						System.out.print(route.get(i+1) + "的命令前/");
 						//System.out.println(commondString(graph, route.get(i), route.get(i+1), 3));
@@ -109,8 +109,8 @@ public class AbsoluteToRelativeCoordinates {
 		
 		
 		for(Node node: graph.getNodeArray()){
-			if(node.CARD_NUM == path.END_NODE_NUM){
-				path.setStopNodeNum(node.CARD_NUM);
+			if(node.cardNum == path.END_NODE_NUM){
+				path.setStopNodeNum(node.cardNum);
 			}
 		}
 		
@@ -128,7 +128,7 @@ public class AbsoluteToRelativeCoordinates {
 	public static String commondString(Graph graph, int s, int e, int commond){
 		String reString = "";
 		for(Edge edge : graph.getEdgeArray()){
-			if((edge.START_NODE.CARD_NUM == s && edge.END_NODE.CARD_NUM == e)|| (edge.END_NODE.CARD_NUM == s && edge.START_NODE.CARD_NUM == e)){
+			if((edge.START_NODE.cardNum == s && edge.END_NODE.cardNum == e)|| (edge.END_NODE.cardNum == s && edge.START_NODE.cardNum == e)){
 				if(edge.CARD_NUM < 16)
 					reString = String.valueOf(0) + Integer.toHexString(edge.CARD_NUM);
 				else

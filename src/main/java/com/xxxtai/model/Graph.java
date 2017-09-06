@@ -1,5 +1,6 @@
 package com.xxxtai.model;
 
+import com.xxxtai.toolKit.NodeFunction;
 import jxl.Sheet;
 import jxl.Workbook;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,7 @@ public class Graph {
 							Integer.parseInt(sheetNodes.getCell(0, i).getContents()),
 							Integer.parseInt(sheetNodes.getCell(1, i).getContents()),
 							Integer.parseInt(sheetNodes.getCell(2, i).getContents()),
-							sheetNodes.getCell(3, i).getContents());
+							Integer.parseInt(sheetNodes.getCell(3, i).getContents()));
 				}
 				
 				Sheet sheetEdges = wb.getSheet("edges");
@@ -91,8 +92,8 @@ public class Graph {
 		return this.edgeMap.values().size();
 	}
 	
-	public void addNode(int card_num, int x , int y, String function){
-		Node node =new Node(card_num, x, y, function);
+	public void addNode(int card_num, int x , int y, Integer num){
+		Node node =new Node(card_num, x, y, NodeFunction.valueOf(num));
 		nodeMap.put(card_num, node);
 	}
 	
@@ -100,9 +101,9 @@ public class Graph {
 		Node startNode = null;
 		Node endNode = null;
 		for(Node node : getNodeArray()){
-			if(node.CARD_NUM == strNodeNum)
+			if(node.cardNum == strNodeNum)
 				startNode = node;
-			if(node.CARD_NUM == endNodeNum)
+			if(node.cardNum == endNodeNum)
 				endNode = node;
 		}		
 		edgeMap.put(cardNum, new Edge(startNode, endNode, dis, cardNum));

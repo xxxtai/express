@@ -12,13 +12,13 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 @Slf4j
-public class CommunicationWithAGVRunnable implements Runnable{
+public class Communication implements Runnable{
 	private Socket socket;
 	private InputStream inputStream;
 	private OutputStream outputStream;
 	private Car car;
 	
-	public CommunicationWithAGVRunnable(){
+	public Communication(){
 	}
 	
 	void setSocket(Socket socket){
@@ -42,7 +42,7 @@ public class CommunicationWithAGVRunnable implements Runnable{
 					int AGVNum = Integer.parseInt(revMessage.substring(0, 2), 16);
 					for(Car car : SchedulingGui.AGVArray){
 						if(car.getAGVNum() == AGVNum){
-							car.setCommunicationWithAGVRunnable(this);
+							car.setCommunication(this);
 							this.car = car;
 							this.car.setLastCommunicationTime(System.currentTimeMillis());
 							builder.append(" confirmed AGVNum :").append(AGVNum).append("号AGV");
@@ -56,7 +56,7 @@ public class CommunicationWithAGVRunnable implements Runnable{
 
 		while(true){
 			if(System.currentTimeMillis() - this.car.getLastCommunicationTime() > 4500){//通讯中断
-				this.car.setCommunicationWithAGVRunnable(null);
+				this.car.setCommunication(null);
 				try {
 					this.inputStream.close();
 					this.outputStream.close();

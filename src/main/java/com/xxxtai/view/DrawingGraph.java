@@ -45,7 +45,7 @@ public class DrawingGraph {
 				g.setColor(Color.lightGray);
 			else
 				g.setColor(Color.BLACK);
-			g.drawLine(edge.START_NODE.X, edge.START_NODE.Y, edge.END_NODE.X, edge.END_NODE.Y);
+			g.drawLine(edge.START_NODE.x, edge.START_NODE.y, edge.END_NODE.x, edge.END_NODE.y);
 		}
 
 		for(Node node : graph.getNodeArray()){
@@ -53,10 +53,10 @@ public class DrawingGraph {
 				g.setColor(Color.red);
 			else
 				g.setColor(Color.YELLOW);
-			g.fillRect(node.X - 5, node.Y - 5, 10, 10);
+			g.fillRect(node.x - 5, node.y - 5, 10, 10);
 			g.setColor(Color.RED);
 			g.setFont(new Font("宋体", Font.BOLD, 15));
-			g.drawString(String.valueOf(node.CARD_NUM),node.X + 10, node.Y - 10);	
+			g.drawString(String.valueOf(node.cardNum),node.x + 10, node.y - 10);
 		}
 
 		for (List<Exit> list : graph.getExitList()){
@@ -76,7 +76,7 @@ public class DrawingGraph {
             Image rightImage;
             Image upImage;
             Image downImage;
-            if(AGVArray.get(i).getCommunicationWithAGVRunnable() == null){
+            if(AGVArray.get(i).getCommunication() == null){
 				leftImage = leftImageR;
 				rightImage = rightImageR;
 				upImage = upImageR;

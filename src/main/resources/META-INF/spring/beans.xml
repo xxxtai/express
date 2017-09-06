@@ -9,11 +9,11 @@
 	
 	<context:component-scan base-package="com.xxxtai"/>
 	
-	<bean id="monitorServerSocketRunnable" class="com.xxxtai.controller.MonitorServerSocketRunnable">
-		<lookup-method name="getCommunicationWithAGVRunnable" bean="communicationWithAGVRunnable"/>
+	<bean id="monitorServerSocketRunnable" class="com.xxxtai.controller.ServerSocket">
+		<lookup-method name="getCommunicationRunnable" bean="communication"/>
 	</bean>
 	
-	<bean id="communicationWithAGVRunnable" class="com.xxxtai.controller.CommunicationWithAGVRunnable"
+	<bean id="communication" class="com.xxxtai.controller.Communication"
 		scope="prototype">
 	</bean>
 	
