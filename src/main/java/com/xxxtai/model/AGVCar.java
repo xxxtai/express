@@ -4,6 +4,8 @@ import com.xxxtai.controller.Communication;
 import com.xxxtai.controller.TrafficControl;
 import com.xxxtai.toolKit.Orientation;
 import com.xxxtai.toolKit.State;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
@@ -13,25 +15,34 @@ import java.net.SocketException;
 
 @Slf4j(topic = "develop")
 public class AGVCar implements Car{
-	@Resource
-	private Graph graph;
-	private Communication communication;
-	private Orientation orientation = Orientation.LEFT;
 	private Point position = new Point(-200, -200);
 	private boolean finishEdge;
 	private State state = State.STOP;
-	private Edge atEdge;
-	private static final int FORWARD_PIX = 7;
-	private int AGVNum;
-	private int readCardNum;
+	private int count_3s;
 	private int lastReadCardNum;
 	private int stopCardNum;
+	private static final int FORWARD_PIX = 7;
+
+	@Getter @Setter
+	private Communication communication;
+	@Getter
+	private Orientation orientation = Orientation.LEFT;
+	@Getter
+	private int AGVNum;
+	@Getter
+	private int readCardNum;
+	@Getter
+	private Edge atEdge;
+	@Getter @Setter
 	private boolean onDuty;
-	private int count_3s;
+	@Getter @Setter
 	private long lastCommunicationTime;
+	@Getter
 	@Resource
 	private TrafficControl trafficControl;
-	
+	@Resource
+	private Graph graph;
+
 	public AGVCar(){
 		log.debug("kkk");
 	}
@@ -67,7 +78,7 @@ public class AGVCar implements Car{
 			sendMessageToAGV("CC02DD");
 			log.info("命令"+this.AGVNum+"AGV停下来");
 		}
-	}	
+	}
 	
 	public void stepByStep(){			
 		if(!finishEdge&& atEdge != null && (state == State.FORWARD || state == State.BACKWARD)){
@@ -166,56 +177,12 @@ public class AGVCar implements Car{
 		this.onDuty = true;
 	}
 	
-	public long getLastCommunicationTime(){
-		return this.lastCommunicationTime;
-	}
-	
-	public void setLastCommunicationTime(long time){
-		this.lastCommunicationTime = time;
-	}
-	
-	public void setCommunication(Communication communication){
-		this.communication = communication;
-	}
-	
-	public Communication getCommunication(){
-		return this.communication;
-	}
-	
-	public int getAGVNum(){
-		return this.AGVNum;
-	}
-	
-	public Edge getAtEdge(){
-		return this.atEdge;
-	}
-	
-	public Orientation getOrientation(){
-		return this.orientation;
-	}
-	
 	public int getX(){
 		return this.position.x;
 	}
 	
 	public int getY(){
 		return this.position.y;
-	}
-	
-	public TrafficControl getTrafficControl(){
-		return this.trafficControl;
-	}
-	
-	public int getReadCardNum(){
-		return this.readCardNum;
-	}
-
-	public boolean isOnDuty(){
-		return this.onDuty;
-	}
-
-	public void setOnDuty(boolean f){
-		this.onDuty = f;
 	}
 
 	public boolean isOnEntrance(){
