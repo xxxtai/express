@@ -6,12 +6,13 @@ import com.xxxtai.model.Node;
 import com.xxxtai.model.Path;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Absolute2Relative {
 	private Absolute2Relative(){}
 	
 	public static String convert(Graph graph, Path path){
-		ArrayList<Integer> route = path.getRoute();
+		List<Integer> route = path.getRoute();
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("AA");
 		
