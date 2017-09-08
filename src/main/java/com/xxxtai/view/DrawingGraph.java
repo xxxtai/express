@@ -15,7 +15,6 @@ public class DrawingGraph {
     @Resource
     private Graph graph;
     private Image leftImageG;
-
     private Image rightImageG;
     private Image upImageG;
     private Image downImageG;
@@ -41,18 +40,20 @@ public class DrawingGraph {
         g.setColor(Color.BLACK);
 
         for (Edge edge : graph.getEdgeArray()) {
-            if (edge.isLocked() || edge.isRemove())
+            if (edge.isLocked() || edge.isRemove()) {
                 g.setColor(Color.lightGray);
-            else
+            } else {
                 g.setColor(Color.BLACK);
+            }
             g.drawLine(edge.startNode.x, edge.startNode.y, edge.endNode.x, edge.endNode.y);
         }
 
         for (Node node : graph.getNodeArray()) {
-            if (node.isLocked())
+            if (node.isLocked()) {
                 g.setColor(Color.red);
-            else
+            } else {
                 g.setColor(Color.YELLOW);
+            }
             g.fillRect(node.x - 5, node.y - 5, 10, 10);
             g.setColor(Color.RED);
             g.setFont(new Font("宋体", Font.BOLD, 15));
@@ -65,6 +66,12 @@ public class DrawingGraph {
                 g.setColor(Color.darkGray);
                 g.drawString(exit.name, exit.X - 20, exit.Y + 10);
             }
+        }
+
+        for (Entrance entrance : graph.getEntranceMap().values()) {
+            Node node = graph.getNodeMap().get(entrance.getCardNum());
+            g.setColor(Color.GRAY);
+            g.fillRect(node.x - 25, node.y - 25, 50, 50);
         }
     }
 

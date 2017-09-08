@@ -3,6 +3,7 @@ package com.xxxtai.model;
 import com.xxxtai.constant.NodeFunction;
 import jxl.Sheet;
 import jxl.Workbook;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -12,23 +13,32 @@ import java.util.*;
 
 @Component
 public class Graph {
+    public static final String PATH_NAME = "C:\\Users\\xxxta\\work\\Graph.xls";
     private Map<Integer, Node> nodeMap;
     private Map<Integer, Edge> edgeMap;
-    private Map<Integer, Queue<Car>> entranceMap;
     private Map<String, List<Exit>> exitMap;
+    private @Getter
+    Map<Integer, Entrance> entranceMap;
 
     public Graph() {
         nodeMap = new HashMap<>();
         edgeMap = new HashMap<>();
         exitMap = new HashMap<>();
-        importNewGraph();
+        importNewGraph(PATH_NAME);
+        extractEntrances();
+    }
 
+    private void extractEntrances(){
+        int[] entrances = {220, 227, 234, 241, 248, 255, 262, 269, 276, 283, 290, 297, 304, 311};
         entranceMap = new HashMap<>();
-        for (int i = 108; i < 118; i++) {
-            entranceMap.put(i, new LinkedList<>());
-            if (edgeMap.size() > i) {
-                edgeMap.get(i).setRemoved();
+        for (int i = 0; i < entrances.length; i++) {
+            Entrance entrance;
+            if (i % 2 == 0) {
+                entrance= new Entrance(entrances[i], Entrance.Direction.DOWN);
+            } else {
+                entrance = new Entrance(entrances[i], Entrance.Direction.UP);
             }
+            entranceMap.put(entrances[i], entrance);
         }
     }
 
@@ -41,45 +51,41 @@ public class Graph {
         }
     }
 
-    public void importNewGraph() {
-        File file = new File("C:\\Users\\xxxta\\work\\Graph.xls");
+    private void importNewGraph(String pathName) {
+        File file = new File(pathName);
         try {
-            if (file != null) {
-                System.out.println(file.getPath());
-                InputStream is = new FileInputStream(file.getPath());
-                Workbook wb = Workbook.getWorkbook(is);
+            InputStream is = new FileInputStream(file.getPath());
+            Workbook wb = Workbook.getWorkbook(is);
 
-                Sheet sheetNodes = wb.getSheet("nodes");
-                for (int i = 0; i < sheetNodes.getRows(); i++) {
-                    this.addNode(
-                            Integer.parseInt(sheetNodes.getCell(0, i).getContents()),
-                            Integer.parseInt(sheetNodes.getCell(1, i).getContents()),
-                            Integer.parseInt(sheetNodes.getCell(2, i).getContents()),
-                            Integer.parseInt(sheetNodes.getCell(3, i).getContents()));
-                }
-
-                Sheet sheetEdges = wb.getSheet("edges");
-                for (int i = 0; i < sheetEdges.getRows(); i++) {
-
-                    this.addEdge(
-                            Integer.parseInt(sheetEdges.getCell(0, i).getContents()),
-                            Integer.parseInt(sheetEdges.getCell(1, i).getContents()),
-                            Integer.parseInt(sheetEdges.getCell(2, i).getContents()),
-                            Integer.parseInt(sheetEdges.getCell(3, i).getContents())
-                    );
-                }
-                Sheet sheetExit = wb.getSheet("exits");
-                for (int i = 0; i < sheetExit.getRows(); i++) {
-                    this.addExit(
-                            new Exit(
-                                    sheetExit.getCell(0, i).getContents(),
-                                    Integer.parseInt(sheetExit.getCell(1, i).getContents()),
-                                    Integer.parseInt(sheetExit.getCell(2, i).getContents())
-                            )
-                    );
-                }
+            Sheet sheetNodes = wb.getSheet("nodes");
+            for (int i = 0; i < sheetNodes.getRows(); i++) {
+                this.addNode(
+                        Integer.parseInt(sheetNodes.getCell(0, i).getContents()),
+                        Integer.parseInt(sheetNodes.getCell(1, i).getContents()),
+                        Integer.parseInt(sheetNodes.getCell(2, i).getContents()),
+                        Integer.parseInt(sheetNodes.getCell(3, i).getContents()));
             }
-        } catch (Exception e) {
+
+            Sheet sheetEdges = wb.getSheet("edges");
+            for (int i = 0; i < sheetEdges.getRows(); i++) {
+
+                this.addEdge(
+                        Integer.parseInt(sheetEdges.getCell(0, i).getContents()),
+                        Integer.parseInt(sheetEdges.getCell(1, i).getContents()),
+                        Integer.parseInt(sheetEdges.getCell(2, i).getContents()),
+                        Integer.parseInt(sheetEdges.getCell(3, i).getContents())
+                );
+            }
+            Sheet sheetExit = wb.getSheet("exits");
+            for (int i = 0; i < sheetExit.getRows(); i++) {
+                this.addExit(
+                        new Exit(
+                                sheetExit.getCell(0, i).getContents(),
+                                Integer.parseInt(sheetExit.getCell(1, i).getContents()),
+                                Integer.parseInt(sheetExit.getCell(2, i).getContents())
+                        )
+                );
+            }        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -128,10 +134,6 @@ public class Graph {
 
     public Map<Integer, Edge> getEdgeMap() {
         return this.edgeMap;
-    }
-
-    public Map<Integer, Queue<Car>> getEntranceMap() {
-        return this.entranceMap;
     }
 
     public Collection<List<Exit>> getExitList() {

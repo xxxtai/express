@@ -13,9 +13,8 @@ import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
@@ -31,16 +30,16 @@ import static com.xxxtai.controller.Dijkstra.MAXINT;
 
 
 @Component
+@Slf4j
 public class DrawingGui extends JPanel implements Gui {
     private static final long serialVersionUID = 1L;
-    private static Logger logger = Logger.getLogger(DrawingGui.class.getName());
     private RoundButton schedulingGuiBtn;
     private RoundButton settingGuiBtn;
     private RoundButton drawingGuiBtn;
     private RoundButton importGraphBtn;
-    private MyTextField inputRowField;
-    private MyTextField inputColumnField;
-    private MyTextField inputRealdisField;
+    private MyTextField rowField;
+    private MyTextField columnField;
+    private MyTextField realDistanceField;
     private RoundButton confirmAddExitBtn;
 
     @Resource
@@ -62,12 +61,12 @@ public class DrawingGui extends JPanel implements Gui {
         drawingGuiBtn.setForeground(new Color(30, 144, 255));
         drawingGuiBtn.setBackground(Color.WHITE);
 
-        inputRowField = new MyTextField("        行数");
-        inputRowField.setBounds(5 * screenSize.width / 12, 3 * screenSize.height / 15, screenSize.width / 6, screenSize.height / 20);
-        inputColumnField = new MyTextField("        列数");
-        inputColumnField.setBounds(5 * screenSize.width / 12, 4 * screenSize.height / 15, screenSize.width / 6, screenSize.height / 20);
-        inputRealdisField = new MyTextField("        距离");
-        inputRealdisField.setBounds(5 * screenSize.width / 12, 5 * screenSize.height / 15, screenSize.width / 6, screenSize.height / 20);
+        rowField = new MyTextField("        行数");
+        rowField.setBounds(5 * screenSize.width / 12, 3 * screenSize.height / 15, screenSize.width / 6, screenSize.height / 20);
+        columnField = new MyTextField("        列数");
+        columnField.setBounds(5 * screenSize.width / 12, 4 * screenSize.height / 15, screenSize.width / 6, screenSize.height / 20);
+        realDistanceField = new MyTextField("        距离");
+        realDistanceField.setBounds(5 * screenSize.width / 12, 5 * screenSize.height / 15, screenSize.width / 6, screenSize.height / 20);
         RoundButton confirmBtn = new RoundButton("确认");
         confirmBtn.setBounds(5 * screenSize.width / 12, 6 * screenSize.height / 15, screenSize.width / 6, screenSize.height / 20);
         confirmBtn.addActionListener(e -> createNewGraph(screenSize));
@@ -84,9 +83,9 @@ public class DrawingGui extends JPanel implements Gui {
         this.add(schedulingGuiBtn);
         this.add(settingGuiBtn);
         this.add(drawingGuiBtn);
-        this.add(inputColumnField);
-        this.add(inputRealdisField);
-        this.add(inputRowField);
+        this.add(columnField);
+        this.add(realDistanceField);
+        this.add(rowField);
         this.add(confirmBtn);
         this.add(importGraphBtn);
         this.add(confirmAddExitBtn);
@@ -103,9 +102,7 @@ public class DrawingGui extends JPanel implements Gui {
                             addExit(e, cityName);
                         }
                     });
-
                 }
-
             }
         });
     }
@@ -157,30 +154,33 @@ public class DrawingGui extends JPanel implements Gui {
             }
         }
 
-        Node minyNode = new Node(0, MAXINT, MAXINT, NodeFunction.NULL);
-        Node nextyMinNode = new Node(0, MAXINT, MAXINT, NodeFunction.NULL);
+        Node minYNode = new Node(0, MAXINT, MAXINT, NodeFunction.NULL);
+        Node nextMinYNode = new Node(0, MAXINT, MAXINT, NodeFunction.NULL);
         for (Node node : yNode) {
-            if (Math.abs(node.x - e.getX()) < Math.abs(minyNode.x - e.getX())) {
-                minyNode = node;
+            if (Math.abs(node.x - e.getX()) < Math.abs(minYNode.x - e.getX())) {
+                minYNode = node;
             }
         }
-        yNode.remove(minyNode);
+        yNode.remove(minYNode);
         for (Node node : yNode) {
-            if (Math.abs(node.x - e.getX()) < Math.abs(nextyMinNode.x - e.getX())) {
-                nextyMinNode = node;
+            if (Math.abs(node.x - e.getX()) < Math.abs(nextMinYNode.x - e.getX())) {
+                nextMinYNode = node;
             }
         }
-        graph.addExit(new Exit(cityName, Arrays.asList(minxNode, nextMinNode, minyNode, nextyMinNode)));
+        graph.addExit(new Exit(cityName, Arrays.asList(minxNode, nextMinNode, minYNode, nextMinYNode)));
     }
 
     private void createNewGraph(Dimension screenSize) {
 
-        int row = Integer.valueOf(inputRowField.getText());
-        int column = Integer.valueOf(inputColumnField.getText());
-        int realdis = Integer.valueOf(inputRealdisField.getText());
+        int row = Integer.valueOf(rowField.getText());
+        int column = Integer.valueOf(columnField.getText());
+        int realDistance = Integer.valueOf(realDistanceField.getText());
         int rlMargin = 100;
         int topMargin = 140;
         int downMargin = 100;
+        if (row % 2 != 0) {
+            log.error("输入行数必须为偶数");
+        }
         if (row > 15) {
             topMargin = 90;
             downMargin = 50;
@@ -205,7 +205,7 @@ public class DrawingGui extends JPanel implements Gui {
             for (int j = 0; j < column; j++) {
                 graph.addNode(++nodeNum, rlMargin + j * width, topMargin + i * height, NodeFunction.Junction.getValue());
                 if (graph.getNodeArraySize() > 1 && (nodeNum - 1) % column != 0) {
-                    graph.addEdge(nodeNum - 1, nodeNum, realdis, ++cardNum);
+                    graph.addEdge(nodeNum - 1, nodeNum, realDistance, ++cardNum);
                 }
 
             }
@@ -213,7 +213,7 @@ public class DrawingGui extends JPanel implements Gui {
 
         for (int i = 1; i <= column && (i + column <= column * row); i++) {
             for (int j = i; j + column <= column * row; j += column) {
-                graph.addEdge(j, j + column, realdis, ++cardNum);
+                graph.addEdge(j, j + column, realDistance, ++cardNum);
             }
         }
 
@@ -228,7 +228,7 @@ public class DrawingGui extends JPanel implements Gui {
                 System.out.println("new graph success!");
         } catch (Exception ex) {
             ex.printStackTrace();
-            logger.error(ex);
+            log.error("exception:", ex);
         }
 
     }
@@ -242,10 +242,10 @@ public class DrawingGui extends JPanel implements Gui {
 
     private static void writeExcel(Graph graph) {
         try {
-            File file = new File("C:\\Users\\xxxta\\work\\Graph.xls");
+            File file = new File(Graph.PATH_NAME);
             InputStream inputStream = new FileInputStream(file.getPath());
             Workbook wb = Workbook.getWorkbook(inputStream);
-            WritableWorkbook wwb = Workbook.createWorkbook(new File("C:\\Users\\xxxta\\work\\Graph.xls"), wb);
+            WritableWorkbook wwb = Workbook.createWorkbook(new File(Graph.PATH_NAME), wb);
             wwb.removeSheet(0);
             WritableSheet wsNode = wwb.createSheet("nodes", 0);
             int i = 0;
@@ -296,7 +296,7 @@ public class DrawingGui extends JPanel implements Gui {
             System.out.println("write success");
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error(e);
+            log.error("exception:", e);
         }
     }
 

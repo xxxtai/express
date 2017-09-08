@@ -23,20 +23,20 @@ public class Absolute2Relative {
                     if (graph.getNodeMap().get(route.get(i + 2)).x > graph.getNodeMap().get(route.get(i + 1)).x) {
                         //左1
                         System.out.print(route.get(i + 1) + "的命令左");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 1));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 1));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 1));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 1));
                         buffer.append("FF");
                     } else if (graph.getNodeMap().get(route.get(i + 2)).x == graph.getNodeMap().get(route.get(i + 1)).x) {
                         //前3
                         System.out.print(route.get(i + 1) + "的命令前/");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 3));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 3));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 3));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 3));
                         buffer.append("FF");
                     } else {
                         //右2
                         System.out.print(route.get(i + 1) + "的命令右/");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 2));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 2));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 2));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 2));
                         buffer.append("FF");
                     }
                 } else if (graph.getNodeMap().get(route.get(i)).y > graph.getNodeMap().get(route.get(i + 1)).y) {//up
@@ -44,20 +44,20 @@ public class Absolute2Relative {
                     if (graph.getNodeMap().get(route.get(i + 2)).x > graph.getNodeMap().get(route.get(i + 1)).x) {
                         //右
                         System.out.print(route.get(i + 1) + "的命令右/");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 2));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 2));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 2));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 2));
                         buffer.append("FF");
                     } else if (graph.getNodeMap().get(route.get(i + 2)).x == graph.getNodeMap().get(route.get(i + 1)).x) {
                         //前
                         System.out.print(route.get(i + 1) + "的命令前/");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 3));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 3));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 3));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 3));
                         buffer.append("FF");
                     } else {
                         //左
                         System.out.print(route.get(i + 1) + "的命令左/");
-                        //	System.out.println(commondString(graph, route.get(i), route.get(i+1), 1));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 1));
+                        //	System.out.println(commandString(graph, route.get(i), route.get(i+1), 1));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 1));
                         buffer.append("FF");
                     }
                 }
@@ -67,20 +67,20 @@ public class Absolute2Relative {
                     if (graph.getNodeMap().get(route.get(i + 2)).y > graph.getNodeMap().get(route.get(i + 1)).y) {
                         //右
                         System.out.print(route.get(i + 1) + "的命令右/");
-                        //	System.out.println(commondString(graph, route.get(i), route.get(i+1), 2));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 2));
+                        //	System.out.println(commandString(graph, route.get(i), route.get(i+1), 2));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 2));
                         buffer.append("FF");
                     } else if (graph.getNodeMap().get(route.get(i + 2)).y == graph.getNodeMap().get(route.get(i + 1)).y) {
                         //前
                         System.out.print(route.get(i + 1) + "的命令前/");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 3));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 3));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 3));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 3));
                         buffer.append("FF");
                     } else {
                         //左
                         System.out.print(route.get(i + 1) + "的命令左/");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 1));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 1));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 1));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 1));
                         buffer.append("FF");
                     }
                 } else if (graph.getNodeMap().get(route.get(i)).x > graph.getNodeMap().get(route.get(i + 1)).x) {//leftleftleftleftleftleft
@@ -88,20 +88,20 @@ public class Absolute2Relative {
                     if (graph.getNodeMap().get(route.get(i + 2)).y > graph.getNodeMap().get(route.get(i + 1)).y) {
                         //左
                         System.out.print(route.get(i + 1) + "的命令左/");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 1));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 1));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 1));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 1));
                         buffer.append("FF");
                     } else if (graph.getNodeMap().get(route.get(i + 2)).y == graph.getNodeMap().get(route.get(i + 1)).y) {
                         //前
                         System.out.print(route.get(i + 1) + "的命令前/");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 3));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 3));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 3));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 3));
                         buffer.append("FF");
                     } else {
                         //右
                         System.out.print(route.get(i + 1) + "的命令右/");
-                        //System.out.println(commondString(graph, route.get(i), route.get(i+1), 2));
-                        buffer.append(commondString(graph, route.get(i), route.get(i + 1), 2));
+                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 2));
+                        buffer.append(commandString(graph, route.get(i), route.get(i + 1), 2));
                         buffer.append("FF");
                     }
                 }
@@ -126,17 +126,18 @@ public class Absolute2Relative {
         return buffer.toString();
     }
 
-    public static String commondString(Graph graph, int s, int e, int commond) {
-        String reString = "";
+    private static String commandString(Graph graph, int startNode, int endNode, int command) {
+        StringBuilder reString = new StringBuilder();
         for (Edge edge : graph.getEdgeArray()) {
-            if ((edge.startNode.cardNum == s && edge.endNode.cardNum == e) || (edge.endNode.cardNum == s && edge.startNode.cardNum == e)) {
-                if (edge.cardNum < 16)
-                    reString = String.valueOf(0) + Integer.toHexString(edge.cardNum);
-                else
-                    reString += Integer.toHexString(edge.cardNum);
+            if ((edge.startNode.cardNum == startNode && edge.endNode.cardNum == endNode) || (edge.endNode.cardNum == startNode && edge.startNode.cardNum == endNode)) {
+                if (edge.cardNum < 16) {
+                    reString = new StringBuilder(String.valueOf(0) + Integer.toHexString(edge.cardNum));
+                } else {
+                    reString.append(Integer.toHexString(edge.cardNum));
+                }
             }
         }
-        reString += String.valueOf(0);
-        return reString += String.valueOf(commond);
+        reString.append("EE").append(String.valueOf(0)).append(String.valueOf(command));
+        return reString.toString();
     }
 }

@@ -1,6 +1,7 @@
 package com.xxxtai.controller;
 
 import com.xxxtai.model.Edge;
+import com.xxxtai.model.Entrance;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Path;
 import com.xxxtai.constant.NodeFunction;
@@ -39,8 +40,8 @@ public class Dijkstra implements Algorithm {
 
             uArray.add(new Path(startEdge.endNode.cardNum, i + 1));
             for (Edge edge : graph.getEdgeArray()) {
-                if ((edge.startNode.cardNum == startEdge.endNode.cardNum && edge.endNode.cardNum == (i + 1))
-                        || (edge.endNode.cardNum == startEdge.endNode.cardNum && edge.startNode.cardNum == (i + 1))) {//|| (graph.getEdge(j).endNode.cardNum == startNode && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
+                if ((edge.startNode.cardNum.equals(startEdge.endNode.cardNum) && edge.endNode.cardNum == (i + 1))
+                        || (edge.endNode.cardNum.equals(startEdge.endNode.cardNum) && edge.startNode.cardNum == (i + 1))) {//|| (graph.getEdge(j).endNode.cardNum == startNode && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
                     if (!edge.isRemove()) {//当边和点被占用或被移除后，认为不联通!edge.isLocked() &&
                         uArray.get(i).setRealDistance(edge.realDistance);
                         uArray.get(i).addRouteNode(i + 1);
@@ -87,46 +88,49 @@ public class Dijkstra implements Algorithm {
                     }
                 }
             }
-        }//end while
+        }
+
         Path returnPath = null;
         for (Path aSArray : sArray) {
             if (aSArray.endNodeNum == endNodeNum) {
                 returnPath = aSArray;
-                if (true) {//!startEdge.endNode.functionNode
-                    ArrayList<Integer> tempArray = new ArrayList<>(returnPath.getRoute());
-                    returnPath.getRoute().clear();
-                    returnPath.getRoute().add(startEdge.startNode.cardNum);
-                    for (Integer aTempArray : tempArray) {
-                        returnPath.getRoute().add(aTempArray);
-                    }
-
+                ArrayList<Integer> tempArray = new ArrayList<>(returnPath.getRoute());
+                returnPath.getRoute().clear();
+                returnPath.getRoute().add(startEdge.startNode.cardNum);
+                for (Integer aTempArray : tempArray) {
+                    returnPath.getRoute().add(aTempArray);
                 }
-
             }
         }
         if (removeEdge != null)
             recoverEdgeArray(removeEdge);
         return returnPath;
-    }//end countPath
+    }
 
-
-    private Edge changeEdgeArray(int endNodeCARD_NUM, boolean isBackToEntrance) {
+    private Edge changeEdgeArray(int endNodeCardNum, boolean isBackToEntrance) {
         Edge removeEdge = null;
-        if (!NodeFunction.Junction.equals(graph.getNodeMap().get(endNodeCARD_NUM).getFunction())) {
-            Edge edge = graph.getEdgeMap().get(graph.getNodeMap().get(endNodeCARD_NUM).cardNum);
+        if (!NodeFunction.Junction.equals(graph.getNodeMap().get(endNodeCardNum).getFunction())) {
+            Edge edge = graph.getEdgeMap().get(graph.getNodeMap().get(endNodeCardNum).cardNum);
             edge.setRemoved();
             removeEdge = edge;
             if (isBackToEntrance) {
-                if (graph.getNodeMap().get(endNodeCARD_NUM).x < edge.startNode.x) {
-                    graph.addEdge(edge.startNode.cardNum, endNodeCARD_NUM, edge.realDistance / 2, 0);
-                } else {
-                    graph.addEdge(endNodeCARD_NUM, edge.endNode.cardNum, edge.realDistance / 2, -1);
+                if (graph.getEntranceMap().get(endNodeCardNum).getDirection().equals(Entrance.Direction.DOWN)) {
+                    if (edge.startNode.getY() < edge.endNode.getY()) {
+                        graph.addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+                    } else {
+                        graph.addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+                    }
+                } else if (graph.getEntranceMap().get(endNodeCardNum).getDirection().equals(Entrance.Direction.UP)){
+                    if (edge.startNode.getY() < edge.endNode.getY()) {
+                        graph.addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+                    } else {
+                        graph.addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+                    }
                 }
             } else {
-                graph.addEdge(edge.startNode.cardNum, endNodeCARD_NUM, edge.realDistance / 2, 0);
-                graph.addEdge(endNodeCARD_NUM, edge.endNode.cardNum, edge.realDistance / 2, -1);
+                graph.addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+                graph.addEdge(endNodeCardNum, edge.endNode.cardNum, edge.realDistance / 2, -1);
             }
-
         }
         return removeEdge;
     }

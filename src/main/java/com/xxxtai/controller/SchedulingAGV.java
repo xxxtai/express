@@ -1,6 +1,7 @@
 package com.xxxtai.controller;
 
 import com.xxxtai.model.Car;
+import com.xxxtai.model.Entrance;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Path;
 import com.xxxtai.toolKit.Absolute2Relative;
@@ -42,14 +43,15 @@ public class SchedulingAGV implements Runnable {
             }
             for (Car car : AGVArray) {
                 if (car.getAtEdge() != null && !car.isOnDuty()) {
-                    int minEntrance = 0;
-                    for (Map.Entry<Integer, Queue<Car>> entry : graph.getEntranceMap().entrySet()) {
-                        if (minEntrance == 0 || entry.getValue().size() < graph.getEntranceMap().get(minEntrance).size()) {
-                            minEntrance = entry.getKey();
+                    Integer minEntrance = null;
+                    for (Entrance entrance : graph.getEntranceMap().values()) {
+                        if (minEntrance == null || entrance.getQueue().size() < graph.getEntranceMap().get(minEntrance).getQueue().size()) {
+                            minEntrance = entrance.getCardNum();
                         }
                     }
                     log.debug("派遣车辆" + car.getAGVNum() + "去" + minEntrance);
-                    Path path = algorithm.findRoute(car.getAtEdge(), minEntrance, true);
+                    Path path = minEntrance == null? null : algorithm.findRoute(car.getAtEdge(), minEntrance, true);
+
                     if (path != null) {
                         System.out.println();
                         System.out.print(car.getAGVNum() + "AGVRoute:");
@@ -61,7 +63,7 @@ public class SchedulingAGV implements Runnable {
                         System.out.println(routeString);
                         car.sendMessageToAGV(routeString);
                         car.setRouteNodeNumArray(path.getRoute());
-                        graph.getEntranceMap().get(minEntrance).add(car);
+                        graph.getEntranceMap().get(minEntrance).getQueue().offer(car);
                     }
                 }
 
