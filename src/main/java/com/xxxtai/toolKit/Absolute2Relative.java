@@ -5,7 +5,6 @@ import com.xxxtai.model.Graph;
 import com.xxxtai.model.Node;
 import com.xxxtai.model.Path;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Absolute2Relative {
@@ -111,7 +110,7 @@ public class Absolute2Relative {
 
 
         for (Node node : graph.getNodeArray()) {
-            if (node.cardNum == path.END_NODE_NUM) {
+            if (node.cardNum == path.endNodeNum) {
                 path.setStopNodeNum(node.cardNum);
             }
         }
@@ -130,11 +129,11 @@ public class Absolute2Relative {
     public static String commondString(Graph graph, int s, int e, int commond) {
         String reString = "";
         for (Edge edge : graph.getEdgeArray()) {
-            if ((edge.START_NODE.cardNum == s && edge.END_NODE.cardNum == e) || (edge.END_NODE.cardNum == s && edge.START_NODE.cardNum == e)) {
-                if (edge.CARD_NUM < 16)
-                    reString = String.valueOf(0) + Integer.toHexString(edge.CARD_NUM);
+            if ((edge.startNode.cardNum == s && edge.endNode.cardNum == e) || (edge.endNode.cardNum == s && edge.startNode.cardNum == e)) {
+                if (edge.cardNum < 16)
+                    reString = String.valueOf(0) + Integer.toHexString(edge.cardNum);
                 else
-                    reString += Integer.toHexString(edge.CARD_NUM);
+                    reString += Integer.toHexString(edge.cardNum);
             }
         }
         reString += String.valueOf(0);

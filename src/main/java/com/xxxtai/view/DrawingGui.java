@@ -7,7 +7,7 @@ import com.xxxtai.model.Exit;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Node;
 import com.xxxtai.toolKit.Common;
-import com.xxxtai.toolKit.NodeFunction;
+import com.xxxtai.constant.NodeFunction;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.Number;
@@ -218,7 +218,7 @@ public class DrawingGui extends JPanel implements Gui {
         }
 
         for (Edge edge : graph.getEdgeArray()) {
-            graph.addNode(edge.CARD_NUM, (edge.START_NODE.x + edge.END_NODE.x) / 2, (edge.START_NODE.y + edge.END_NODE.y) / 2, NodeFunction.Parking.getValue());
+            graph.addNode(edge.cardNum, (edge.startNode.x + edge.endNode.x) / 2, (edge.startNode.y + edge.endNode.y) / 2, NodeFunction.Parking.getValue());
         }
 
         try {
@@ -264,10 +264,10 @@ public class DrawingGui extends JPanel implements Gui {
             WritableSheet wsEdge = wwb.createSheet("edges", 1);
             i = 0;
             for (Edge edge : graph.getEdgeArray()) {
-                Number numberStrNode = new Number(0, i, edge.START_NODE.cardNum);
-                Number numberEndNode = new Number(1, i, edge.END_NODE.cardNum);
-                Number numberDis = new Number(2, i, edge.REAL_DISTANCE);
-                Number cardNum = new Number(3, i, edge.CARD_NUM);
+                Number numberStrNode = new Number(0, i, edge.startNode.cardNum);
+                Number numberEndNode = new Number(1, i, edge.endNode.cardNum);
+                Number numberDis = new Number(2, i, edge.realDistance);
+                Number cardNum = new Number(3, i, edge.cardNum);
                 wsEdge.addCell(numberStrNode);
                 wsEdge.addCell(numberEndNode);
                 wsEdge.addCell(numberDis);
@@ -280,7 +280,7 @@ public class DrawingGui extends JPanel implements Gui {
             i = 0;
             for (java.util.List<Exit> list : graph.getExitList()) {
                 for (Exit exit : list) {
-                    Label name = new Label(0, i, exit.NAME);
+                    Label name = new Label(0, i, exit.name);
                     Number x = new Number(1, i, exit.X);
                     Number y = new Number(2, i, exit.Y);
                     wsExits.addCell(name);

@@ -3,7 +3,7 @@ package com.xxxtai.controller;
 import com.xxxtai.model.Edge;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Path;
-import com.xxxtai.toolKit.NodeFunction;
+import com.xxxtai.constant.NodeFunction;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -28,21 +28,21 @@ public class Dijkstra implements Algorithm {
 
         boolean adjoin = false;
         List<Path> sArray = new ArrayList<>();
-        sArray.add(new Path(startEdge.END_NODE.cardNum, startEdge.END_NODE.cardNum));
+        sArray.add(new Path(startEdge.endNode.cardNum, startEdge.endNode.cardNum));
         List<Path> uArray = new ArrayList<>();
         for (int i = 0; i < size; i++) {//初始化
-            if (startEdge.START_NODE.cardNum == i + 1) {
-                uArray.add(new Path(startEdge.END_NODE.cardNum, i + 1));
+            if (startEdge.startNode.cardNum == i + 1) {
+                uArray.add(new Path(startEdge.endNode.cardNum, i + 1));
                 uArray.get(i).setRealDistance(MAXINT);
                 continue;
             }
 
-            uArray.add(new Path(startEdge.END_NODE.cardNum, i + 1));
+            uArray.add(new Path(startEdge.endNode.cardNum, i + 1));
             for (Edge edge : graph.getEdgeArray()) {
-                if ((edge.START_NODE.cardNum == startEdge.END_NODE.cardNum && edge.END_NODE.cardNum == (i + 1))
-                        || (edge.END_NODE.cardNum == startEdge.END_NODE.cardNum && edge.START_NODE.cardNum == (i + 1))) {//|| (graph.getEdge(j).endNode.cardNum == startNode && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
+                if ((edge.startNode.cardNum == startEdge.endNode.cardNum && edge.endNode.cardNum == (i + 1))
+                        || (edge.endNode.cardNum == startEdge.endNode.cardNum && edge.startNode.cardNum == (i + 1))) {//|| (graph.getEdge(j).endNode.cardNum == startNode && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
                     if (!edge.isRemove()) {//当边和点被占用或被移除后，认为不联通!edge.isLocked() &&
-                        uArray.get(i).setRealDistance(edge.REAL_DISTANCE);
+                        uArray.get(i).setRealDistance(edge.realDistance);
                         uArray.get(i).addRouteNode(i + 1);
                         adjoin = true;
                     }
@@ -54,7 +54,7 @@ public class Dijkstra implements Algorithm {
             adjoin = false;
         }
 
-        uArray.get(startEdge.END_NODE.cardNum - 1).setRemove();
+        uArray.get(startEdge.endNode.cardNum - 1).setRemove();
         int removedCount = 1;
 
         while (uArray.size() != removedCount) {//
@@ -73,14 +73,14 @@ public class Dijkstra implements Algorithm {
             uArray.get(indexMin).setRemove();
             removedCount++;
 
-            int tempStart = sArray.get(sArray.size() - 1).END_NODE_NUM;
+            int tempStart = sArray.get(sArray.size() - 1).endNodeNum;
             for (int i = 0; i < size; i++) {
                 for (Edge edge : graph.getEdgeArray()) {
-                    if ((edge.START_NODE.cardNum == tempStart && edge.END_NODE.cardNum == (i + 1))
-                            || (edge.END_NODE.cardNum == tempStart && edge.START_NODE.cardNum == (i + 1))) {//|| (graph.getEdge(j).endNode.cardNum == tempStart && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
-                        if (edge.REAL_DISTANCE + sArray.get(sArray.size() - 1).getRealDistance() < uArray.get(i).getRealDistance()
+                    if ((edge.startNode.cardNum == tempStart && edge.endNode.cardNum == (i + 1))
+                            || (edge.endNode.cardNum == tempStart && edge.startNode.cardNum == (i + 1))) {//|| (graph.getEdge(j).endNode.cardNum == tempStart && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
+                        if (edge.realDistance + sArray.get(sArray.size() - 1).getRealDistance() < uArray.get(i).getRealDistance()
                                 && !edge.isRemove()) {//当边和点被占用或被移除后，认为不联通&& !edge.isLocked()
-                            uArray.get(i).setRealDistance(edge.REAL_DISTANCE + sArray.get(sArray.size() - 1).getRealDistance());
+                            uArray.get(i).setRealDistance(edge.realDistance + sArray.get(sArray.size() - 1).getRealDistance());
                             uArray.get(i).newRoute(sArray.get(sArray.size() - 1).getRoute());
                             uArray.get(i).addRouteNode(i + 1);
                         }
@@ -90,12 +90,12 @@ public class Dijkstra implements Algorithm {
         }//end while
         Path returnPath = null;
         for (Path aSArray : sArray) {
-            if (aSArray.END_NODE_NUM == endNodeNum) {
+            if (aSArray.endNodeNum == endNodeNum) {
                 returnPath = aSArray;
-                if (true) {//!startEdge.END_NODE.functionNode
+                if (true) {//!startEdge.endNode.functionNode
                     ArrayList<Integer> tempArray = new ArrayList<>(returnPath.getRoute());
                     returnPath.getRoute().clear();
-                    returnPath.getRoute().add(startEdge.START_NODE.cardNum);
+                    returnPath.getRoute().add(startEdge.startNode.cardNum);
                     for (Integer aTempArray : tempArray) {
                         returnPath.getRoute().add(aTempArray);
                     }
@@ -117,13 +117,14 @@ public class Dijkstra implements Algorithm {
             edge.setRemoved();
             removeEdge = edge;
             if (isBackToEntrance) {
-                if (graph.getNodeMap().get(endNodeCARD_NUM).x < edge.START_NODE.x)
-                    graph.addEdge(edge.START_NODE.cardNum, endNodeCARD_NUM, edge.REAL_DISTANCE / 2, 0);
-                else
-                    graph.addEdge(endNodeCARD_NUM, edge.END_NODE.cardNum, edge.REAL_DISTANCE / 2, -1);
+                if (graph.getNodeMap().get(endNodeCARD_NUM).x < edge.startNode.x) {
+                    graph.addEdge(edge.startNode.cardNum, endNodeCARD_NUM, edge.realDistance / 2, 0);
+                } else {
+                    graph.addEdge(endNodeCARD_NUM, edge.endNode.cardNum, edge.realDistance / 2, -1);
+                }
             } else {
-                graph.addEdge(edge.START_NODE.cardNum, endNodeCARD_NUM, edge.REAL_DISTANCE / 2, 0);
-                graph.addEdge(endNodeCARD_NUM, edge.END_NODE.cardNum, edge.REAL_DISTANCE / 2, -1);
+                graph.addEdge(edge.startNode.cardNum, endNodeCARD_NUM, edge.realDistance / 2, 0);
+                graph.addEdge(endNodeCARD_NUM, edge.endNode.cardNum, edge.realDistance / 2, -1);
             }
 
         }

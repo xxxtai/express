@@ -104,16 +104,16 @@ public abstract class SchedulingGui extends JPanel implements Gui {
             strBuf.append("边 被 占 用 信 息 ：\n");
             for (Edge edge : graph.getEdgeArray()) {
                 if (!edge.waitQueue.isEmpty()) {
-                    strBuf.append(edge.CARD_NUM).append("边被");
+                    strBuf.append(edge.cardNum).append("边被");
                     for (Car car : edge.waitQueue)
                         strBuf.append(car.getAGVNum()).append(",");
                     strBuf.append("AGV占用！！");
                     if (!edge.isLocked())
-                        strBuf.append(edge.CARD_NUM).append("边的waitQueue不为空，但未被锁住");
+                        strBuf.append(edge.cardNum).append("边的waitQueue不为空，但未被锁住");
                     strBuf.append("\n");
                 } else {
                     if (edge.isLocked()) {
-                        strBuf.append(edge.CARD_NUM).append("边被锁住，但waitQueue为空");
+                        strBuf.append(edge.cardNum).append("边被锁住，但waitQueue为空");
                         strBuf.append("\n");
                     }
                 }
@@ -150,7 +150,7 @@ public abstract class SchedulingGui extends JPanel implements Gui {
             int y = e.getY();
             for (Node node : graph.getNodeArray()) {
                 if (Math.abs(x - node.x) < 40 && Math.abs(y - node.y) < 40) {
-                    Path path = algorithm.findRoute(AGVArray.get(0).getAtEdge(), node.cardNum, true);
+                    Path path = algorithm.findRoute(AGVArray.get(0).getAtEdge(), node.cardNum, false);
                     if (path != null) {
                         System.out.println();
                         System.out.print(AGVArray.get(0).getAGVNum() + "AGVRoute:");

@@ -1,7 +1,7 @@
 package com.xxxtai.view;
 
 import com.xxxtai.model.*;
-import com.xxxtai.toolKit.Orientation;
+import com.xxxtai.constant.Orientation;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -45,7 +45,7 @@ public class DrawingGraph {
                 g.setColor(Color.lightGray);
             else
                 g.setColor(Color.BLACK);
-            g.drawLine(edge.START_NODE.x, edge.START_NODE.y, edge.END_NODE.x, edge.END_NODE.y);
+            g.drawLine(edge.startNode.x, edge.startNode.y, edge.endNode.x, edge.endNode.y);
         }
 
         for (Node node : graph.getNodeArray()) {
@@ -63,7 +63,7 @@ public class DrawingGraph {
             for (Exit exit : list) {
                 g.setFont(new Font("宋体", Font.BOLD, 25));
                 g.setColor(Color.darkGray);
-                g.drawString(exit.NAME, exit.X - 20, exit.Y + 10);
+                g.drawString(exit.name, exit.X - 20, exit.Y + 10);
             }
         }
     }

@@ -4,19 +4,19 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Edge {
-    public final Node START_NODE;
-    public final Node END_NODE;
-    public final int REAL_DISTANCE;
-    public final Integer CARD_NUM;
+    public final Node startNode;
+    public final Node endNode;
+    public final int realDistance;
+    public final Integer cardNum;
     public final Queue<Car> waitQueue;
     private boolean remove;
     private boolean locked;
 
     public Edge(Node startNode, Node endNode, int distance, int cardNum) {
-        this.START_NODE = startNode;
-        this.END_NODE = endNode;
-        this.REAL_DISTANCE = distance;
-        this.CARD_NUM = cardNum;
+        this.startNode = startNode;
+        this.endNode = endNode;
+        this.realDistance = distance;
+        this.cardNum = cardNum;
         this.waitQueue = new LinkedList<>();
     }
 

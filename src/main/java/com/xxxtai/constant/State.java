@@ -1,4 +1,4 @@
-package com.xxxtai.toolKit;
+package com.xxxtai.constant;
 
 import lombok.Getter;
 

@@ -8,10 +8,10 @@ import java.util.List;
 public class Exit {
     public final int X;
     public final int Y;
-    public final String NAME;
+    public final String name;
 
     public Exit(String name, List<Node> exitNode) {
-        this.NAME = name;
+        this.name = name;
         int x = 0;
         int y = 0;
         for (int i = 0; i < 4; i++) {
@@ -24,7 +24,7 @@ public class Exit {
     }
 
     Exit(String name, int x, int y) {
-        this.NAME = name;
+        this.name = name;
         this.X = x;
         this.Y = y;
     }

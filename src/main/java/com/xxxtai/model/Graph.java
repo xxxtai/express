@@ -1,6 +1,6 @@
 package com.xxxtai.model;
 
-import com.xxxtai.toolKit.NodeFunction;
+import com.xxxtai.constant.NodeFunction;
 import jxl.Sheet;
 import jxl.Workbook;
 import org.springframework.stereotype.Component;
@@ -33,11 +33,11 @@ public class Graph {
     }
 
     public void addExit(Exit exit) {
-        if (exitMap.get(exit.NAME) == null) {
-            exitMap.put(exit.NAME, new ArrayList<>());
-            exitMap.get(exit.NAME).add(exit);
+        if (exitMap.get(exit.name) == null) {
+            exitMap.put(exit.name, new ArrayList<>());
+            exitMap.get(exit.name).add(exit);
         } else {
-            exitMap.get(exit.NAME).add(exit);
+            exitMap.get(exit.name).add(exit);
         }
     }
 

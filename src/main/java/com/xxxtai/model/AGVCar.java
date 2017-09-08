@@ -2,8 +2,8 @@ package com.xxxtai.model;
 
 import com.xxxtai.controller.Communication;
 import com.xxxtai.controller.TrafficControl;
-import com.xxxtai.toolKit.Orientation;
-import com.xxxtai.toolKit.State;
+import com.xxxtai.constant.Orientation;
+import com.xxxtai.constant.State;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -46,10 +46,6 @@ public class AGVCar implements Car {
     @Resource
     private Graph graph;
 
-    public AGVCar() {
-        log.debug("kkk");
-    }
-
     public void init(int num) {
         this.AGVNum = num;
         trafficControl.setCar(this);
@@ -64,10 +60,10 @@ public class AGVCar implements Car {
         }
 
         if (node != null && edge != null) {
-            if (edge.START_NODE.cardNum.equals(node.cardNum)) {
+            if (edge.startNode.cardNum.equals(node.cardNum)) {
                 setAtEdge(edge);
-            } else if (edge.END_NODE.cardNum.equals(node.cardNum)) {
-                setAtEdge(new Edge(edge.END_NODE, edge.START_NODE, edge.REAL_DISTANCE, edge.CARD_NUM));
+            } else if (edge.endNode.cardNum.equals(node.cardNum)) {
+                setAtEdge(new Edge(edge.endNode, edge.startNode, edge.realDistance, edge.cardNum));
             }
         }
         this.lastReadCardNum = this.readCardNum;
@@ -85,28 +81,28 @@ public class AGVCar implements Car {
 
     public void stepByStep() {
         if (!finishEdge && atEdge != null && (state == State.FORWARD || state == State.BACKWARD)) {
-            if (atEdge.START_NODE.x == atEdge.END_NODE.x) {
-                if (atEdge.START_NODE.y < atEdge.END_NODE.y) {
-                    if (this.position.y < atEdge.END_NODE.y) {
+            if (atEdge.startNode.x == atEdge.endNode.x) {
+                if (atEdge.startNode.y < atEdge.endNode.y) {
+                    if (this.position.y < atEdge.endNode.y) {
                         this.position.y += FORWARD_PIX;
                     } else {
                         finishEdge = true;
                     }
-                } else if (atEdge.START_NODE.y > atEdge.END_NODE.y) {
-                    if (this.position.y > atEdge.END_NODE.y) {
+                } else if (atEdge.startNode.y > atEdge.endNode.y) {
+                    if (this.position.y > atEdge.endNode.y) {
                         this.position.y -= FORWARD_PIX;
                     } else {
                         finishEdge = true;
                     }
                 }
-            } else if (atEdge.START_NODE.y == atEdge.END_NODE.y) {
-                if (atEdge.START_NODE.x < atEdge.END_NODE.x) {
-                    if (this.position.x < atEdge.END_NODE.x)
+            } else if (atEdge.startNode.y == atEdge.endNode.y) {
+                if (atEdge.startNode.x < atEdge.endNode.x) {
+                    if (this.position.x < atEdge.endNode.x)
                         this.position.x += FORWARD_PIX;
                     else
                         finishEdge = true;
-                } else if (atEdge.START_NODE.x > atEdge.END_NODE.x) {
-                    if (this.position.x > atEdge.END_NODE.x)
+                } else if (atEdge.startNode.x > atEdge.endNode.x) {
+                    if (this.position.x > atEdge.endNode.x)
                         this.position.x -= FORWARD_PIX;
                     else
                         finishEdge = true;
@@ -130,22 +126,22 @@ public class AGVCar implements Car {
 
     public void setAtEdge(Edge edge) {
         this.atEdge = edge;
-        this.position.x = this.atEdge.START_NODE.x;
-        this.position.y = this.atEdge.START_NODE.y;
+        this.position.x = this.atEdge.startNode.x;
+        this.position.y = this.atEdge.startNode.y;
         this.finishEdge = false;
         this.state = State.FORWARD;
         judgeOrientation();
     }
 
     public void judgeOrientation() {
-        if (atEdge.START_NODE.x == atEdge.END_NODE.x) {
-            if (atEdge.START_NODE.y < atEdge.END_NODE.y) {
+        if (atEdge.startNode.x == atEdge.endNode.x) {
+            if (atEdge.startNode.y < atEdge.endNode.y) {
                 orientation = Orientation.DOWN;
             } else {
                 orientation = Orientation.UP;
             }
-        } else if (atEdge.START_NODE.y == atEdge.END_NODE.y) {
-            if (atEdge.START_NODE.x < atEdge.END_NODE.x) {
+        } else if (atEdge.startNode.y == atEdge.endNode.y) {
+            if (atEdge.startNode.x < atEdge.endNode.x) {
                 orientation = Orientation.RIGHT;
             } else {
                 orientation = Orientation.LEFT;
@@ -167,7 +163,7 @@ public class AGVCar implements Car {
         if (state == 1) {
             this.state = State.FORWARD;
         } else if (state == 2) {
-            Node n = graph.getNodeMap().get(this.atEdge.CARD_NUM);
+            Node n = graph.getNodeMap().get(this.atEdge.cardNum);
             this.position.x = n.x;
             this.position.y = n.y;
             this.state = State.STOP;

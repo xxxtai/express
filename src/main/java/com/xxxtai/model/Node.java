@@ -1,6 +1,6 @@
 package com.xxxtai.model;
 
-import com.xxxtai.toolKit.NodeFunction;
+import com.xxxtai.constant.NodeFunction;
 import lombok.Data;
 
 import java.util.LinkedList;
