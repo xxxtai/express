@@ -9,10 +9,12 @@ public enum State {
     SHIPMENT(4, "装货"),
     UNLOADING(5, "卸货");
 
-    private @Getter Integer value;
-    private @Getter String description;
+    private @Getter
+    Integer value;
+    private @Getter
+    String description;
 
-    State(Integer value, String description){
+    State(Integer value, String description) {
         this.value = value;
         this.description = description;
     }

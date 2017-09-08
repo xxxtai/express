@@ -3,16 +3,17 @@ package com.xxxtai.controller;
 import com.xxxtai.model.Car;
 import com.xxxtai.model.Edge;
 import com.xxxtai.model.Node;
+
 import java.util.List;
 
 public interface TrafficControl {
-	void setRouteNodeNumArray(List<Integer> routeNodeNumArray);
+    void setRouteNodeNumArray(List<Integer> routeNodeNumArray);
 
-	boolean isStopToWait(int cardNum, boolean f);
+    boolean isStopToWait(int cardNum, boolean f);
 
-	Node getLockedNode();
+    Node getLockedNode();
 
-	Edge getLockedEdge();
+    Edge getLockedEdge();
 
-	void setCar(Car car);
+    void setCar(Car car);
 }

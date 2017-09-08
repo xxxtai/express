@@ -1,5 +1,5 @@
 package com.xxxtai.view;
 
 public interface FileNameDialogListener {
-	void getFileName(String cityName, boolean buttonState);
+    void getFileName(String cityName, boolean buttonState);
 }

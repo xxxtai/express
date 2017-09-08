@@ -18,38 +18,39 @@ import java.util.Queue;
  */
 @Component
 @Slf4j
-public class SchedulingAGV implements Runnable{
+public class SchedulingAGV implements Runnable {
     private List<Car> AGVArray;
     @Resource
     private Graph graph;
     @Resource(name = "dijkstra")
     private Algorithm algorithm;
 
-    public SchedulingAGV(){
+    public SchedulingAGV() {
     }
 
-    public void setAGVArray(ArrayList<Car> AGVArray){
+    public void setAGVArray(ArrayList<Car> AGVArray) {
         this.AGVArray = AGVArray;
     }
+
     @Override
     public void run() {
-        while (true){
+        while (true) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            for (Car car: AGVArray){
-                if(car.getAtEdge() != null && !car.isOnDuty()){
+            for (Car car : AGVArray) {
+                if (car.getAtEdge() != null && !car.isOnDuty()) {
                     int minEntrance = 0;
-                    for (Map.Entry<Integer, Queue<Car>> entry : graph.getEntranceMap().entrySet()){
-                        if (minEntrance == 0 || entry.getValue().size() < graph.getEntranceMap().get(minEntrance).size()){
+                    for (Map.Entry<Integer, Queue<Car>> entry : graph.getEntranceMap().entrySet()) {
+                        if (minEntrance == 0 || entry.getValue().size() < graph.getEntranceMap().get(minEntrance).size()) {
                             minEntrance = entry.getKey();
                         }
                     }
                     log.debug("派遣车辆" + car.getAGVNum() + "去" + minEntrance);
                     Path path = algorithm.findRoute(car.getAtEdge(), minEntrance, true);
-                    if(path != null ) {
+                    if (path != null) {
                         System.out.println();
                         System.out.print(car.getAGVNum() + "AGVRoute:");
                         for (Integer n : path.getRoute()) {
@@ -64,7 +65,7 @@ public class SchedulingAGV implements Runnable{
                     }
                 }
 
-                if(car.getAtEdge() != null && car.isOnDuty() && car.isOnEntrance()){
+                if (car.getAtEdge() != null && car.isOnDuty() && car.isOnEntrance()) {
 
                 }
             }

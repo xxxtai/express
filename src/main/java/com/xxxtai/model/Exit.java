@@ -10,20 +10,20 @@ public class Exit {
     public final int Y;
     public final String NAME;
 
-    public Exit(String name,List<Node> exitNode ) {
+    public Exit(String name, List<Node> exitNode) {
         this.NAME = name;
         int x = 0;
         int y = 0;
-        for (int i = 0; i < 4; i++){
-            x+=exitNode.get(i).x;
-            y+=exitNode.get(i).y;
+        for (int i = 0; i < 4; i++) {
+            x += exitNode.get(i).x;
+            y += exitNode.get(i).y;
         }
-        this.X = x/4;
-        this.Y = y/4;
+        this.X = x / 4;
+        this.Y = y / 4;
 
     }
 
-    public Exit(String name, int x, int y){
+    Exit(String name, int x, int y) {
         this.NAME = name;
         this.X = x;
         this.Y = y;

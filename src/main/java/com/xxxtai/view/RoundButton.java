@@ -5,12 +5,13 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 public class RoundButton extends JButton {
-    
+
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	RoundButton(String label) {
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    RoundButton(String label) {
         super(label);
         Dimension size = getPreferredSize();//Dimension 类封装单个对象中组件的宽度和高度（精确到整数
 //        size.width = size.height = Math.max(size.width, size.height);
@@ -27,17 +28,17 @@ public class RoundButton extends JButton {
 
     // Paint the round background and label.
     protected void paintComponent(Graphics g) {
-	if (getModel().isArmed()) {
+        if (getModel().isArmed()) {
             // You might want to make the highlight color
             // a property of the RoundButton class.
             g.setColor(Color.white);
         } else {
             g.setColor(getBackground());
         }
-	g.fillRect(0, 0, getSize().width-1, getSize().height-1);
+        g.fillRect(0, 0, getSize().width - 1, getSize().height - 1);
 
         // This call will paint the label and the focus rectangle.
-	super.paintComponent(g);
+        super.paintComponent(g);
     }
 
     // Paint the border of the button using a simple stroke.
@@ -48,6 +49,7 @@ public class RoundButton extends JButton {
 
     // Hit detection.
     private Shape shape;
+
     public boolean contains(int x, int y) {
         // If the button has changed size, make a new shape object.
         if (shape == null || !shape.getBounds().equals(getBounds())) {

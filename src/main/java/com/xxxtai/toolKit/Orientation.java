@@ -8,9 +8,12 @@ public enum Orientation {
     UP(3, "向上"),
     DOWN(4, "向下");
 
-    private @Getter Integer value;
-    private @Getter String description;
-    Orientation(Integer value, String description){
+    private @Getter
+    Integer value;
+    private @Getter
+    String description;
+
+    Orientation(Integer value, String description) {
         this.value = value;
         this.description = description;
     }
