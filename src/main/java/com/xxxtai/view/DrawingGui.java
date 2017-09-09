@@ -8,6 +8,7 @@ import com.xxxtai.model.Graph;
 import com.xxxtai.model.Node;
 import com.xxxtai.toolKit.Common;
 import com.xxxtai.constant.NodeFunction;
+import com.xxxtai.toolKit.MyTextField;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.Number;
@@ -281,8 +282,8 @@ public class DrawingGui extends JPanel implements Gui {
             for (java.util.List<Exit> list : graph.getExitList()) {
                 for (Exit exit : list) {
                     Label name = new Label(0, i, exit.name);
-                    Number x = new Number(1, i, exit.X);
-                    Number y = new Number(2, i, exit.Y);
+                    Number x = new Number(1, i, exit.x);
+                    Number y = new Number(2, i, exit.y);
                     wsExits.addCell(name);
                     wsExits.addCell(x);
                     wsExits.addCell(y);

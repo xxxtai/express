@@ -1,4 +1,4 @@
-package com.xxxtai.view;
+package com.xxxtai.toolKit;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +12,7 @@ public class MyTextField extends JTextField implements MouseListener {
     private static final long serialVersionUID = 1L;
     private boolean first;
 
-    MyTextField(String string) {
+    public MyTextField(String string) {
         this.setText(string);
         first = true;
         this.setFont(new Font("ו", Font.BOLD, 30));

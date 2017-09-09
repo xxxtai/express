@@ -12,4 +12,12 @@ public class Common {
         main.repaint();
         main.validate();
     }
+
+    public static void delay(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

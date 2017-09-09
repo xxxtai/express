@@ -64,7 +64,7 @@ public class DrawingGraph {
             for (Exit exit : list) {
                 g.setFont(new Font("宋体", Font.BOLD, 25));
                 g.setColor(Color.darkGray);
-                g.drawString(exit.name, exit.X - 20, exit.Y + 10);
+                g.drawString(exit.name, exit.x - 20, exit.y + 10);
             }
         }
 
@@ -83,7 +83,7 @@ public class DrawingGraph {
             Image rightImage;
             Image upImage;
             Image downImage;
-            if (AGVArray.get(i).getCommunication() == null) {
+            if (AGVArray.get(i).getCommunicationWithAGV() == null) {
                 leftImage = leftImageR;
                 rightImage = rightImageR;
                 upImage = upImageR;

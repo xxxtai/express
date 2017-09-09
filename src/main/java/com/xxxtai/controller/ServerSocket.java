@@ -1,13 +1,16 @@
 package com.xxxtai.controller;
 
 
+import com.xxxtai.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Slf4j
+@Slf4j(topic = "develop")
 public abstract class ServerSocket implements Runnable {
     private java.net.ServerSocket serverSocket;
     private ExecutorService executorService;
@@ -19,26 +22,36 @@ public abstract class ServerSocket implements Runnable {
             e.printStackTrace();
         }
         executorService = Executors.newFixedThreadPool(20);
-
     }
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                if (serverSocket != null) {
-                    Socket socket = serverSocket.accept();
-                    System.out.println("socket connect:" + socket);
-                    Communication runnable = getCommunicationRunnable();
-                    runnable.setSocket(socket);
-                    executorService.execute(runnable);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error("{}", e);
+        do {
+            if (serverSocket == null) {
+                break;
             }
-        }
+            try {
+                Socket socket = serverSocket.accept();
+                log.info("socket connect:" + socket);
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String message = reader.readLine();
+                Runnable runnable;
+                if (message.endsWith(Constant.QR_SUFFIX)) {
+                    runnable = getCommunicationWithQRScan();
+                    ((CommunicationWithQRScan)runnable).setSocket(socket);
+                } else {
+                    runnable = getCommunicationWithAGV();
+                    ((CommunicationWithAGV)runnable).setSocket(socket);
+                }
+                executorService.execute(runnable);
+            } catch (Exception e) {
+                log.error("exception:", e);
+            }
+        } while (true);
     }
 
-    public abstract Communication getCommunicationRunnable();
+    public abstract CommunicationWithAGV getCommunicationWithAGV();
+
+    public abstract CommunicationWithQRScan getCommunicationWithQRScan();
 }

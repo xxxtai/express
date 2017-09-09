@@ -5,6 +5,7 @@ import com.xxxtai.model.Entrance;
 import com.xxxtai.model.Graph;
 import com.xxxtai.model.Path;
 import com.xxxtai.toolKit.Absolute2Relative;
+import com.xxxtai.view.SchedulingGui;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -19,19 +20,13 @@ import java.util.Queue;
  */
 @Component
 @Slf4j
-public class SchedulingAGV implements Runnable {
-    private List<Car> AGVArray;
+public class DispatchingAGV implements Runnable {
     @Resource
     private Graph graph;
     @Resource(name = "dijkstra")
     private Algorithm algorithm;
 
-    public SchedulingAGV() {
-    }
-
-    public void setAGVArray(ArrayList<Car> AGVArray) {
-        this.AGVArray = AGVArray;
-    }
+    public DispatchingAGV() {}
 
     @Override
     public void run() {
@@ -41,7 +36,7 @@ public class SchedulingAGV implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            for (Car car : AGVArray) {
+            for (Car car : SchedulingGui.AGVArray) {
                 if (car.getAtEdge() != null && !car.isOnDuty()) {
                     Integer minEntrance = null;
                     for (Entrance entrance : graph.getEntranceMap().values()) {

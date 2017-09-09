@@ -3,21 +3,21 @@ package com.xxxtai.controller;
 
 import com.xxxtai.constant.Constant;
 import com.xxxtai.model.Car;
-import com.xxxtai.toolKit.ReaderWriter;
 import com.xxxtai.view.SchedulingGui;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
+
+import static com.xxxtai.toolKit.Common.delay;
 
 @Slf4j(topic = "develop")
-public class Communication implements Runnable {
+public class CommunicationWithAGV implements Runnable {
     private PrintWriter printWriter;
     private BufferedReader bufferedReader;
     private Car car;
 
-    public Communication() {
+    public CommunicationWithAGV() {
     }
 
     void setSocket(Socket socket) {
@@ -42,7 +42,7 @@ public class Communication implements Runnable {
             if ((revMessage = read()) != null) {
                 this.car.setLastCommunicationTime(System.currentTimeMillis());
                 log.info(car.getAGVNum() + "AGV receive:" +revMessage);
-                String content = revMessage.substring(Constant.FIX_LENGTH, revMessage.length() - Constant.FIX_LENGTH);
+                String content = Constant.getContent(revMessage);
                 String[] c = content.split(Constant.SPLIT);
                 if (revMessage.endsWith(Constant.CARD_SUFFIX)) {
                     int cardNum = Integer.parseInt(c[1], 16);
@@ -57,14 +57,6 @@ public class Communication implements Runnable {
         }
     }
 
-    private void delay(int time){
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void setup(){
         while (this.car == null) {
             String revMessage;
@@ -73,10 +65,10 @@ public class Communication implements Runnable {
             if ((revMessage = read()) != null) {
                 builder.append("receive msg:").append(revMessage);
                 if (revMessage.endsWith(Constant.HEART_SUFFIX)) {
-                    int AGVNum = Integer.parseInt(revMessage.substring(Constant.FIX_LENGTH, revMessage.length() - Constant.FIX_LENGTH), 16);
+                    int AGVNum = Integer.parseInt(Constant.getContent(revMessage), 16);
                     for (Car car : SchedulingGui.AGVArray) {
                         if (car.getAGVNum() == AGVNum) {
-                            car.setCommunication(this);
+                            car.setCommunicationWithAGV(this);
                             this.car = car;
                             this.car.setLastCommunicationTime(System.currentTimeMillis());
                             builder.append(" confirmed AGVNum :").append(AGVNum).append("号AGV");
@@ -91,7 +83,7 @@ public class Communication implements Runnable {
 
     private boolean connectedTest(int interval){
         if (System.currentTimeMillis() - this.car.getLastCommunicationTime() > interval) {//通讯中断
-            this.car.setCommunication(null);
+            this.car.setCommunicationWithAGV(null);
             try {
                 printWriter.close();
                 bufferedReader.close();
@@ -108,6 +100,7 @@ public class Communication implements Runnable {
         String revMsg = null;
         try {
             revMsg= bufferedReader.readLine();
+//            log.info(revMsg);
         } catch (IOException e) {
             log.error("exception:", e);
         }

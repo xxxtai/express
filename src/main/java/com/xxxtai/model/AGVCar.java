@@ -1,9 +1,8 @@
 package com.xxxtai.model;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import com.xxxtai.constant.Command;
 import com.xxxtai.constant.Constant;
-import com.xxxtai.controller.Communication;
+import com.xxxtai.controller.CommunicationWithAGV;
 import com.xxxtai.controller.TrafficControl;
 import com.xxxtai.constant.Orientation;
 import com.xxxtai.constant.State;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
 import java.util.List;
 import javax.annotation.Resource;
-import java.net.SocketException;
 
 @Slf4j(topic = "develop")
 public class AGVCar implements Car {
@@ -28,7 +26,7 @@ public class AGVCar implements Car {
 
     @Getter
     @Setter
-    private Communication communication;
+    private CommunicationWithAGV communicationWithAGV;
     @Getter
     private Orientation orientation = Orientation.LEFT;
     @Getter
@@ -149,8 +147,8 @@ public class AGVCar implements Car {
     }
 
     public void sendMessageToAGV(String message) {
-        if (this.communication != null) {
-            this.communication.write(message);
+        if (this.communicationWithAGV != null) {
+            this.communicationWithAGV.write(message);
         }
     }
 

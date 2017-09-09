@@ -1,7 +1,7 @@
 package com.xxxtai.view;
 
 import com.xxxtai.controller.Algorithm;
-import com.xxxtai.controller.SchedulingAGV;
+import com.xxxtai.controller.DispatchingAGV;
 import com.xxxtai.main.Main;
 import com.xxxtai.model.*;
 import com.xxxtai.toolKit.Absolute2Relative;
@@ -31,7 +31,7 @@ public abstract class SchedulingGui extends JPanel implements Gui {
     @Resource
     private Runnable monitorServerSocketRunnable;
     @Resource
-    private SchedulingAGV schedulingAGV;
+    private DispatchingAGV dispatchingAGV;
     public static final ArrayList<Car> AGVArray = new ArrayList<>();
     private Timer timer;
     private ExecutorService executors;
@@ -86,8 +86,7 @@ public abstract class SchedulingGui extends JPanel implements Gui {
 
         timer.start();
         executors.execute(monitorServerSocketRunnable);
-        schedulingAGV.setAGVArray(AGVArray);
-		executors.execute(schedulingAGV);
+		executors.execute(dispatchingAGV);
     }
 
     @Override

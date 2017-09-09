@@ -1,6 +1,6 @@
 package com.xxxtai.model;
 
-import com.xxxtai.controller.Communication;
+import com.xxxtai.controller.CommunicationWithAGV;
 import com.xxxtai.controller.TrafficControl;
 import com.xxxtai.constant.Orientation;
 
@@ -25,7 +25,7 @@ public interface Car {
 
     int getY();
 
-    void setCommunication(Communication communication);
+    void setCommunicationWithAGV(CommunicationWithAGV communicationWithAGV);
 
     void sendMessageToAGV(String route);
 
@@ -41,7 +41,7 @@ public interface Car {
 
     void setLastCommunicationTime(long time);
 
-    Communication getCommunication();
+    CommunicationWithAGV getCommunicationWithAGV();
 
     TrafficControl getTrafficControl();
 
