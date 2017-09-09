@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class Graph {
@@ -22,7 +23,7 @@ public class Graph {
 
     public Graph() {
         nodeMap = new HashMap<>();
-        edgeMap = new HashMap<>();
+        edgeMap = new ConcurrentHashMap<>();
         exitMap = new HashMap<>();
         importNewGraph(PATH_NAME);
         extractEntrances();

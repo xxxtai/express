@@ -1,5 +1,8 @@
 package com.xxxtai.model;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+import com.xxxtai.constant.Command;
+import com.xxxtai.constant.Constant;
 import com.xxxtai.controller.Communication;
 import com.xxxtai.controller.TrafficControl;
 import com.xxxtai.constant.Orientation;
@@ -74,7 +77,7 @@ public class AGVCar implements Car {
             this.state = State.STOP;
         }
         if (trafficControl.isStopToWait(cardNum, false)) {
-            sendMessageToAGV("CC02DD");
+            sendMessageToAGV(Command.STOP.getCommand());
             log.info("命令" + this.AGVNum + "AGV停下来");
         }
     }
@@ -114,11 +117,7 @@ public class AGVCar implements Car {
     public void heartBeat() {
         if (this.count_3s == 60) {
             this.count_3s = 0;
-            if (this.AGVNum < 16) {
-                sendMessageToAGV("AA0" + Integer.toHexString(this.AGVNum) + "DD");
-            } else {
-                sendMessageToAGV("AA" + Integer.toHexString(this.AGVNum) + "DD");
-            }
+            sendMessageToAGV(Constant.PREFIX + Integer.toHexString(this.AGVNum) + Constant.HEART_SUFFIX);
         } else {
             this.count_3s++;
         }
@@ -151,11 +150,7 @@ public class AGVCar implements Car {
 
     public void sendMessageToAGV(String message) {
         if (this.communication != null) {
-            try {
-                this.communication.write(message);
-            } catch (SocketException e) {
-                log.error("exception:", e);
-            }
+            this.communication.write(message);
         }
     }
 

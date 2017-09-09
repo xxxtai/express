@@ -40,7 +40,11 @@ public class TrafficControlImpl implements TrafficControl {
         }
 
         if (lastLockedEdge != null && NodeFunction.Junction.equals(graph.getNodeMap().get(cardNum).getFunction())) {
-            tryUnlockEdge(cardNum);
+            try {
+                tryUnlockEdge(cardNum);
+            } catch (Exception e) {
+                log.error("exception: "+car.getAGVNum()+"  cardNum : " + cardNum, e);
+            }
             return false;
         } else if (NodeFunction.Parking.equals(graph.getNodeMap().get(cardNum).getFunction())) {
             if (!isStart) {

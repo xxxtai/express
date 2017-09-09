@@ -4,8 +4,8 @@ import lombok.Getter;
 
 public enum  Command {
 
-    FORWARD("CC01DD", "前进"),
-    STOP("CC02DD", "停止");
+    FORWARD(Constant.PREFIX + Integer.toHexString(1) + Constant.COMMAND_SUFFIX, "前进"),
+    STOP(Constant.PREFIX + Integer.toHexString(2) + Constant.COMMAND_SUFFIX, "停止");
 
     private @Getter
     String command;
