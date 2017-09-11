@@ -178,8 +178,8 @@ public class TrafficControlImpl implements TrafficControl {
     }
 
     private void tryUnlockNode(StringBuilder logMessage) {
-        synchronized (this.lockedNode.cardNum) {
-            if (this.lockedNode != null && this.lockedNode.isLocked()) {
+        if (this.lockedNode != null && this.lockedNode.isLocked()) {
+            synchronized (this.lockedNode.cardNum) {
                 Car myself = this.lockedNode.waitQueue.poll();
                 if (myself.getAGVNum() != car.getAGVNum()) {
                     log.error("不应该出现的情况！ {}AGV通过停车点准备解除lockedNode,但是该AGV不在waitQueue顶端", car.getAGVNum());
@@ -199,7 +199,6 @@ public class TrafficControlImpl implements TrafficControl {
                     this.lockedNode = null;
                 }
             }
-
         }
     }
 

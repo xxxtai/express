@@ -21,29 +21,38 @@ public class AGVCar implements Car {
     private State state = State.STOP;
     private int count_3s;
     private int lastReadCardNum;
-    private int stopCardNum;
     private static final int FORWARD_PIX = 7;
 
-    @Getter
-    @Setter
-    private CommunicationWithAGV communicationWithAGV;
-    @Getter
-    private Orientation orientation = Orientation.LEFT;
-    @Getter
-    private int AGVNum;
-    @Getter
-    private int readCardNum;
-    @Getter
-    private Edge atEdge;
-    @Getter
-    @Setter
-    private boolean onDuty;
-    @Getter
-    @Setter
-    private long lastCommunicationTime;
-    @Getter
+    private @Getter @Setter
+    String destination;
+
+    private @Getter
+    int stopCardNum;
+
+    private@Getter @Setter
+    CommunicationWithAGV communicationWithAGV;
+
+    private @Getter
+    Orientation orientation = Orientation.LEFT;
+
+    private @Getter
+    int AGVNum;
+
+    private @Getter
+    int readCardNum;
+
+    private @Getter
+    Edge atEdge;
+
+    private @Getter @Setter
+    boolean onDuty;
+
+    private @Getter @Setter
+    long lastCommunicationTime;
+
     @Resource
-    private TrafficControl trafficControl;
+    private @Getter
+    TrafficControl trafficControl;
     @Resource
     private Graph graph;
 
@@ -162,6 +171,7 @@ public class AGVCar implements Car {
             this.state = State.STOP;
         } else if (state == State.UNLOADED.getValue()) {
             this.onDuty = false;
+            this.destination = null;
         }
     }
 

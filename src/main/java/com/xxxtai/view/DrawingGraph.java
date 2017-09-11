@@ -77,13 +77,12 @@ public class DrawingGraph {
 
     void drawingAGV(Graphics g, ArrayList<Car> AGVArray, JPanel panel) {
         g.setFont(new Font("Dialog", Font.BOLD, 25));
-        g.setColor(Color.black);
-        for (int i = 0; i < AGVArray.size(); i++) {
+        for (Car car : AGVArray) {
             Image leftImage;
             Image rightImage;
             Image upImage;
             Image downImage;
-            if (AGVArray.get(i).getCommunicationWithAGV() == null) {
+            if (car.getCommunicationWithAGV() == null) {
                 leftImage = leftImageR;
                 rightImage = rightImageR;
                 upImage = upImageR;
@@ -94,20 +93,33 @@ public class DrawingGraph {
                 upImage = upImageG;
                 downImage = downImageG;
             }
-            if (AGVArray.get(i).getOrientation() == Orientation.LEFT) {
-                g.drawImage(leftImage, AGVArray.get(i).getX() - 20, AGVArray.get(i).getY() - 17, 40, 34, panel);
-                g.drawString(String.valueOf(i + 1), AGVArray.get(i).getX(), AGVArray.get(i).getY() + 9);
-            } else if (AGVArray.get(i).getOrientation() == Orientation.RIGHT) {
-                g.drawImage(rightImage, AGVArray.get(i).getX() - 20, AGVArray.get(i).getY() - 17, 40, 34, panel);
-                g.drawString(String.valueOf(i + 1), AGVArray.get(i).getX() - 10, AGVArray.get(i).getY() + 9);
-            } else if (AGVArray.get(i).getOrientation() == Orientation.UP) {
-                g.drawImage(upImage, AGVArray.get(i).getX() - 17, AGVArray.get(i).getY() - 20, 34, 40, panel);
-                g.drawString(String.valueOf(i + 1), AGVArray.get(i).getX() - 10, AGVArray.get(i).getY() + 10);
-            } else if (AGVArray.get(i).getOrientation() == Orientation.DOWN) {
-                g.drawImage(downImage, AGVArray.get(i).getX() - 17, AGVArray.get(i).getY() - 20, 34, 40, panel);
-                g.drawString(String.valueOf(i + 1), AGVArray.get(i).getX() - 5, AGVArray.get(i).getY() + 5);
+            g.setColor(Color.BLACK);
+            if (car.getOrientation() == Orientation.LEFT) {
+                int[] args = {-20, -17, 40, 34, 0, 9, -15, -20};
+                draw(g, panel, leftImage, car, args);
+            } else if (car.getOrientation() == Orientation.RIGHT) {
+                int[] args = {-20, -17, 40, 34, -10, 9, -15, -20};
+                draw(g, panel, rightImage, car, args);
+            } else if (car.getOrientation() == Orientation.UP) {
+                int[] args = {-17, -20, 34, 40, -5, 10, 20, 10};
+                draw(g, panel, upImage, car, args);
+            } else if (car.getOrientation() == Orientation.DOWN) {
+                int[] args = {-17, -20, 34, 40, -5, 5, 20, 10};
+                draw(g, panel, downImage, car, args);
             }
         }
     }
 
+    private void draw(Graphics g, JPanel panel, Image image, Car car, int[] args){
+        g.drawImage(image, car.getX() + args[0], car.getY() + args[1], args[2], args[3], panel);
+        g.drawString(String.valueOf(car.getAGVNum()), car.getX() + args[4], car.getY() + args[5]);
+        if (car.isOnDuty()) {
+            String destination = ((AGVCar) car).getDestination();
+            if (destination != null) {
+                g.setColor(Color.BLACK);
+                g.drawString(destination, car.getX() + args[6], car.getY() + args[7]);
+                g.setColor(Color.white);
+            }
+        }
+    }
 }

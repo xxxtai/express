@@ -1,18 +1,14 @@
 package com.xxxtai.view;
 
-import com.xxxtai.controller.Algorithm;
 import com.xxxtai.controller.DispatchingAGV;
 import com.xxxtai.main.Main;
 import com.xxxtai.model.*;
-import com.xxxtai.toolKit.Absolute2Relative;
 import com.xxxtai.toolKit.Common;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,8 +22,6 @@ public abstract class SchedulingGui extends JPanel implements Gui {
     private Graph graph;
     @Resource
     private DrawingGraph drawingGraph;
-    @Resource(name = "dijkstra")
-    private Algorithm algorithm;
     @Resource
     private Runnable monitorServerSocketRunnable;
     @Resource
@@ -59,12 +53,6 @@ public abstract class SchedulingGui extends JPanel implements Gui {
         this.add(settingGuiBtn);
         this.add(drawingGuiBtn);
         this.add(stateLabel);
-
-        this.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                clickAction(e);
-            }
-        });
 
         timer = new Timer(50, e -> {
             repaint();
@@ -142,78 +130,5 @@ public abstract class SchedulingGui extends JPanel implements Gui {
         settingGuiBtn.addActionListener(e -> Common.changePanel(main, settingGui));
         drawingGuiBtn.addActionListener(e -> Common.changePanel(main, drawingGui));
     }
-
-    private void clickAction(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            int x = e.getX();
-            int y = e.getY();
-            for (Node node : graph.getNodeArray()) {
-                if (Math.abs(x - node.x) < 40 && Math.abs(y - node.y) < 40) {
-                    Path path = algorithm.findRoute(AGVArray.get(0).getAtEdge(), node.cardNum, false);
-                    if (path != null) {
-                        System.out.println();
-                        System.out.print(AGVArray.get(0).getAGVNum() + "AGVRoute:");
-                        for (Integer n : path.getRoute()) {
-                            System.out.print(n + "/");
-                        }
-                        System.out.print("--relative：");
-                        String routeString = Absolute2Relative.convert(graph, path);
-                        System.out.println(routeString);
-                        AGVArray.get(0).sendMessageToAGV(routeString);
-                        AGVArray.get(0).setRouteNodeNumArray(path.getRoute());
-                    } else {
-                        System.out.println("无路可走");
-                    }
-                }
-            }
-        } else if (e.getButton() == MouseEvent.BUTTON2) {
-            int x = e.getX();
-            int y = e.getY();
-            for (Node node : graph.getNodeArray()) {
-                if (Math.abs(x - node.x) < 40 && Math.abs(y - node.y) < 40) {
-                    Path path1 = algorithm.findRoute(AGVArray.get(1).getAtEdge(), node.cardNum, false);
-                    if (path1 != null) {
-                        System.out.println();
-                        System.out.print(AGVArray.get(1).getAGVNum() + "AGVroute:");
-                        for (Integer n : path1.getRoute()) {
-                            System.out.print(n + "/");
-                        }
-                        System.out.print("--relative：");
-                        String routeString1 = Absolute2Relative.convert(graph, path1);
-                        System.out.println(routeString1);
-                        AGVArray.get(1).sendMessageToAGV(routeString1);
-                        AGVArray.get(1).setRouteNodeNumArray(path1.getRoute());
-                    } else {
-                        System.out.println("无路可走");
-                    }
-                }
-            }
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
-            int x = e.getX();
-            int y = e.getY();
-            for (Node node : graph.getNodeArray()) {
-                if (Math.abs(x - node.x) < 40 && Math.abs(y - node.y) < 40) {
-                    Path path1 = algorithm.findRoute(AGVArray.get(2).getAtEdge(), node.cardNum, false);
-                    if (path1 != null) {
-                        System.out.println();
-                        System.out.print(AGVArray.get(2).getAGVNum() + "AGVroute:");
-                        for (Integer n : path1.getRoute()) {
-                            System.out.print(n + "/");
-                        }
-                        System.out.print("---relative：");
-                        String routeString1 = Absolute2Relative.convert(graph, path1);
-                        System.out.println(routeString1);
-                        AGVArray.get(2).sendMessageToAGV(routeString1);
-                        AGVArray.get(2).setRouteNodeNumArray(path1.getRoute());
-                    } else {
-                        System.out.println("无路可走");
-                    }
-
-                }
-            }
-        }
-
-    }
-
     public abstract Car getCar();
 }

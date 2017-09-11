@@ -29,4 +29,14 @@ public enum City {
         }
         return NULL;
     }
+
+    public static City valueOfCode(Long code){
+        for (City city : City.values()) {
+            if (city.getCode() == code) {
+                return city;
+            }
+        }
+        return NULL;
+    }
+
 }

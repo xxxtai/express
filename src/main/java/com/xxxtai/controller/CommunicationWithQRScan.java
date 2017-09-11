@@ -1,5 +1,6 @@
 package com.xxxtai.controller;
 
+import com.xxxtai.constant.City;
 import com.xxxtai.constant.Constant;
 import com.xxxtai.model.*;
 import com.xxxtai.toolKit.Absolute2Relative;
@@ -43,7 +44,7 @@ public class CommunicationWithQRScan implements Runnable {
                     String[] c = content.split(Constant.SPLIT);
                     for (Car car : SchedulingGui.AGVArray) {
                         if (car.getAtEdge() != null && car.getAtEdge().cardNum.equals(Integer.parseInt(c[0], 16))) {
-                            log.debug("派遣车辆" + car.getAGVNum() + "去" + c[1]);
+                            log.debug("派遣车辆" + car.getAGVNum() + "去" + City.valueOfCode(Long.parseLong(c[1], 16)));
                             Node node = graph.getNodeMap().get(car.getAtEdge().cardNum);
                             int minDis = MAXINT;
                             int minDisNodeNum = 0;
@@ -65,6 +66,7 @@ public class CommunicationWithQRScan implements Runnable {
                                 log.info("--relative：" + routeString);
                                 car.sendMessageToAGV(routeString);
                                 car.setRouteNodeNumArray(path.getRoute());
+                                ((AGVCar) car).setDestination(City.valueOfCode(Long.parseLong(c[1], 16)).getName());
                             }
                         }
                     }
