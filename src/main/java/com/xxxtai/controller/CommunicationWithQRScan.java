@@ -1,9 +1,7 @@
 package com.xxxtai.controller;
 
 import com.xxxtai.constant.Constant;
-import com.xxxtai.model.Car;
-import com.xxxtai.model.Graph;
-import com.xxxtai.model.Path;
+import com.xxxtai.model.*;
 import com.xxxtai.toolKit.Absolute2Relative;
 import com.xxxtai.view.SchedulingGui;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import static com.xxxtai.controller.Dijkstra.MAXINT;
 import static com.xxxtai.toolKit.Common.delay;
 
 @Component
@@ -36,7 +35,6 @@ public class CommunicationWithQRScan implements Runnable {
 
     @Override
     public void run() {
-        log.info("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
         while (true) {
             try {
                 String message = bufferedReader.readLine();
@@ -46,7 +44,20 @@ public class CommunicationWithQRScan implements Runnable {
                     for (Car car : SchedulingGui.AGVArray) {
                         if (car.getAtEdge() != null && car.getAtEdge().cardNum.equals(Integer.parseInt(c[0], 16))) {
                             log.debug("派遣车辆" + car.getAGVNum() + "去" + c[1]);
-                            int exitNum = 260;
+                            Node node = graph.getNodeMap().get(car.getAtEdge().cardNum);
+                            int minDis = MAXINT;
+                            int minDisNodeNum = 0;
+                            for (Exit exit :graph.getExitMap().get(Long.parseLong(c[1], 16))) {
+                                for (int nodeNum : exit.getExitNodeNums()) {
+                                    int dis = Math.abs(node.x - graph.getNodeMap().get(nodeNum).x) + Math.abs(node.y - graph.getNodeMap().get(nodeNum).y);
+                                    if (minDis > dis) {
+                                        minDis = dis;
+                                        minDisNodeNum = nodeNum;
+                                    }
+                                }
+                            }
+
+                            int exitNum = minDisNodeNum;
                             Path path = algorithm.findRoute(car.getAtEdge(), exitNum, false);
                             if (path != null) {
                                 log.info(car.getAGVNum() + "AGVRoute:" + path.getRoute().toString());

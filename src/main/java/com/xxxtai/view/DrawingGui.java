@@ -1,6 +1,7 @@
 package com.xxxtai.view;
 
 
+import com.xxxtai.constant.City;
 import com.xxxtai.main.Main;
 import com.xxxtai.model.Edge;
 import com.xxxtai.model.Exit;
@@ -31,7 +32,7 @@ import static com.xxxtai.controller.Dijkstra.MAXINT;
 
 
 @Component
-@Slf4j
+@Slf4j(topic = "develop")
 public class DrawingGui extends JPanel implements Gui {
     private static final long serialVersionUID = 1L;
     private RoundButton schedulingGuiBtn;
@@ -131,14 +132,13 @@ public class DrawingGui extends JPanel implements Gui {
         ArrayList<Node> xNode = new ArrayList<>();
         ArrayList<Node> yNode = new ArrayList<>();
         for (Node node : graph.getNodeArray()) {
-            if (Math.abs(node.x - e.getX()) < 60) {
+            if (Math.abs(node.x - e.getX()) < 30) {
                 xNode.add(node);
             }
 
-            if (Math.abs(node.y - e.getY()) < 60) {
+            if (Math.abs(node.y - e.getY()) < 30) {
                 yNode.add(node);
             }
-
         }
 
         Node minxNode = new Node(0, MAXINT, MAXINT, NodeFunction.NULL);
@@ -168,7 +168,9 @@ public class DrawingGui extends JPanel implements Gui {
                 nextMinYNode = node;
             }
         }
-        graph.addExit(new Exit(cityName, Arrays.asList(minxNode, nextMinNode, minYNode, nextMinYNode)));
+        log.info(minxNode.getCardNum() + " /" + nextMinNode.getCardNum() + "/" + minYNode.getCardNum() + "/" + nextMinYNode.getCardNum());
+        City city = City.valueOfName(cityName);
+        graph.addExit(new Exit(city.getName(), city.getCode(), Arrays.asList(minxNode, nextMinNode, minYNode, nextMinYNode)));
     }
 
     private void createNewGraph(Dimension screenSize) {
@@ -279,14 +281,24 @@ public class DrawingGui extends JPanel implements Gui {
             wwb.removeSheet(2);
             WritableSheet wsExits = wwb.createSheet("exits", 2);
             i = 0;
-            for (java.util.List<Exit> list : graph.getExitList()) {
+            for (java.util.List<Exit> list : graph.getExitMap().values()) {
                 for (Exit exit : list) {
                     Label name = new Label(0, i, exit.name);
-                    Number x = new Number(1, i, exit.x);
-                    Number y = new Number(2, i, exit.y);
+                    Number code = new Number(1, i, exit.code);
+                    Number x = new Number(2, i, exit.x);
+                    Number y = new Number(3, i, exit.y);
+                    Number exit1 = new Number(4, i, exit.getExitNodeNums()[0]);
+                    Number exit2 = new Number(5, i, exit.getExitNodeNums()[1]);
+                    Number exit3 = new Number(6, i, exit.getExitNodeNums()[2]);
+                    Number exit4 = new Number(7, i, exit.getExitNodeNums()[3]);
                     wsExits.addCell(name);
+                    wsExits.addCell(code);
                     wsExits.addCell(x);
                     wsExits.addCell(y);
+                    wsExits.addCell(exit1);
+                    wsExits.addCell(exit2);
+                    wsExits.addCell(exit3);
+                    wsExits.addCell(exit4);
                     i++;
                 }
             }

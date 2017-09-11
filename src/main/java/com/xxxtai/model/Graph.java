@@ -15,9 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Graph {
     public static final String PATH_NAME = "C:\\Users\\xxxta\\work\\Graph.xls";
-    private Map<Integer, Node> nodeMap;
-    private Map<Integer, Edge> edgeMap;
-    private Map<String, List<Exit>> exitMap;
+    private @Getter
+    Map<Integer, Node> nodeMap;
+    private @Getter
+    Map<Integer, Edge> edgeMap;
+    private @Getter
+    Map<Long, List<Exit>> exitMap;
     private @Getter
     Map<Integer, Entrance> entranceMap;
 
@@ -44,11 +47,11 @@ public class Graph {
     }
 
     public void addExit(Exit exit) {
-        if (exitMap.get(exit.name) == null) {
-            exitMap.put(exit.name, new ArrayList<>());
-            exitMap.get(exit.name).add(exit);
+        if (!exitMap.containsKey(exit.code)) {
+            exitMap.put(exit.code, new ArrayList<>());
+            exitMap.get(exit.code).add(exit);
         } else {
-            exitMap.get(exit.name).add(exit);
+            exitMap.get(exit.code).add(exit);
         }
     }
 
@@ -79,14 +82,17 @@ public class Graph {
             }
             Sheet sheetExit = wb.getSheet("exits");
             for (int i = 0; i < sheetExit.getRows(); i++) {
-                this.addExit(
-                        new Exit(
-                                sheetExit.getCell(0, i).getContents(),
-                                Integer.parseInt(sheetExit.getCell(1, i).getContents()),
-                                Integer.parseInt(sheetExit.getCell(2, i).getContents())
-                        )
-                );
-            }        } catch (Exception e) {
+                String name = sheetExit.getCell(0, i).getContents();
+                Long code = Long.parseLong(sheetExit.getCell(1, i).getContents());
+                int x = Integer.parseInt(sheetExit.getCell(2, i).getContents());
+                int y = Integer.parseInt(sheetExit.getCell(3, i).getContents());
+                int[] exits = {Integer.parseInt(sheetExit.getCell(4, i).getContents()),
+                        Integer.parseInt(sheetExit.getCell(5, i).getContents()),
+                        Integer.parseInt(sheetExit.getCell(6, i).getContents()),
+                        Integer.parseInt(sheetExit.getCell(7, i).getContents())};
+                this.addExit(new Exit(name, code, x, y, exits));
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -127,17 +133,5 @@ public class Graph {
 
     public Collection<Edge> getEdgeArray() {
         return this.edgeMap.values();
-    }
-
-    public Map<Integer, Node> getNodeMap() {
-        return this.nodeMap;
-    }
-
-    public Map<Integer, Edge> getEdgeMap() {
-        return this.edgeMap;
-    }
-
-    public Collection<List<Exit>> getExitList() {
-        return this.exitMap.values();
     }
 }

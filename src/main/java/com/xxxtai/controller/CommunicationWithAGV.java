@@ -41,7 +41,7 @@ public class CommunicationWithAGV implements Runnable {
             String revMessage;
             if ((revMessage = read()) != null) {
                 this.car.setLastCommunicationTime(System.currentTimeMillis());
-                log.info(car.getAGVNum() + "AGV receive:" +revMessage);
+//                log.info(car.getAGVNum() + "AGV receive:" +revMessage);
                 String content = Constant.getContent(revMessage);
                 String[] c = content.split(Constant.SPLIT);
                 if (revMessage.endsWith(Constant.CARD_SUFFIX)) {

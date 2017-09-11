@@ -60,7 +60,7 @@ public class DrawingGraph {
             g.drawString(String.valueOf(node.cardNum), node.x + 10, node.y - 10);
         }
 
-        for (List<Exit> list : graph.getExitList()) {
+        for (List<Exit> list : graph.getExitMap().values()) {
             for (Exit exit : list) {
                 g.setFont(new Font("宋体", Font.BOLD, 25));
                 g.setColor(Color.darkGray);

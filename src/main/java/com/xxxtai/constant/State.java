@@ -3,11 +3,10 @@ package com.xxxtai.constant;
 import lombok.Getter;
 
 public enum State {
-    STOP(1, "停止"),
-    FORWARD(2, "前进"),
+    FORWARD(1, "前进"),
+    STOP(2, "停止"),
     BACKWARD(3, "后退"),
-    SHIPMENT(4, "装货"),
-    UNLOADING(5, "卸货");
+    UNLOADED(4, "卸货完成");
 
     private @Getter
     Integer value;
