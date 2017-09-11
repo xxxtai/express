@@ -12,11 +12,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Component
 @Scope("prototype")
 @Slf4j(topic = "develop")
 public class TrafficControlImpl implements TrafficControl {
+    private ReentrantLock lock;
     private List<Integer> routeNodeNumArray;
     private Node lastLockedNode;
     private Edge lastLockedEdge;
@@ -144,55 +146,60 @@ public class TrafficControlImpl implements TrafficControl {
     }
 
     private void tryUnlockEdge(int cardNum) {
-        Car myself = this.lastLockedEdge.waitQueue.poll();
-        if (myself.getAGVNum() != car.getAGVNum()) {
-            log.error(" 不应该出现的情况！ " + car.getAGVNum() + "AGV通过交汇点准备解除lockedEdge,但是该AGV不在waitQueue顶端");
-        }
-
-        if (!this.lastLockedEdge.waitQueue.isEmpty()) {
-            Car carTmp = this.lastLockedEdge.waitQueue.peek();
-            synchronized (carTmp.getTrafficControl().getLockedNode().cardNum) {
-                if (!carTmp.getTrafficControl().getLockedNode().isLocked()) {
-                    carTmp.getTrafficControl().getLockedNode().setLocked();
-                    carTmp.sendMessageToAGV(Command.FORWARD.getCommand());
-                    log.info("{}AGV receive cardNum:{} >>> 解除占用{}边 >>> {}AGV前进占用{}边",
-                            car.getAGVNum(), cardNum, this.lastLockedEdge.cardNum, carTmp.getAGVNum(), lastLockedEdge.cardNum);
-                } else {
-                    log.info("{}AGV receive cardNum:{} >>> 解除占用{}边 >>> {}AGV继续等待{}边，因为{}点被{}AGV占用！",
-                            car.getAGVNum(), cardNum, lastLockedEdge.cardNum, carTmp.getAGVNum(), lastLockedEdge.cardNum,
-                            carTmp.getTrafficControl().getLockedNode().cardNum,
-                            carTmp.getTrafficControl().getLockedNode().waitQueue.peek().getAGVNum());
-                }
-                carTmp.getTrafficControl().getLockedNode().waitQueue.offer(carTmp);
+        synchronized (this.lastLockedEdge.cardNum) {
+            Car myself = this.lastLockedEdge.waitQueue.poll();
+            if (myself.getAGVNum() != car.getAGVNum()) {
+                log.error(" 不应该出现的情况！ " + car.getAGVNum() + "AGV通过交汇点准备解除lockedEdge,但是该AGV不在waitQueue顶端");
             }
-        } else {
-            log.info("{}AGV receive cardNum:{} >>> {}边完全被解除占用", car.getAGVNum(), cardNum, lastLockedEdge.cardNum);
-            this.lastLockedEdge.unlock();
+
+            if (!this.lastLockedEdge.waitQueue.isEmpty()) {
+                Car carTmp = this.lastLockedEdge.waitQueue.peek();
+                synchronized (carTmp.getTrafficControl().getLockedNode().cardNum) {
+                    if (!carTmp.getTrafficControl().getLockedNode().isLocked()) {
+                        carTmp.getTrafficControl().getLockedNode().setLocked();
+                        carTmp.sendMessageToAGV(Command.FORWARD.getCommand());
+                        log.info("{}AGV receive cardNum:{} >>> 解除占用{}边 >>> {}AGV前进占用{}边",
+                                car.getAGVNum(), cardNum, this.lastLockedEdge.cardNum, carTmp.getAGVNum(), lastLockedEdge.cardNum);
+                    } else {
+                        log.info("{}AGV receive cardNum:{} >>> 解除占用{}边 >>> {}AGV继续等待{}边，因为{}点被{}AGV占用！",
+                                car.getAGVNum(), cardNum, lastLockedEdge.cardNum, carTmp.getAGVNum(), lastLockedEdge.cardNum,
+                                carTmp.getTrafficControl().getLockedNode().cardNum,
+                                carTmp.getTrafficControl().getLockedNode().waitQueue.peek().getAGVNum());
+                    }
+                    carTmp.getTrafficControl().getLockedNode().waitQueue.offer(carTmp);
+                }
+            } else {
+                log.info("{}AGV receive cardNum:{} >>> {}边完全被解除占用", car.getAGVNum(), cardNum, lastLockedEdge.cardNum);
+                this.lastLockedEdge.unlock();
+            }
+            this.lastLockedEdge = this.lockedEdge;
+            this.lastLockedNode = this.lockedNode;
         }
-        this.lastLockedEdge = this.lockedEdge;
-        this.lastLockedNode = this.lockedNode;
     }
 
     private void tryUnlockNode(StringBuilder logMessage) {
-        if (this.lockedNode != null && this.lockedNode.isLocked()) {
-            Car myself = this.lockedNode.waitQueue.poll();
-            if (myself.getAGVNum() != car.getAGVNum()) {
-                log.error("不应该出现的情况！ {}AGV通过停车点准备解除lockedNode,但是该AGV不在waitQueue顶端", car.getAGVNum());
-            }
-            if (!this.lockedNode.waitQueue.isEmpty()) {
-                Car carTmp = this.lockedNode.waitQueue.peek();
-                if (carTmp.getTrafficControl().getLockedEdge().isLocked() &&
-                        carTmp.getTrafficControl().getLockedEdge().waitQueue.peek().getAGVNum() == carTmp.getAGVNum()) {
-                    carTmp.sendMessageToAGV(Command.FORWARD.getCommand());
-                    logMessage.append(" >>> 解除占用").append(this.lockedNode.cardNum).append("点 >>> ").append(carTmp.getAGVNum()).append("AGV前进占用 >>>");
-                } else {
-                    log.error("不应该出现的情况！ {}AGV没有锁住{}边，就想通过！", carTmp.getAGVNum(), carTmp.getTrafficControl().getLockedEdge().cardNum);
+        synchronized (this.lockedNode.cardNum) {
+            if (this.lockedNode != null && this.lockedNode.isLocked()) {
+                Car myself = this.lockedNode.waitQueue.poll();
+                if (myself.getAGVNum() != car.getAGVNum()) {
+                    log.error("不应该出现的情况！ {}AGV通过停车点准备解除lockedNode,但是该AGV不在waitQueue顶端", car.getAGVNum());
                 }
-            } else {
-                logMessage.append(" >>> ").append(this.lockedNode.cardNum).append("点完全被解除占用 >>>");
-                this.lockedNode.unlock();
-                this.lockedNode = null;
+                if (!this.lockedNode.waitQueue.isEmpty()) {
+                    Car carTmp = this.lockedNode.waitQueue.peek();
+                    if (carTmp.getTrafficControl().getLockedEdge().isLocked() &&
+                            carTmp.getTrafficControl().getLockedEdge().waitQueue.peek().getAGVNum() == carTmp.getAGVNum()) {
+                        carTmp.sendMessageToAGV(Command.FORWARD.getCommand());
+                        logMessage.append(" >>> 解除占用").append(this.lockedNode.cardNum).append("点 >>> ").append(carTmp.getAGVNum()).append("AGV前进占用 >>>");
+                    } else {
+                        log.error("不应该出现的情况！ {}AGV没有锁住{}边，就想通过！", carTmp.getAGVNum(), carTmp.getTrafficControl().getLockedEdge().cardNum);
+                    }
+                } else {
+                    logMessage.append(" >>> ").append(this.lockedNode.cardNum).append("点完全被解除占用 >>>");
+                    this.lockedNode.unlock();
+                    this.lockedNode = null;
+                }
             }
+
         }
     }
 
