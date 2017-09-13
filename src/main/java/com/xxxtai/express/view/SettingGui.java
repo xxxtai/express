@@ -44,7 +44,7 @@ public class SettingGui extends JPanel implements Gui {
 
     }
 
-    public void getGuiInstance(Main main, SchedulingGui schedulingGui, DrawingGui drawingGui) {
+    public void getGuiInstance(JFrame main, JPanel schedulingGui, JPanel drawingGui) {
         schedulingGuiBtn.addActionListener(e -> Common.changePanel(main, schedulingGui));
         drawingGuiBtn.addActionListener(e -> Common.changePanel(main, drawingGui));
     }

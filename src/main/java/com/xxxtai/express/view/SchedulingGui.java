@@ -87,7 +87,7 @@ public abstract class SchedulingGui extends JPanel implements Gui {
         drawingGraph.drawingAGV(g, AGVArray, this);
     }
 
-    public void getGuiInstance(Main main, SettingGui settingGui, DrawingGui drawingGui) {
+    public void getGuiInstance(JFrame main, JPanel settingGui, JPanel drawingGui) {
         schedulingGuiBtn.addActionListener(e -> {
             StringBuilder strBuf = new StringBuilder();
             strBuf.append("/*************************************************\n");
