@@ -7,26 +7,26 @@
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-4.1.xsd">
 	
-	<context:component-scan base-package="com.xxxtai"/>
+	<context:component-scan base-package="com.xxxtai.express"/>
 	
-	<bean id="monitorServerSocketRunnable" class="com.xxxtai.controller.ServerSocket">
+	<bean id="monitorServerSocketRunnable" class="com.xxxtai.express.controller.ServerSocket">
 		<lookup-method name="getCommunicationWithAGV" bean="communicationWithAGV"/>
 		<lookup-method name="getCommunicationWithQRScan" bean="communicationWithQRScan"/>
 	</bean>
 	
-	<bean id="communicationWithAGV" class="com.xxxtai.controller.CommunicationWithAGV"
+	<bean id="communicationWithAGV" class="com.xxxtai.express.controller.CommunicationWithAGV"
 		scope="prototype">
 	</bean>
 
-	<bean id="communicationWithQRScan" class="com.xxxtai.controller.CommunicationWithQRScan"
+	<bean id="communicationWithQRScan" class="com.xxxtai.express.controller.CommunicationWithQRScan"
 		  scope="prototype">
 	</bean>
 	
-	<bean id="schedulingGui" class="com.xxxtai.view.SchedulingGui" >
+	<bean id="schedulingGui" class="com.xxxtai.express.view.SchedulingGui" >
 		<lookup-method name="getCar" bean="car"/>
 	</bean>
 
-	<bean id="car" class="com.xxxtai.model.AGVCar" scope="prototype">
+	<bean id="car" class="com.xxxtai.express.model.AGVCar" scope="prototype">
 	</bean>
 
 </beans>
