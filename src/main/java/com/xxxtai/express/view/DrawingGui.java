@@ -307,7 +307,6 @@ public class DrawingGui extends JPanel{
 
             System.out.println("write success");
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("exception:", e);
         }
     }
