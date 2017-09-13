@@ -11,13 +11,9 @@ public interface Car {
 
     void setReceiveCardNum(int cardNum);
 
-    void setAtEdge(Edge edge);
-
     void stepByStep();
 
     void heartBeat();
-
-    void judgeOrientation();
 
     Orientation getOrientation();
 
@@ -41,7 +37,7 @@ public interface Car {
 
     void setLastCommunicationTime(long time);
 
-    CommunicationWithAGV getCommunicationWithAGV();
+    Runnable getCommunicationRunnable();
 
     TrafficControl getTrafficControl();
 
@@ -49,8 +45,7 @@ public interface Car {
 
     boolean isOnDuty();
 
-    void setOnDuty(boolean f);
-
     boolean isOnEntrance();
 
+    String getDestination();
 }

@@ -6,7 +6,6 @@ import com.xxxtai.express.model.Edge;
 import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.model.Node;
 import com.xxxtai.express.toolKit.Common;
-import com.xxxtai.express.main.Main;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public abstract class SchedulingGui extends JPanel implements Gui {
+public abstract class SchedulingGui extends JPanel{
     private static final long serialVersionUID = 1L;
     private RoundButton schedulingGuiBtn;
     private RoundButton settingGuiBtn;
@@ -83,7 +82,7 @@ public abstract class SchedulingGui extends JPanel implements Gui {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        drawingGraph.drawingMap(g);
+        drawingGraph.drawingMap(g, DrawingGraph.Style.EXPRESS);
         drawingGraph.drawingAGV(g, AGVArray, this);
     }
 

@@ -29,7 +29,7 @@ public class AGVCar implements Car {
     private @Getter
     int stopCardNum;
 
-    private@Getter @Setter
+    private @Setter
     CommunicationWithAGV communicationWithAGV;
 
     private @Getter
@@ -130,7 +130,7 @@ public class AGVCar implements Car {
         }
     }
 
-    public void setAtEdge(Edge edge) {
+    private void setAtEdge(Edge edge) {
         this.atEdge = edge;
         this.position.x = this.atEdge.startNode.x;
         this.position.y = this.atEdge.startNode.y;
@@ -139,7 +139,7 @@ public class AGVCar implements Car {
         judgeOrientation();
     }
 
-    public void judgeOrientation() {
+    private void judgeOrientation() {
         if (atEdge.startNode.x == atEdge.endNode.x) {
             if (atEdge.startNode.y < atEdge.endNode.y) {
                 orientation = Orientation.DOWN;
@@ -179,6 +179,11 @@ public class AGVCar implements Car {
         this.stopCardNum = arrayList.get(arrayList.size() - 1);
         this.trafficControl.setRouteNodeNumArray(arrayList);
         this.onDuty = true;
+    }
+
+    @Override
+    public Runnable getCommunicationRunnable() {
+        return communicationWithAGV;
     }
 
     public int getX() {

@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 @Component
-public class SettingGui extends JPanel implements Gui {
+public class SettingGui extends JPanel{
 
     /**
      *

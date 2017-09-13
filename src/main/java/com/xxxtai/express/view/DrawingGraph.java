@@ -12,6 +12,7 @@ import java.util.List;
 
 @Component
 public class DrawingGraph {
+    public enum Style{EXPRESS, SIMULATOR};
     @Resource
     private Graph graph;
     private Image leftImageG;
@@ -35,7 +36,7 @@ public class DrawingGraph {
         downImageR = tool.createImage(getClass().getResource("/images/downImage2.png"));
     }
 
-    void drawingMap(Graphics g) {
+    public void drawingMap(Graphics g, Style style) {
         ((Graphics2D) g).setStroke(new BasicStroke(6.0f));
         g.setColor(Color.BLACK);
 
@@ -55,7 +56,11 @@ public class DrawingGraph {
                 g.setColor(Color.YELLOW);
             }
             g.fillRect(node.x - 5, node.y - 5, 10, 10);
-            g.setColor(Color.RED);
+            if (style == Style.EXPRESS) {
+                g.setColor(Color.RED);
+            } else if (style == Style.SIMULATOR) {
+                g.setColor(Color.blue);
+            }
             g.setFont(new Font("宋体", Font.BOLD, 15));
             g.drawString(String.valueOf(node.cardNum), node.x + 10, node.y - 10);
         }
@@ -71,18 +76,18 @@ public class DrawingGraph {
         for (Entrance entrance : graph.getEntranceMap().values()) {
             Node node = graph.getNodeMap().get(entrance.getCardNum());
             g.setColor(Color.GRAY);
-            g.fillRect(node.x - 25, node.y - 25, 50, 50);
+            g.fillRect(node.x - 20, node.y - 20, 40, 40);
         }
     }
 
-    void drawingAGV(Graphics g, ArrayList<Car> AGVArray, JPanel panel) {
+    public void drawingAGV(Graphics g, ArrayList<Car> AGVArray, JPanel panel) {
         g.setFont(new Font("Dialog", Font.BOLD, 25));
         for (Car car : AGVArray) {
             Image leftImage;
             Image rightImage;
             Image upImage;
             Image downImage;
-            if (car.getCommunicationWithAGV() == null) {
+            if (car.getCommunicationRunnable() == null) {
                 leftImage = leftImageR;
                 rightImage = rightImageR;
                 upImage = upImageR;
@@ -114,7 +119,7 @@ public class DrawingGraph {
         g.drawImage(image, car.getX() + args[0], car.getY() + args[1], args[2], args[3], panel);
         g.drawString(String.valueOf(car.getAGVNum()), car.getX() + args[4], car.getY() + args[5]);
         if (car.isOnDuty()) {
-            String destination = ((AGVCar) car).getDestination();
+            String destination =  car.getDestination();
             if (destination != null) {
                 g.setColor(Color.BLACK);
                 g.drawString(destination, car.getX() + args[6], car.getY() + args[7]);

@@ -4,7 +4,6 @@ package com.xxxtai.express.view;
 import com.xxxtai.express.constant.City;
 import com.xxxtai.express.model.Node;
 import com.xxxtai.express.toolKit.MyTextField;
-import com.xxxtai.express.main.Main;
 import com.xxxtai.express.model.Edge;
 import com.xxxtai.express.model.Exit;
 import com.xxxtai.express.model.Graph;
@@ -33,7 +32,7 @@ import static com.xxxtai.express.controller.Dijkstra.MAXINT;
 
 @Component
 @Slf4j(topic = "develop")
-public class DrawingGui extends JPanel implements Gui {
+public class DrawingGui extends JPanel{
     private static final long serialVersionUID = 1L;
     private RoundButton schedulingGuiBtn;
     private RoundButton settingGuiBtn;
@@ -113,7 +112,7 @@ public class DrawingGui extends JPanel implements Gui {
     public void paint(Graphics g) {
         super.paint(g);
         if (isImportGraph)
-            drawingGraph.drawingMap(g);
+            drawingGraph.drawingMap(g, DrawingGraph.Style.EXPRESS);
     }
 
     private void importExistGraph() {
