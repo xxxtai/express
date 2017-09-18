@@ -5,6 +5,7 @@ import com.xxxtai.express.constant.Constant;
 import com.xxxtai.express.model.Car;
 import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.toolKit.Common;
+import com.xxxtai.express.toolKit.ReaderWriter;
 import com.xxxtai.express.view.SchedulingGui;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +19,7 @@ public class CommunicationWithAGV implements Runnable {
     private Graph graph;
     private PrintWriter printWriter;
     private BufferedReader bufferedReader;
+    private OutputStream outputStream;
     private Car car;
 
     public CommunicationWithAGV() {
@@ -25,6 +27,7 @@ public class CommunicationWithAGV implements Runnable {
 
     void setSocket(Socket socket) {
         try {
+            outputStream = socket.getOutputStream();
             printWriter = new PrintWriter(socket.getOutputStream());
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
@@ -105,7 +108,7 @@ public class CommunicationWithAGV implements Runnable {
         String revMsg = null;
         try {
             revMsg= bufferedReader.readLine();
-//            log.info(revMsg);
+            log.info(revMsg);
 //            write(Constant.HEART_PREFIX + Integer.toHexString(1) + Constant.SUFFIX);
         } catch (IOException e) {
             log.error("exception:", e);
@@ -125,4 +128,15 @@ public class CommunicationWithAGV implements Runnable {
         return isSuccess;
     }
 
+    public boolean writeHexString(String sendMessage) {
+        boolean isSuccess = false;
+        try {
+            System.out.println(sendMessage);
+            outputStream.write(ReaderWriter.hexString2Bytes(sendMessage));
+            isSuccess = true;
+        } catch (Exception e) {
+            log.error("exception:", e);
+        }
+        return isSuccess;
+    }
 }

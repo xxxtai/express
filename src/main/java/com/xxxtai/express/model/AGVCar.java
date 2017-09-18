@@ -6,6 +6,7 @@ import com.xxxtai.express.controller.CommunicationWithAGV;
 import com.xxxtai.express.controller.TrafficControl;
 import com.xxxtai.express.constant.Orientation;
 import com.xxxtai.express.constant.State;
+import com.xxxtai.express.toolKit.Common;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -124,7 +125,7 @@ public class AGVCar implements Car {
     public void heartBeat() {
         if (this.count_3s == 60) {
             this.count_3s = 0;
-            sendMessageToAGV(Constant.HEART_PREFIX + Integer.toHexString(this.AGVNum) + Constant.SUFFIX);
+            sendMessageToAGV(Constant.HEART_PREFIX + Common.toHexString(this.AGVNum) + Constant.SUFFIX);
         } else {
             this.count_3s++;
         }
@@ -157,7 +158,7 @@ public class AGVCar implements Car {
 
     public void sendMessageToAGV(String message) {
         if (this.communicationWithAGV != null) {
-            this.communicationWithAGV.write(message);
+            this.communicationWithAGV.writeHexString(message);
         }
     }
 

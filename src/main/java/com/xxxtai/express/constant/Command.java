@@ -1,5 +1,6 @@
 package com.xxxtai.express.constant;
 
+import com.xxxtai.express.toolKit.Common;
 import lombok.Getter;
 
 public enum  Command {
@@ -21,7 +22,7 @@ public enum  Command {
 
     Command(int value, String description){
         this.value = value;
-        this.command =Constant.COMMAND_PREFIX + Integer.toHexString(value) + Constant.SUFFIX;
+        this.command =Constant.COMMAND_PREFIX + Common.toHexString(value) + Constant.SUFFIX;
         this.description = description;
     }
 }
