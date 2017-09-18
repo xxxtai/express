@@ -101,14 +101,10 @@ public class Absolute2Relative {
         StringBuilder reString = new StringBuilder();
         for (Edge edge : graph.getEdgeArray()) {
             if ((edge.startNode.cardNum == startNode && edge.endNode.cardNum == endNode) || (edge.endNode.cardNum == startNode && edge.startNode.cardNum == endNode)) {
-                if (edge.cardNum < 16) {
-                    reString = new StringBuilder(String.valueOf(0) + Integer.toHexString(edge.cardNum));
-                } else {
-                    reString.append(Integer.toHexString(edge.cardNum));
-                }
+                reString.append(graph.getCardNumMap().get(edge.cardNum));
             }
         }
-        reString.append(Constant.SUB_SPLIT).append(String.valueOf(0)).append(String.valueOf(command)).append(Constant.SPLIT);
+        reString.append(Constant.SUB_SPLIT).append(Integer.toHexString(command)).append(Constant.SPLIT);
         return reString.toString();
     }
 }

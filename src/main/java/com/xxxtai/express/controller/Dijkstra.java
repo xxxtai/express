@@ -120,17 +120,18 @@ public class Dijkstra implements Algorithm {
                     } else {
                         graph.addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     }
+                    return removeEdge;
                 } else if (graph.getEntranceMap().get(endNodeCardNum).getDirection().equals(Entrance.Direction.UP)){
                     if (edge.startNode.getY() < edge.endNode.getY()) {
                         graph.addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     } else {
                         graph.addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     }
+                    return removeEdge;
                 }
-            } else {
-                graph.addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
-                graph.addEdge(endNodeCardNum, edge.endNode.cardNum, edge.realDistance / 2, -1);
             }
+            graph.addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+            graph.addEdge(endNodeCardNum, edge.endNode.cardNum, edge.realDistance / 2, -1);
         }
         return removeEdge;
     }

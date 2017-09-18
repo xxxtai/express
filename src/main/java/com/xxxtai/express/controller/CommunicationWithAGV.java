@@ -3,15 +3,19 @@ package com.xxxtai.express.controller;
 
 import com.xxxtai.express.constant.Constant;
 import com.xxxtai.express.model.Car;
+import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.toolKit.Common;
 import com.xxxtai.express.view.SchedulingGui;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.net.Socket;
 
 @Slf4j(topic = "develop")
 public class CommunicationWithAGV implements Runnable {
+    @Resource
+    private Graph graph;
     private PrintWriter printWriter;
     private BufferedReader bufferedReader;
     private Car car;
@@ -44,8 +48,10 @@ public class CommunicationWithAGV implements Runnable {
                 String content = Constant.getContent(revMessage);
                 String[] c = content.split(Constant.SPLIT);
                 if (revMessage.startsWith(Constant.CARD_PREFIX)) {
-                    int cardNum = Integer.parseInt(c[1], 16);
+//                    int cardNum = Integer.parseInt(c[0], 16);
+                    int cardNum = graph.getSerialNumMap().get(c[0]);
                     if (cardNum != 0) {
+                        log.info(car.getAGVNum() + "AGV receive:" +cardNum);
                         this.car.setReceiveCardNum(cardNum);
                     }
                 } else if (revMessage.startsWith(Constant.STATE_PREFIX)) {
