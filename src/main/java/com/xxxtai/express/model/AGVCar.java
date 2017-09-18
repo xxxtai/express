@@ -124,7 +124,7 @@ public class AGVCar implements Car {
     public void heartBeat() {
         if (this.count_3s == 60) {
             this.count_3s = 0;
-            sendMessageToAGV(Constant.PREFIX + Integer.toHexString(this.AGVNum) + Constant.HEART_SUFFIX);
+            sendMessageToAGV(Constant.HEART_PREFIX + Integer.toHexString(this.AGVNum) + Constant.SUFFIX);
         } else {
             this.count_3s++;
         }

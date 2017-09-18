@@ -16,7 +16,7 @@ public class Absolute2Relative {
     public static String convert(Graph graph, Path path) {
         List<Integer> route = path.getRoute();
         StringBuilder buffer = new StringBuilder();
-        buffer.append(Constant.PREFIX);
+        buffer.append(Constant.ROUTE_PREFIX);
 
         for (int i = 0; i + 2 < route.size(); i++) {
             if (graph.getNodeMap().get(route.get(i)).x == graph.getNodeMap().get(route.get(i + 1)).x) {
@@ -92,7 +92,7 @@ public class Absolute2Relative {
         }
 
         buffer.append(Integer.toHexString(path.getStopNodeNum()));
-        buffer.append(Constant.ROUTE_SUFFIX);
+        buffer.append(Constant.SUFFIX);
 
         return buffer.toString();
     }

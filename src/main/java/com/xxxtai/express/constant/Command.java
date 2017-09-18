@@ -21,7 +21,7 @@ public enum  Command {
 
     Command(int value, String description){
         this.value = value;
-        this.command = Constant.PREFIX + Integer.toHexString(value) + Constant.COMMAND_SUFFIX;
+        this.command =Constant.COMMAND_PREFIX + Integer.toHexString(value) + Constant.SUFFIX;
         this.description = description;
     }
 }

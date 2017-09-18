@@ -43,12 +43,12 @@ public class CommunicationWithAGV implements Runnable {
 //                log.info(car.getAGVNum() + "AGV receive:" +revMessage);
                 String content = Constant.getContent(revMessage);
                 String[] c = content.split(Constant.SPLIT);
-                if (revMessage.endsWith(Constant.CARD_SUFFIX)) {
+                if (revMessage.startsWith(Constant.CARD_PREFIX)) {
                     int cardNum = Integer.parseInt(c[1], 16);
                     if (cardNum != 0) {
                         this.car.setReceiveCardNum(cardNum);
                     }
-                } else if (revMessage.endsWith(Constant.STATE_SUFFIX)) {
+                } else if (revMessage.startsWith(Constant.STATE_PREFIX)) {
                     this.car.setState(Integer.parseInt(c[1], 16));
                 }
             }
@@ -63,7 +63,7 @@ public class CommunicationWithAGV implements Runnable {
             builder.append(this.hashCode()).append(" CommunicationWithAGV Runnable start\n");
             if ((revMessage = read()) != null) {
                 builder.append("receive msg:").append(revMessage);
-                if (revMessage.endsWith(Constant.HEART_SUFFIX)) {
+                if (revMessage.startsWith(Constant.HEART_PREFIX)) {
                     int AGVNum = Integer.parseInt(Constant.getContent(revMessage), 16);
                     for (Car car : SchedulingGui.AGVArray) {
                         if (car.getAGVNum() == AGVNum) {
@@ -100,6 +100,7 @@ public class CommunicationWithAGV implements Runnable {
         try {
             revMsg= bufferedReader.readLine();
 //            log.info(revMsg);
+//            write(Constant.HEART_PREFIX + Integer.toHexString(1) + Constant.SUFFIX);
         } catch (IOException e) {
             log.error("exception:", e);
         }
