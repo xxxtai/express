@@ -47,14 +47,16 @@ public class CommunicationWithAGV implements Runnable {
             String revMessage;
             if ((revMessage = read()) != null) {
                 this.car.setLastCommunicationTime(System.currentTimeMillis());
-//                log.info(car.getAGVNum() + "AGV receive:" +revMessage);
                 String content = Constant.getContent(revMessage);
                 String[] c = content.split(Constant.SPLIT);
                 if (revMessage.startsWith(Constant.CARD_PREFIX)) {
-//                    int cardNum = Integer.parseInt(c[0], 16);
-                    int cardNum = graph.getSerialNumMap().get(c[0]);
+                    int cardNum;
+                    if (c[0].length() % 2 == 0) {
+                        cardNum = graph.getSerialNumMap().get(c[0]);
+                    } else {
+                        cardNum = graph.getSerialNumMap().get("0" + c[0]);
+                    }
                     if (cardNum != 0) {
-                        log.info(car.getAGVNum() + "AGV receive:" +cardNum);
                         this.car.setReceiveCardNum(cardNum);
                     }
                 } else if (revMessage.startsWith(Constant.STATE_PREFIX)) {
@@ -108,30 +110,15 @@ public class CommunicationWithAGV implements Runnable {
         String revMsg = null;
         try {
             revMsg= bufferedReader.readLine();
-            log.info(revMsg);
-//            write(Constant.HEART_PREFIX + Integer.toHexString(1) + Constant.SUFFIX);
         } catch (IOException e) {
             log.error("exception:", e);
         }
         return revMsg;
     }
 
-    public boolean write(String sendMessage) {
-        boolean isSuccess = false;
-        try {
-            printWriter.println(sendMessage);
-            printWriter.flush();
-            isSuccess = true;
-        } catch (Exception e) {
-           log.error("exception:", e);
-        }
-        return isSuccess;
-    }
-
     public boolean writeHexString(String sendMessage) {
         boolean isSuccess = false;
         try {
-            System.out.println(sendMessage);
             outputStream.write(ReaderWriter.hexString2Bytes(sendMessage));
             isSuccess = true;
         } catch (Exception e) {
