@@ -91,7 +91,7 @@ public class Absolute2Relative {
             }
         }
 
-        buffer.append(Common.toHexString(path.getStopNodeNum()));
+        buffer.append(graph.getCardNumMap().get(path.getStopNodeNum()));
         buffer.append(Constant.SUFFIX);
 
         return buffer.toString();

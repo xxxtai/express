@@ -60,7 +60,7 @@ public class CommunicationWithAGV implements Runnable {
                         this.car.setReceiveCardNum(cardNum);
                     }
                 } else if (revMessage.startsWith(Constant.STATE_PREFIX)) {
-                    this.car.setState(Integer.parseInt(c[1], 16));
+                    this.car.setState(Integer.parseInt(c[0], 16));
                 }
             }
            Common.delay(20);

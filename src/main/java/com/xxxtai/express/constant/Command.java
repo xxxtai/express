@@ -9,7 +9,7 @@ public enum  Command {
     STOP(2, "停止"),
     TURN_LEFT(3, "向左转"),
     TURN_RIGHT(4, "向右转"),
-    GO_AHEAD(5, "向前走");
+    GO_AHEAD(1, "向前走");
 
     private @Getter
     String command;
