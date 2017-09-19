@@ -3,17 +3,23 @@ package com.xxxtai.express.controller;
 
 import com.xxxtai.express.constant.Constant;
 import com.xxxtai.express.model.Car;
+import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.toolKit.Common;
+import com.xxxtai.express.toolKit.ReaderWriter;
 import com.xxxtai.express.view.SchedulingGui;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.net.Socket;
 
 @Slf4j(topic = "develop")
 public class CommunicationWithAGV implements Runnable {
+    @Resource
+    private Graph graph;
     private PrintWriter printWriter;
     private BufferedReader bufferedReader;
+    private OutputStream outputStream;
     private Car car;
 
     public CommunicationWithAGV() {
@@ -21,6 +27,7 @@ public class CommunicationWithAGV implements Runnable {
 
     void setSocket(Socket socket) {
         try {
+            outputStream = socket.getOutputStream();
             printWriter = new PrintWriter(socket.getOutputStream());
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
@@ -40,16 +47,20 @@ public class CommunicationWithAGV implements Runnable {
             String revMessage;
             if ((revMessage = read()) != null) {
                 this.car.setLastCommunicationTime(System.currentTimeMillis());
-//                log.info(car.getAGVNum() + "AGV receive:" +revMessage);
                 String content = Constant.getContent(revMessage);
                 String[] c = content.split(Constant.SPLIT);
-                if (revMessage.endsWith(Constant.CARD_SUFFIX)) {
-                    int cardNum = Integer.parseInt(c[1], 16);
+                if (revMessage.startsWith(Constant.CARD_PREFIX)) {
+                    int cardNum;
+                    if (c[0].length() % 2 == 0) {
+                        cardNum = graph.getSerialNumMap().get(c[0]);
+                    } else {
+                        cardNum = graph.getSerialNumMap().get("0" + c[0]);
+                    }
                     if (cardNum != 0) {
                         this.car.setReceiveCardNum(cardNum);
                     }
-                } else if (revMessage.endsWith(Constant.STATE_SUFFIX)) {
-                    this.car.setState(Integer.parseInt(c[1], 16));
+                } else if (revMessage.startsWith(Constant.STATE_PREFIX)) {
+                    this.car.setState(Integer.parseInt(c[0], 16));
                 }
             }
            Common.delay(20);
@@ -63,7 +74,7 @@ public class CommunicationWithAGV implements Runnable {
             builder.append(this.hashCode()).append(" CommunicationWithAGV Runnable start\n");
             if ((revMessage = read()) != null) {
                 builder.append("receive msg:").append(revMessage);
-                if (revMessage.endsWith(Constant.HEART_SUFFIX)) {
+                if (revMessage.startsWith(Constant.HEART_PREFIX)) {
                     int AGVNum = Integer.parseInt(Constant.getContent(revMessage), 16);
                     for (Car car : SchedulingGui.AGVArray) {
                         if (car.getAGVNum() == AGVNum) {
@@ -99,23 +110,20 @@ public class CommunicationWithAGV implements Runnable {
         String revMsg = null;
         try {
             revMsg= bufferedReader.readLine();
-//            log.info(revMsg);
         } catch (IOException e) {
             log.error("exception:", e);
         }
         return revMsg;
     }
 
-    public boolean write(String sendMessage) {
+    public boolean writeHexString(String sendMessage) {
         boolean isSuccess = false;
         try {
-            printWriter.println(sendMessage);
-            printWriter.flush();
+            outputStream.write(ReaderWriter.hexString2Bytes(sendMessage));
             isSuccess = true;
         } catch (Exception e) {
-           log.error("exception:", e);
+            log.error("exception:", e);
         }
         return isSuccess;
     }
-
 }

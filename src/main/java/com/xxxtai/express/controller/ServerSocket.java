@@ -17,7 +17,7 @@ public abstract class ServerSocket implements Runnable {
 
     public ServerSocket() {
         try {
-            serverSocket = new java.net.ServerSocket(8001);
+            serverSocket = new java.net.ServerSocket(8899);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -37,7 +37,7 @@ public abstract class ServerSocket implements Runnable {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String message = reader.readLine();
                 Runnable runnable;
-                if (message.endsWith(Constant.QR_SUFFIX)) {
+                if (message.startsWith(Constant.QR_PREFIX)) {
                     runnable = getCommunicationWithQRScan();
                     ((CommunicationWithQRScan)runnable).setSocket(socket);
                 } else {

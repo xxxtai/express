@@ -75,6 +75,9 @@ public class DrawingGraph {
 
         for (Entrance entrance : graph.getEntranceMap().values()) {
             Node node = graph.getNodeMap().get(entrance.getCardNum());
+            if (node == null) {
+                continue;
+            }
             g.setColor(Color.GRAY);
             g.fillRect(node.x - 20, node.y - 20, 40, 40);
         }

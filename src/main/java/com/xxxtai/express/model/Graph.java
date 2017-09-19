@@ -23,24 +23,31 @@ public class Graph {
     Map<Long, List<Exit>> exitMap;
     private @Getter
     Map<Integer, Entrance> entranceMap;
+    private @Getter
+    Map<String, Integer> serialNumMap;
+    private @Getter
+    Map<Integer, String> cardNumMap;
 
     public Graph() {
         nodeMap = new HashMap<>();
         edgeMap = new ConcurrentHashMap<>();
         exitMap = new HashMap<>();
+        serialNumMap = new HashMap<>();
+        cardNumMap = new HashMap<>();
         importNewGraph(PATH_NAME);
         extractEntrances();
     }
 
     private void extractEntrances(){
-        int[] entrances = {220, 227, 234, 241, 248, 255, 262, 269, 276, 283, 290, 297, 304, 311};
+//        int[] entrances = {220, 227, 234, 241, 248, 255, 262, 269, 276, 283, 290, 297, 304, 311};
+        int[] entrances = {21, 22, 23, 24};
         entranceMap = new HashMap<>();
         for (int i = 0; i < entrances.length; i++) {
             Entrance entrance;
             if (i % 2 == 0) {
-                entrance= new Entrance(entrances[i], Entrance.Direction.DOWN);
+                entrance= new Entrance(entrances[i], Entrance.Direction.NULL);
             } else {
-                entrance = new Entrance(entrances[i], Entrance.Direction.UP);
+                entrance = new Entrance(entrances[i], Entrance.Direction.NULL);
             }
             entranceMap.put(entrances[i], entrance);
         }
@@ -62,36 +69,55 @@ public class Graph {
             Workbook wb = Workbook.getWorkbook(is);
 
             Sheet sheetNodes = wb.getSheet("nodes");
-            for (int i = 0; i < sheetNodes.getRows(); i++) {
-                this.addNode(
-                        Integer.parseInt(sheetNodes.getCell(0, i).getContents()),
-                        Integer.parseInt(sheetNodes.getCell(1, i).getContents()),
-                        Integer.parseInt(sheetNodes.getCell(2, i).getContents()),
-                        Integer.parseInt(sheetNodes.getCell(3, i).getContents()));
+            if (sheetNodes != null) {
+                for (int i = 0; i < sheetNodes.getRows(); i++) {
+                    this.addNode(
+                            Integer.parseInt(sheetNodes.getCell(0, i).getContents()),
+                            Integer.parseInt(sheetNodes.getCell(1, i).getContents()),
+                            Integer.parseInt(sheetNodes.getCell(2, i).getContents()),
+                            Integer.parseInt(sheetNodes.getCell(3, i).getContents()));
+                }
             }
 
             Sheet sheetEdges = wb.getSheet("edges");
-            for (int i = 0; i < sheetEdges.getRows(); i++) {
+            if (sheetEdges != null) {
+                for (int i = 0; i < sheetEdges.getRows(); i++) {
 
-                this.addEdge(
-                        Integer.parseInt(sheetEdges.getCell(0, i).getContents()),
-                        Integer.parseInt(sheetEdges.getCell(1, i).getContents()),
-                        Integer.parseInt(sheetEdges.getCell(2, i).getContents()),
-                        Integer.parseInt(sheetEdges.getCell(3, i).getContents())
-                );
+                    this.addEdge(
+                            Integer.parseInt(sheetEdges.getCell(0, i).getContents()),
+                            Integer.parseInt(sheetEdges.getCell(1, i).getContents()),
+                            Integer.parseInt(sheetEdges.getCell(2, i).getContents()),
+                            Integer.parseInt(sheetEdges.getCell(3, i).getContents())
+                    );
+                }
             }
+
             Sheet sheetExit = wb.getSheet("exits");
-            for (int i = 0; i < sheetExit.getRows(); i++) {
-                String name = sheetExit.getCell(0, i).getContents();
-                Long code = Long.parseLong(sheetExit.getCell(1, i).getContents());
-                int x = Integer.parseInt(sheetExit.getCell(2, i).getContents());
-                int y = Integer.parseInt(sheetExit.getCell(3, i).getContents());
-                int[] exits = {Integer.parseInt(sheetExit.getCell(4, i).getContents()),
-                        Integer.parseInt(sheetExit.getCell(5, i).getContents()),
-                        Integer.parseInt(sheetExit.getCell(6, i).getContents()),
-                        Integer.parseInt(sheetExit.getCell(7, i).getContents())};
-                this.addExit(new Exit(name, code, x, y, exits));
+            if (sheetExit != null) {
+                for (int i = 0; i < sheetExit.getRows(); i++) {
+                    String name = sheetExit.getCell(0, i).getContents();
+                    Long code = Long.parseLong(sheetExit.getCell(1, i).getContents());
+                    int x = Integer.parseInt(sheetExit.getCell(2, i).getContents());
+                    int y = Integer.parseInt(sheetExit.getCell(3, i).getContents());
+                    int[] exits = {Integer.parseInt(sheetExit.getCell(4, i).getContents()),
+                            Integer.parseInt(sheetExit.getCell(5, i).getContents()),
+                            Integer.parseInt(sheetExit.getCell(6, i).getContents()),
+                            Integer.parseInt(sheetExit.getCell(7, i).getContents())};
+                    this.addExit(new Exit(name, code, x, y, exits));
+                }
             }
+            Sheet sheetSerial = wb.getSheet("serial");
+            if (sheetSerial != null) {
+                for (int i = 0; i < sheetSerial.getRows(); i++) {
+                    String serialNum = sheetSerial.getCell(1, i).getContents();
+                    int cardNum = Integer.parseInt(sheetSerial.getCell(0, i).getContents());
+                    cardNumMap.put(cardNum, serialNum);
+                    serialNumMap.put(serialNum, cardNum);
+                }
+            }
+
+            wb.close();
+            is.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

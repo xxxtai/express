@@ -7,7 +7,7 @@ import java.util.Queue;
 
 @Data
 public class Entrance {
-    public enum Direction{UP, DOWN}
+    public enum Direction{UP, DOWN, NULL}
     private Queue<Car> queue = new LinkedList<>();
     private Integer cardNum;
     private Direction direction;

@@ -16,7 +16,7 @@ public class Absolute2Relative {
     public static String convert(Graph graph, Path path) {
         List<Integer> route = path.getRoute();
         StringBuilder buffer = new StringBuilder();
-        buffer.append(Constant.PREFIX);
+        buffer.append(Constant.ROUTE_PREFIX);
 
         for (int i = 0; i + 2 < route.size(); i++) {
             if (graph.getNodeMap().get(route.get(i)).x == graph.getNodeMap().get(route.get(i + 1)).x) {
@@ -91,8 +91,8 @@ public class Absolute2Relative {
             }
         }
 
-        buffer.append(Integer.toHexString(path.getStopNodeNum()));
-        buffer.append(Constant.ROUTE_SUFFIX);
+        buffer.append(graph.getCardNumMap().get(path.getStopNodeNum()));
+        buffer.append(Constant.SUFFIX);
 
         return buffer.toString();
     }
@@ -101,14 +101,10 @@ public class Absolute2Relative {
         StringBuilder reString = new StringBuilder();
         for (Edge edge : graph.getEdgeArray()) {
             if ((edge.startNode.cardNum == startNode && edge.endNode.cardNum == endNode) || (edge.endNode.cardNum == startNode && edge.startNode.cardNum == endNode)) {
-                if (edge.cardNum < 16) {
-                    reString = new StringBuilder(String.valueOf(0) + Integer.toHexString(edge.cardNum));
-                } else {
-                    reString.append(Integer.toHexString(edge.cardNum));
-                }
+                reString.append(graph.getCardNumMap().get(edge.cardNum));
             }
         }
-        reString.append(Constant.SUB_SPLIT).append(String.valueOf(0)).append(String.valueOf(command)).append(Constant.SPLIT);
+        reString.append(Constant.SUB_SPLIT).append(Common.toHexString(command)).append(Constant.SPLIT);
         return reString.toString();
     }
 }

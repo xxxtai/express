@@ -18,4 +18,12 @@ public class Common {
             e.printStackTrace();
         }
     }
+
+    public static String toHexString(int num){
+        String temp = Integer.toHexString(num);
+        if (temp.length() % 2 != 0) {
+            return "0" + temp;
+        }
+        return temp;
+    }
 }
