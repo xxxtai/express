@@ -37,8 +37,15 @@ public class CommunicationWithQRScan implements Runnable {
     public void run() {
         while (true) {
             try {
+                if (!bufferedReader.ready()){
+                    continue;
+                }
                 String message = bufferedReader.readLine();
-                if (message != null && message.endsWith(Constant.QR_PREFIX)) {
+                if (message != null){
+                    log.info(message);
+                }
+
+                if (message != null && message.startsWith(Constant.QR_PREFIX)) {
                     String content = Constant.getContent(message);
                     String[] c = content.split(Constant.SPLIT);
                     for (Car car : SchedulingGui.AGVArray) {

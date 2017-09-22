@@ -34,23 +34,8 @@ public class Graph {
         exitMap = new HashMap<>();
         serialNumMap = new HashMap<>();
         cardNumMap = new HashMap<>();
-        importNewGraph(PATH_NAME);
-        extractEntrances();
-    }
-
-    private void extractEntrances(){
-//        int[] entrances = {220, 227, 234, 241, 248, 255, 262, 269, 276, 283, 290, 297, 304, 311};
-        int[] entrances = {21, 22, 23, 24};
         entranceMap = new HashMap<>();
-        for (int i = 0; i < entrances.length; i++) {
-            Entrance entrance;
-            if (i % 2 == 0) {
-                entrance= new Entrance(entrances[i], Entrance.Direction.NULL);
-            } else {
-                entrance = new Entrance(entrances[i], Entrance.Direction.NULL);
-            }
-            entranceMap.put(entrances[i], entrance);
-        }
+        importNewGraph(PATH_NAME);
     }
 
     public void addExit(Exit exit) {
@@ -106,6 +91,24 @@ public class Graph {
                     this.addExit(new Exit(name, code, x, y, exits));
                 }
             }
+
+            Sheet sheetEntrance = wb.getSheet("entrances");
+            if (sheetEntrance != null) {
+                for (int i = 0; i < sheetEntrance.getRows(); i++) {
+                    int cardNum =Integer.parseInt(sheetEntrance.getCell(0, i).getContents());
+                    int direction = Integer.parseInt(sheetEntrance.getCell(1, i).getContents());
+                    Entrance.Direction direct;
+                    if(direction == 1){
+                        direct = Entrance.Direction.UP;
+                    }else if (direction == 2){
+                        direct = Entrance.Direction.DOWN;
+                    }else {
+                        direct = Entrance.Direction.NULL;
+                    }
+                    entranceMap.put(cardNum, new Entrance(cardNum, direct));
+                }
+            }
+
             Sheet sheetSerial = wb.getSheet("serial");
             if (sheetSerial != null) {
                 for (int i = 0; i < sheetSerial.getRows(); i++) {

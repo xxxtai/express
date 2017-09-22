@@ -10,6 +10,8 @@ public enum City {
     SHANGHAI("上海", 200000L),
     CHONGQING("重庆", 404100),
     TIANJIN("天津", 300000),
+    HANGZHOU("杭州",310000),
+    NANJING("南京", 210000),
     NULL("城市不存在", 0);
 
     private @Setter @Getter

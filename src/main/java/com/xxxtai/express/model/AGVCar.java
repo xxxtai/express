@@ -165,7 +165,7 @@ public class AGVCar implements Car {
     public void setState(int state) {
         if (state == State.FORWARD.getValue()) {
             this.state = State.FORWARD;
-        } else if (state == State.STOP.getValue()) {
+        } else if (state == State.STOP.getValue() && atEdge != null) {
             Node n = graph.getNodeMap().get(this.atEdge.cardNum);
             this.position.x = n.x;
             this.position.y = n.y;

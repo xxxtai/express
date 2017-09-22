@@ -1,6 +1,7 @@
 package com.xxxtai.express.controller;
 
 
+import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.constant.Constant;
 import com.xxxtai.express.model.Car;
 import com.xxxtai.express.model.Graph;
@@ -57,6 +58,7 @@ public class CommunicationWithAGV implements Runnable {
                         cardNum = graph.getSerialNumMap().get("0" + c[0]);
                     }
                     if (cardNum != 0) {
+//                        car.sendMessageToAGV(Command.STOP.getCommand());
                         this.car.setReceiveCardNum(cardNum);
                     }
                 } else if (revMessage.startsWith(Constant.STATE_PREFIX)) {
@@ -107,22 +109,29 @@ public class CommunicationWithAGV implements Runnable {
     }
 
     private String read() {
-        String revMsg = null;
+        String recMsg = null;
         try {
-            revMsg= bufferedReader.readLine();
+            if (!bufferedReader.ready()){
+                return null;
+            }
+            recMsg= bufferedReader.readLine();
+//            log.info(recMsg);
         } catch (IOException e) {
             log.error("exception:", e);
         }
-        return revMsg;
+        return recMsg;
     }
 
     public boolean writeHexString(String sendMessage) {
         boolean isSuccess = false;
         try {
             outputStream.write(ReaderWriter.hexString2Bytes(sendMessage));
+//            log.info("send message:" + sendMessage);
             isSuccess = true;
+
+
         } catch (Exception e) {
-            log.error("exception:", e);
+//            log.error("exception:", e);
         }
         return isSuccess;
     }
