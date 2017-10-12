@@ -27,13 +27,13 @@ public class Main extends JFrame {
         super("AGV快递分拣系统");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setExtendedState(Frame.MAXIMIZED_BOTH);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                //exit();
+                exit();
             }
         });
     }
@@ -48,8 +48,8 @@ public class Main extends JFrame {
         this.validate();
     }
 
-    public void exit() {
-        Object[] option = {"exit", "confirm"};
+    private void exit() {
+        Object[] option = {"exit", "cancel"};
         JOptionPane pane = new JOptionPane(" ", JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.YES_NO_OPTION, null, option, option[1]);
         JDialog dialog = pane.createDialog(this, "  ");
@@ -58,12 +58,11 @@ public class Main extends JFrame {
         if (result == null || result == option[1]) {
             setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         } else if (result == option[0]) {
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         }
     }
 
     public static void main(String[] args) {
-
         ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/beans.xml");
         Main main = context.getBean(Main.class);
         main.init();

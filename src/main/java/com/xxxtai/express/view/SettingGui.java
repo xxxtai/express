@@ -1,6 +1,5 @@
 package com.xxxtai.express.view;
 
-import com.xxxtai.express.main.Main;
 import com.xxxtai.express.toolKit.Common;
 import org.springframework.stereotype.Component;
 

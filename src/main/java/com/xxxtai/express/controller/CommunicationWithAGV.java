@@ -115,7 +115,7 @@ public class CommunicationWithAGV implements Runnable {
                 return null;
             }
             recMsg= bufferedReader.readLine();
-//            log.info(recMsg);
+            log.info(recMsg);
         } catch (IOException e) {
             log.error("exception:", e);
         }
