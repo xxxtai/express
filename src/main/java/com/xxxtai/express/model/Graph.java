@@ -13,4 +13,6 @@ public interface Graph {
     Map<Integer, String> getCardNumMap();
     Collection<Node> getNodeArray();
     Collection<Edge> getEdgeArray();
+    int getRow();
+    int getColumn();
 }

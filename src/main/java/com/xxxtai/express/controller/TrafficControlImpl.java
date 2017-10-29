@@ -3,6 +3,7 @@ package com.xxxtai.express.controller;
 import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.model.*;
 import com.xxxtai.express.constant.NodeFunction;
+import com.xxxtai.express.toolKit.Common;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -100,12 +101,7 @@ public class TrafficControlImpl implements TrafficControl {
         }
 
         if (nextStartNode != null && nextEndNode != null) {
-            for (Edge edge : graph.getEdgeArray()) {
-                if ((edge.startNode.cardNum.equals(nextStartNode.cardNum) && edge.endNode.cardNum.equals(nextEndNode.cardNum))
-                        || (edge.endNode.cardNum.equals(nextStartNode.cardNum) && edge.startNode.cardNum.equals(nextEndNode.cardNum))) {
-                    nextEdge = edge;
-                }
-            }
+            nextEdge = Common.calculateEdge(nextStartNode.cardNum, nextEndNode.cardNum, graph);
         } else if (cardNum != routeNodeNumArray.get(routeNodeNumArray.size() - 1)) {
             log.warn("不应该出现的情况！");
         }

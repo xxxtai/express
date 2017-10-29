@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ComGraph implements Graph{
     public static final String PATH_NAME = "C:\\Users\\xxxta\\work\\Graph.xls";
+    private int row = 5;
+    private int column = 6;
     private @Getter
     Map<Integer, Node> nodeMap;
     private @Getter
@@ -148,11 +150,23 @@ public class ComGraph implements Graph{
         edgeMap = new HashMap<>();
     }
 
+    @Override
     public Collection<Node> getNodeArray() {
         return this.nodeMap.values();
     }
 
+    @Override
     public Collection<Edge> getEdgeArray() {
         return this.edgeMap.values();
+    }
+
+    @Override
+    public int getRow() {
+        return row;
+    }
+
+    @Override
+    public int getColumn() {
+        return column;
     }
 }
