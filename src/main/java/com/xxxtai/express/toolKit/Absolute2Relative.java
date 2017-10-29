@@ -2,10 +2,7 @@ package com.xxxtai.express.toolKit;
 
 import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.constant.Constant;
-import com.xxxtai.express.model.Graph;
-import com.xxxtai.express.model.Node;
-import com.xxxtai.express.model.Path;
-import com.xxxtai.express.model.Edge;
+import com.xxxtai.express.model.*;
 
 import java.util.List;
 

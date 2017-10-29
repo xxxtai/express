@@ -1,9 +1,6 @@
 package com.xxxtai.express.controller;
 
-import com.xxxtai.express.model.Edge;
-import com.xxxtai.express.model.Entrance;
-import com.xxxtai.express.model.Graph;
-import com.xxxtai.express.model.Path;
+import com.xxxtai.express.model.*;
 import com.xxxtai.express.constant.NodeFunction;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +18,7 @@ public class Dijkstra implements Algorithm {
 
     @PostConstruct
     public void init() {
-        size = graph.getNodeArraySize();
+        size = graph.getNodeArray().size();
     }
 
     public synchronized Path findRoute(Edge startEdge, final int endNodeNum, boolean isBackToEntrance) {
@@ -116,22 +113,22 @@ public class Dijkstra implements Algorithm {
             if (isBackToEntrance) {
                 if (graph.getEntranceMap().get(endNodeCardNum).getDirection().equals(Entrance.Direction.DOWN)) {
                     if (edge.startNode.getY() < edge.endNode.getY()) {
-                        graph.addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+                        ((ComGraph)graph).addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     } else {
-                        graph.addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+                        ((ComGraph)graph).addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     }
                     return removeEdge;
                 } else if (graph.getEntranceMap().get(endNodeCardNum).getDirection().equals(Entrance.Direction.UP)){
                     if (edge.startNode.getY() < edge.endNode.getY()) {
-                        graph.addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+                        ((ComGraph)graph).addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     } else {
-                        graph.addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+                        ((ComGraph)graph).addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     }
                     return removeEdge;
                 }
             }
-            graph.addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
-            graph.addEdge(endNodeCardNum, edge.endNode.cardNum, edge.realDistance / 2, -1);
+            ((ComGraph)graph).addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
+            ((ComGraph)graph).addEdge(endNodeCardNum, edge.endNode.cardNum, edge.realDistance / 2, -1);
         }
         return removeEdge;
     }

@@ -2,11 +2,8 @@ package com.xxxtai.express.view;
 
 
 import com.xxxtai.express.constant.City;
-import com.xxxtai.express.model.Node;
+import com.xxxtai.express.model.*;
 import com.xxxtai.express.toolKit.MyTextField;
-import com.xxxtai.express.model.Edge;
-import com.xxxtai.express.model.Exit;
-import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.toolKit.Common;
 import com.xxxtai.express.constant.NodeFunction;
 import jxl.Workbook;
@@ -169,7 +166,7 @@ public class DrawingGui extends JPanel{
         }
         log.info(minxNode.getCardNum() + " /" + nextMinNode.getCardNum() + "/" + minYNode.getCardNum() + "/" + nextMinYNode.getCardNum());
         City city = City.valueOfName(cityName);
-        graph.addExit(new Exit(city.getName(), city.getCode(), Arrays.asList(minxNode, nextMinNode, minYNode, nextMinYNode)));
+        ((ComGraph)graph).addExit(new Exit(city.getName(), city.getCode(), Arrays.asList(minxNode, nextMinNode, minYNode, nextMinYNode)));
     }
 
     private void createNewGraph(Dimension screenSize) {
@@ -202,12 +199,12 @@ public class DrawingGui extends JPanel{
 
         int nodeNum = 0;
         int cardNum = row * column;
-        graph.getNewGraph();
+        ((ComGraph)graph).getNewGraph();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
-                graph.addNode(++nodeNum, rlMargin + j * width, topMargin + i * height, NodeFunction.Junction.getValue());
-                if (graph.getNodeArraySize() > 1 && (nodeNum - 1) % column != 0) {
-                    graph.addEdge(nodeNum - 1, nodeNum, realDistance, ++cardNum);
+                ((ComGraph)graph).addNode(++nodeNum, rlMargin + j * width, topMargin + i * height, NodeFunction.Junction.getValue());
+                if (graph.getNodeArray().size() > 1 && (nodeNum - 1) % column != 0) {
+                    ((ComGraph)graph).addEdge(nodeNum - 1, nodeNum, realDistance, ++cardNum);
                 }
 
             }
@@ -215,18 +212,18 @@ public class DrawingGui extends JPanel{
 
         for (int i = 1; i <= column && (i + column <= column * row); i++) {
             for (int j = i; j + column <= column * row; j += column) {
-                graph.addEdge(j, j + column, realDistance, ++cardNum);
+                ((ComGraph)graph).addEdge(j, j + column, realDistance, ++cardNum);
             }
         }
 
         for (Edge edge : graph.getEdgeArray()) {
-            graph.addNode(edge.cardNum, (edge.startNode.x + edge.endNode.x) / 2, (edge.startNode.y + edge.endNode.y) / 2, NodeFunction.Parking.getValue());
+            ((ComGraph)graph).addNode(edge.cardNum, (edge.startNode.x + edge.endNode.x) / 2, (edge.startNode.y + edge.endNode.y) / 2, NodeFunction.Parking.getValue());
         }
 
         try {
             writeExcel(graph);
             System.out.println("newing........");
-            if (graph.getNodeArraySize() == (column * row + graph.getEdgeArraySize()) && graph.getEdgeArraySize() == ((column - 1) * row + (row - 1) * column))
+            if (graph.getNodeArray().size() == (column * row + graph.getEdgeArray().size()) && graph.getEdgeArray().size() == ((column - 1) * row + (row - 1) * column))
                 System.out.println("new graph success!");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -244,10 +241,10 @@ public class DrawingGui extends JPanel{
 
     private static void writeExcel(Graph graph) {
         try {
-            File file = new File(Graph.PATH_NAME);
+            File file = new File(ComGraph.PATH_NAME);
             InputStream inputStream = new FileInputStream(file.getPath());
             Workbook wb = Workbook.getWorkbook(inputStream);
-            WritableWorkbook wwb = Workbook.createWorkbook(new File(Graph.PATH_NAME), wb);
+            WritableWorkbook wwb = Workbook.createWorkbook(new File(ComGraph.PATH_NAME), wb);
             wwb.removeSheet(0);
             WritableSheet wsNode = wwb.createSheet("nodes", 0);
             int i = 0;

@@ -1,10 +1,7 @@
 package com.xxxtai.express.controller;
 
 import com.xxxtai.express.constant.Command;
-import com.xxxtai.express.model.Car;
-import com.xxxtai.express.model.Edge;
-import com.xxxtai.express.model.Graph;
-import com.xxxtai.express.model.Node;
+import com.xxxtai.express.model.*;
 import com.xxxtai.express.constant.NodeFunction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;

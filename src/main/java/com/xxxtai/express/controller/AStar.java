@@ -5,7 +5,7 @@ import com.xxxtai.express.model.Path;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AstarAlgorithm implements Algorithm {
+public class AStar implements Algorithm {
 
     public void init() {
 
