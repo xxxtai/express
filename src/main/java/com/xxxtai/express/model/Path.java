@@ -7,13 +7,15 @@ import lombok.Setter;
 import java.util.List;
 
 public class Path {
-    public final int endNodeNum;
+    @Getter
+    @Setter
+    public int endNodeNum;
     @Getter
     @Setter
     private int stopNodeNum;
     @Getter
     @Setter
-    private int realDistance;
+    private int cost;
     @Getter
     private boolean remove;
     @Getter
@@ -24,6 +26,9 @@ public class Path {
         this.endNodeNum = endNode;
         route = Lists.newArrayList();
         route.add(startNode);
+    }
+    public Path(){
+        route = Lists.newArrayList();
     }
 
     public void addRouteNode(int node) {

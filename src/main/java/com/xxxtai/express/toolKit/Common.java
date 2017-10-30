@@ -51,4 +51,8 @@ public class Common {
         }
         return new int[]{row, column - 1};
     }
+
+    public static int calculateNodeNum(int [] position, Graph graph) {
+        return position[0] * graph.getColumn() + position[1] + 1;
+    }
 }

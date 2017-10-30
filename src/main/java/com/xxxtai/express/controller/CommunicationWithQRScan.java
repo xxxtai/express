@@ -65,7 +65,7 @@ public class CommunicationWithQRScan implements Runnable {
                             }
 
                             int exitNum = minDisNodeNum;
-                            Path path = algorithm.findRoute(car.getAtEdge(), exitNum, false);
+                            Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(exitNum), false);
                             if (path != null) {
                                 log.info(car.getAGVNum() + "AGVRoute:" + path.getRoute().toString());
                                 String routeString = Absolute2Relative.convert(graph, path);

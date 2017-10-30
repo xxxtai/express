@@ -21,8 +21,8 @@ public class Dijkstra implements Algorithm {
         size = graph.getNodeArray().size();
     }
 
-    public synchronized Path findRoute(Edge startEdge, final int endNodeNum, boolean isBackToEntrance) {
-        Edge removeEdge = changeEdgeArray(endNodeNum, isBackToEntrance);
+    public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean isBackToEntrance) {
+        Edge removeEdge = changeEdgeArray(endEdge.cardNum, isBackToEntrance);
 
         boolean adjoin = false;
         List<Path> sArray = new ArrayList<>();
@@ -31,7 +31,7 @@ public class Dijkstra implements Algorithm {
         for (int i = 0; i < size; i++) {//初始化
             if (startEdge.startNode.cardNum == i + 1) {
                 uArray.add(new Path(startEdge.endNode.cardNum, i + 1));
-                uArray.get(i).setRealDistance(MAXINT);
+                uArray.get(i).setCost(MAXINT);
                 continue;
             }
 
@@ -40,14 +40,14 @@ public class Dijkstra implements Algorithm {
                 if ((edge.startNode.cardNum.equals(startEdge.endNode.cardNum) && edge.endNode.cardNum == (i + 1))
                         || (edge.endNode.cardNum.equals(startEdge.endNode.cardNum) && edge.startNode.cardNum == (i + 1))) {//|| (graph.getEdge(j).endNode.cardNum == startNode && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
                     if (!edge.isLocked() && !edge.isRemove()) {//当边和点被占用或被移除后，认为不联通
-                        uArray.get(i).setRealDistance(edge.realDistance);
+                        uArray.get(i).setCost(edge.realDistance);
                         uArray.get(i).addRouteNode(i + 1);
                         adjoin = true;
                     }
                 }
             }
             if (!adjoin) {
-                uArray.get(i).setRealDistance(MAXINT);
+                uArray.get(i).setCost(MAXINT);
             }
             adjoin = false;
         }
@@ -60,8 +60,8 @@ public class Dijkstra implements Algorithm {
             int indexMin = 0;
             for (int i = 0; i < uArray.size(); i++) {//取u中权值最小的点放进s中
                 if (!uArray.get(i).isRemove()) {
-                    if (uArray.get(i).getRealDistance() < tempMin) {
-                        tempMin = uArray.get(i).getRealDistance();
+                    if (uArray.get(i).getCost() < tempMin) {
+                        tempMin = uArray.get(i).getCost();
                         indexMin = i;
                     }
                 }
@@ -76,9 +76,9 @@ public class Dijkstra implements Algorithm {
                 for (Edge edge : graph.getEdgeArray()) {
                     if ((edge.startNode.cardNum == tempStart && edge.endNode.cardNum == (i + 1))
                             || (edge.endNode.cardNum == tempStart && edge.startNode.cardNum == (i + 1))) {//|| (graph.getEdge(j).endNode.cardNum == tempStart && graph.getEdge(j).startNode.cardNum == (i+1) && graph.getEdge(j).twoWay)
-                        if (edge.realDistance + sArray.get(sArray.size() - 1).getRealDistance() < uArray.get(i).getRealDistance()
+                        if (edge.realDistance + sArray.get(sArray.size() - 1).getCost() < uArray.get(i).getCost()
                                 && !edge.isRemove() && !edge.isLocked()) {//当边和点被占用或被移除后，认为不联通
-                            uArray.get(i).setRealDistance(edge.realDistance + sArray.get(sArray.size() - 1).getRealDistance());
+                            uArray.get(i).setCost(edge.realDistance + sArray.get(sArray.size() - 1).getCost());
                             uArray.get(i).newRoute(sArray.get(sArray.size() - 1).getRoute());
                             uArray.get(i).addRouteNode(i + 1);
                         }
@@ -89,7 +89,7 @@ public class Dijkstra implements Algorithm {
 
         Path returnPath = null;
         for (Path aSArray : sArray) {
-            if (aSArray.endNodeNum == endNodeNum) {
+            if (aSArray.endNodeNum == endEdge.cardNum) {
                 returnPath = aSArray;
                 ArrayList<Integer> tempArray = new ArrayList<>(returnPath.getRoute());
                 returnPath.getRoute().clear();

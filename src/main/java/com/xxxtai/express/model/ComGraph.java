@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ComGraph implements Graph{
     public static final String PATH_NAME = "C:\\Users\\xxxta\\work\\Graph.xls";
+    public static final int EDGE_COST = 10;
+    public static final int SWERVE_COST = 20;
     private int row = 5;
     private int column = 6;
     private @Getter

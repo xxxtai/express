@@ -38,7 +38,7 @@ public class DispatchingAGV implements Runnable {
                         }
                     }
                     log.debug("派遣车辆" + car.getAGVNum() + "去" + minEntrance);
-                    Path path = minEntrance == null? null : algorithm.findRoute(car.getAtEdge(), minEntrance, true);
+                    Path path = minEntrance == null? null : algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(minEntrance), true);
 
                     if (path != null) {
                         System.out.println();
