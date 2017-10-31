@@ -22,7 +22,7 @@ public class CommunicationWithQRScan implements Runnable {
     private BufferedReader bufferedReader;
     @Resource
     private Graph graph;
-    @Resource(name = "dijkstra")
+    @Resource(name = "AStar")
     private Algorithm algorithm;
 
     void setSocket(Socket socket) {

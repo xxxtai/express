@@ -16,7 +16,7 @@ public class AStar implements Algorithm {
     @Resource
     private Graph graph;
 
-    public Path findRoute(Edge startEdge, Edge endEdge, boolean isBackToEntrance) {
+    public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean isBackToEntrance) {
         Map<Integer, AStarNode> openMap = new HashMap<>();
         Map<Integer, AStarNode> closeMap = new HashMap<>();
 
@@ -71,20 +71,19 @@ public class AStar implements Algorithm {
             endEdgeStartNode = endEdge.endNode.cardNum;
             endEdgeEndNode = endEdge.startNode.cardNum;
         }
-        path.setEndNodeNum(endEdgeEndNode);
+        path.setEndNodeNum(endEdge.cardNum);
         AStarNode pStarNode = closeMap.get(endEdgeStartNode);
         int[] curPosition = Common.calculateNodePosition(pStarNode.getNodeNum(), graph);
         int[] prePosition = Common.calculateNodePosition(pStarNode.getParentAStarNode().getNodeNum(), graph);
         int[] endPosition = Common.calculateNodePosition(endEdgeEndNode, graph);
-        if ((prePosition[0] ^ curPosition[0]) == (curPosition[0] ^ endPosition[0])
-                && (prePosition[1] ^ curPosition[1]) == (curPosition[1] ^ endPosition[1])) {
+        if (isWalkStraight(prePosition, curPosition, endPosition)) {
             path.setCost(pStarNode.valueG + ComGraph.EDGE_COST/2);
         } else {
             path.setCost(pStarNode.valueG + ComGraph.EDGE_COST/2 + ComGraph.SWERVE_COST);
         }
 
         List<Integer> route = Lists.newArrayList();
-        route.add(endEdgeEndNode);
+        route.add(endEdge.cardNum);
         while (pStarNode != null) {
             route.add(pStarNode.nodeNum);
             pStarNode = pStarNode.parentAStarNode;
@@ -101,8 +100,7 @@ public class AStar implements Algorithm {
         if (!openMap.containsKey(nodeNum) && !closeMap.containsKey(nodeNum)) {
             AStarNode starNode = new AStarNode(nodeNum, curAStarNode);
             int[] parentPosition = Common.calculateNodePosition(curAStarNode.getParentAStarNode().getNodeNum(), graph);
-            if ((parentPosition[0] ^ curPosition[0]) == (curPosition[0] ^ nextPosition[0])
-                    && (parentPosition[1] ^ curPosition[1]) == (curPosition[1] ^ nextPosition[1]) ) {
+            if (isWalkStraight(parentPosition, curPosition, nextPosition)) {
                 starNode.setValueG(curAStarNode.getValueG() + ComGraph.EDGE_COST);
             } else {
                 starNode.setValueG(curAStarNode.getValueG() + ComGraph.EDGE_COST + ComGraph.SWERVE_COST);
@@ -112,8 +110,7 @@ public class AStar implements Algorithm {
         } else if (openMap.containsKey(nodeNum)) {
             int swerveCost = 0;
             int[] parentPosition = Common.calculateNodePosition(curAStarNode.getParentAStarNode().getNodeNum(), graph);
-            if ((parentPosition[0] ^ curPosition[0]) != (curPosition[0] ^ nextPosition[0])
-                    && (parentPosition[1] ^ curPosition[1]) != (curPosition[1] ^ nextPosition[1]) ) {
+            if (!isWalkStraight(parentPosition, curPosition, nextPosition)) {
                 swerveCost = ComGraph.SWERVE_COST;
             }
             AStarNode existAStarNode = openMap.get(nodeNum);
@@ -136,6 +133,11 @@ public class AStar implements Algorithm {
                     + Math.abs(ComGraph.EDGE_COST *nodePosition[0] - (ComGraph.EDGE_COST *endEdgeStartPosition[0] + (ComGraph.EDGE_COST / 2) * (endEdgeEndPosition[0] - endEdgeStartPosition[0])));
         }
         return 0;
+    }
+
+    private boolean isWalkStraight(int[] parentPosition, int[] curPosition, int[] nextPosition) {
+        return (parentPosition[0] == curPosition[0] ? 0 : 1) == (curPosition[0] == nextPosition[0] ? 0 : 1)
+                && (parentPosition[1] == curPosition[1] ? 0 : 1) == (curPosition[1] == nextPosition[1] ? 0 : 1);
     }
 
     private class AStarNode {

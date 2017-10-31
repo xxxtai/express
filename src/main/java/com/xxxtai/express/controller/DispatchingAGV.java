@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 public class DispatchingAGV implements Runnable {
     @Resource
     private Graph graph;
-    @Resource(name = "dijkstra")
+    @Resource(name = "AStar")
     private Algorithm algorithm;
 
     public DispatchingAGV() {}
