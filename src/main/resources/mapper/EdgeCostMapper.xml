@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxxtai.express.dao.EdgeCostDAO" >
+    <resultMap id="BaseResultMap" type="com.xxxtai.express.model.EdgeCost" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+        <result column="edge_num" property="edgeNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="cost" property="cost" jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result column="agv_num" property="agvNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="start_node_num" property="startNodeNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="end_node_num" property="endNodeNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="target_city_code" property="targetCityCode" jdbcType="BIGINT" javaType="java.lang.Long"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,create_time,modify_time, edge_num, cost, agv_num, start_node_num, end_node_num,target_city_code
+    </sql>
+
+    <select id="getCostsByEdgeNum" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM edge_cost
+        WHERE edge_num = #{edgeNum}
+    </select>
+
+    <insert id="insert" parameterType="com.xxxtai.express.model.EdgeCost" >
+        INSERT INTO
+        edge_cost
+        (create_time, modify_time, edge_num, cost, agv_num, start_node_num, end_node_num,target_city_code)
+        VALUES
+        (#{createTime},  #{modifyTime}, #{edgeNum}, #{cost}, #{agvNum}, #{startNodeNum}, #{endNodeNum}, #{targetCityCode})
+    </insert>
+
+    <!--<update id="update" parameterType="com.xxxtai.dispatch.domain.StationDO" >-->
+        <!--UPDATE-->
+        <!--station_info-->
+        <!--SET-->
+        <!--<if test="dispatchNo != null">dispatch_no = #{dispatchNo}</if>-->
+        <!--<if test="taskType != null">,task_type = #{taskType}</if>-->
+        <!--<if test="matterType != null">,matter_type = #{matterType}</if>-->
+        <!--<if test="dispatchFinished != null">,dispatch_finished = #{dispatchFinished}</if>-->
+
+        <!--WHERE station_no = #{stationNo}-->
+    <!--</update>-->
+
+    <!--<delete id="delete" parameterType="java.lang.Long" >-->
+        <!--DELETE FROM-->
+        <!--station_info-->
+        <!--WHERE-->
+        <!--station_no = #{stationNo}-->
+    <!--</delete>-->
+
+</mapper>

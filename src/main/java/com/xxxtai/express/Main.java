@@ -1,4 +1,4 @@
-package com.xxxtai.express.main;
+package com.xxxtai.express;
 
 import com.xxxtai.express.view.DrawingGui;
 import com.xxxtai.express.view.SchedulingGui;
