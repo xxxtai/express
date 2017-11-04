@@ -178,7 +178,7 @@ public class AGVCar implements Car {
 
     public void setRouteNodeNumArray(List<Integer> arrayList) {
         this.stopCardNum = arrayList.get(arrayList.size() - 1);
-        this.trafficControl.setRouteNodeNumArray(arrayList);
+        this.trafficControl.setRouteNodeList(arrayList);
         this.onDuty = true;
     }
 

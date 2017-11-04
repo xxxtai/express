@@ -1,17 +1,18 @@
 package com.xxxtai.express.controller;
 
-import com.xxxtai.express.constant.City;
 import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.dao.CacheExecutor;
-import com.xxxtai.express.dao.EdgeCostDAO;
 import com.xxxtai.express.model.*;
 import com.xxxtai.express.constant.NodeFunction;
+import com.xxxtai.express.toolKit.Absolute2Relative;
 import com.xxxtai.express.toolKit.Common;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -19,7 +20,7 @@ import java.util.List;
 @Slf4j(topic = "develop")
 public class TrafficControlImpl implements TrafficControl {
     private final long ABNORMAL_COST = 180000;
-    private List<Integer> routeNodeNumArray;
+    private LinkedList<Integer> routeNodeList;
     private Node lastLockedNode;
     private Edge lastLockedEdge;
     private Node lockedNode;
@@ -30,12 +31,15 @@ public class TrafficControlImpl implements TrafficControl {
     private CacheExecutor cacheExecutor;
     @Resource
     private Graph graph;
+    @Resource(name = "AStar")
+    private Algorithm algorithm;
+
 
 
     public boolean isStopToWait(int cardNum, boolean isStart) {
-        if (this.routeNodeNumArray == null) {
-            log.warn("{}AGV receive cardNum:{} but routeNodeNumArray:{} lastLockedEdge:{} lastLockedNode:{}",
-                    car.getAGVNum(), cardNum, routeNodeNumArray, lastLockedEdge, lastLockedNode);
+        if (this.routeNodeList == null) {
+            log.warn("{}AGV receive cardNum:{} but routeNodeList:{} lastLockedEdge:{} lastLockedNode:{}",
+                    car.getAGVNum(), cardNum, routeNodeList, lastLockedEdge, lastLockedNode);
             tryLockEdgeWithoutRoute(cardNum);
             return false;
         }
@@ -46,6 +50,7 @@ public class TrafficControlImpl implements TrafficControl {
         }
 
         if (NodeFunction.Junction.equals(graph.getNodeMap().get(cardNum).getFunction())) {
+            this.routeNodeList.removeFirst();
             if (lastLockedEdge != null ) {
                 long cost = System.currentTimeMillis() - lockedEdgeStartTime;
                 if (cost < ABNORMAL_COST && cost > 0) {
@@ -56,7 +61,7 @@ public class TrafficControlImpl implements TrafficControl {
                 }
 
                 try {
-                    tryUnlockEdge(cardNum);
+                    unlockEdge(cardNum);
                 } catch (Exception e) {
                     log.error("exception: "+car.getAGVNum()+"  cardNum : " + cardNum, e);
                 }
@@ -70,9 +75,9 @@ public class TrafficControlImpl implements TrafficControl {
             }
             StringBuilder logMessage = new StringBuilder();
             logMessage.append(car.getAGVNum()).append("AGV receive cardNum:").append(cardNum);
-            tryUnlockNode(logMessage);
+            unlockNode(logMessage);
             return tryLockNodeEdge(cardNum, logMessage);
-        } else if (cardNum != routeNodeNumArray.get(2)) {
+        } else if (cardNum != routeNodeList.get(2)) {
             log.error("不应该出现的情况! AGVNum:" + this.car.getAGVNum() + " cardNum:" + cardNum
                     + " lastLockedEdge:" + lastLockedEdge
                     + " lastLockedNode:" + lastLockedNode);
@@ -83,7 +88,7 @@ public class TrafficControlImpl implements TrafficControl {
     private void tryLockEdgeWithoutRoute(int cardNum){
         if (NodeFunction.Parking.equals(graph.getNodeMap().get(cardNum).getFunction())) {
             if (lastLockedEdge != null) {
-                tryUnlockEdge(lockedEdge.cardNum);
+                unlockEdge(lockedEdge.cardNum);
             }
             lockedEdge = graph.getEdgeMap().get(cardNum);
             lockedEdge.setLocked();
@@ -92,62 +97,69 @@ public class TrafficControlImpl implements TrafficControl {
             car.sendMessageToAGV(Command.STOP.getCommand());
             log.info("命令" + car.getAGVNum() + "AGV停下来");
         } else if (lastLockedEdge != null){
-            tryUnlockEdge(lockedEdge.cardNum);
+            unlockEdge(lockedEdge.cardNum);
         }
     }
 
     private boolean tryLockNodeEdge(int cardNum, StringBuilder logMessage) {
-        Edge onTheEdge = graph.getEdgeMap().get(cardNum);
-        Node nextStartNode = null;
-        Node nextEndNode = null;
+        Node nextNode = null;
         Edge nextEdge = null;
-
-        for (int i = 0; i < this.routeNodeNumArray.size(); i++) {
-            if ((this.routeNodeNumArray.get(i).equals(onTheEdge.endNode.cardNum) && this.routeNodeNumArray.get(i + 1).equals(onTheEdge.startNode.cardNum))
-                    || (this.routeNodeNumArray.get(i).equals(onTheEdge.startNode.cardNum) && this.routeNodeNumArray.get(i + 1).equals(onTheEdge.endNode.cardNum))) {
-                nextStartNode = graph.getNodeMap().get(this.routeNodeNumArray.get(i + 1));
-                if ((i + 1) != this.routeNodeNumArray.size() - 2) {
-                    nextEndNode = graph.getNodeMap().get(this.routeNodeNumArray.get(i + 2));
-                } else {
-                    Edge edgeTmp = graph.getEdgeMap().get(this.routeNodeNumArray.get(this.routeNodeNumArray.size() - 1));
-                    if (edgeTmp.startNode.cardNum.equals(nextStartNode.cardNum)) {
-                        nextEndNode = edgeTmp.endNode;
-                    } else {
-                        nextEndNode = edgeTmp.startNode;
-                    }
-                }
-            }
+        if (this.routeNodeList.size() > 2) {
+            nextNode = graph.getNodeMap().get(this.routeNodeList.getFirst());
+            nextEdge = Common.calculateEdge(nextNode.cardNum, graph.getNodeMap().get(this.routeNodeList.get(1)).cardNum, graph);
+        } else if (this.routeNodeList.size() == 2) {
+            nextNode = graph.getNodeMap().get(this.routeNodeList.getFirst());
+            nextEdge = graph.getEdgeMap().get(this.routeNodeList.getLast());
         }
 
-        if (nextStartNode != null && nextEndNode != null) {
-            nextEdge = Common.calculateEdge(nextStartNode.cardNum, nextEndNode.cardNum, graph);
-        } else if (cardNum != routeNodeNumArray.get(routeNodeNumArray.size() - 1)) {
-            log.warn("不应该出现的情况！");
+        if (nextEdge == null || nextNode == null) {
+            //dao da zhong dian
+            return true;
         }
-        if (nextEdge != null) {
-            this.lockedEdge = nextEdge;
-            this.lockedNode = nextStartNode;
-            synchronized (this.lockedNode.cardNum) {
-                synchronized (this.lockedEdge.cardNum) {
-                    if (this.lockedEdge.isLocked()) {
+
+        this.lockedEdge = nextEdge;
+        this.lockedNode = nextNode;
+        synchronized (this.lockedNode.cardNum) {
+            synchronized (this.lockedEdge.cardNum) {
+                if (this.lockedEdge.isLocked()) {
+                    if (!isDeadlock(cardNum)) {
                         this.lockedEdge.waitQueue.offer(car);
                         logMessage.append("等待通过，因为").append(lockedEdge.cardNum).append("边被").append(lockedEdge.waitQueue.peek().getAGVNum()).append("AGV占用");
                         log.info(logMessage.toString());
                         return true;
-                    } else if (this.lockedNode.isLocked()) {
-                        this.lockedEdge.waitQueue.offer(car);
-                        this.lockedEdge.setLocked();
-                        this.lockedNode.waitQueue.offer(car);
-                        logMessage.append("占用").append(lockedEdge.cardNum).append("边,等待通过，因为").append(lockedNode.getCardNum()).append("点被").append(lockedNode.waitQueue.peek().getAGVNum()).append("AGV占用");
-                        log.info(logMessage.toString());
-                        return true;
                     } else {
-                        this.lockedEdge.waitQueue.offer(car);
-                        this.lockedEdge.setLocked();
-                        this.lockedNode.waitQueue.offer(car);
-                        this.lockedNode.setLocked();
-                        logMessage.append("占用").append(this.lockedEdge.cardNum).append("边和").append(this.lockedNode.cardNum).append("点，并通过");
+                        //deadlock
+                        log.error("deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!");
+                        Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(car.getStopCardNum()), true);
+
+                        if (path != null) {
+                            System.out.println();
+                            System.out.print(car.getAGVNum() + "AGVRoute:");
+                            for (Integer n : path.getRoute()) {
+                                System.out.print(n + "/");
+                            }
+                            System.out.print("--relative：");
+                            String routeString = Absolute2Relative.convert(graph, path);
+                            System.out.println(routeString);
+                            car.sendMessageToAGV(routeString);
+                            car.setRouteNodeNumArray(path.getRoute());
+                            return false;
+                        }
+                        return true;
                     }
+                } else if (this.lockedNode.isLocked()) {
+                    this.lockedEdge.waitQueue.offer(car);
+                    this.lockedEdge.setLocked();
+                    this.lockedNode.waitQueue.offer(car);
+                    logMessage.append("占用").append(lockedEdge.cardNum).append("边,等待通过，因为").append(lockedNode.getCardNum()).append("点被").append(lockedNode.waitQueue.peek().getAGVNum()).append("AGV占用");
+                    log.info(logMessage.toString());
+                    return true;
+                } else {
+                    this.lockedEdge.waitQueue.offer(car);
+                    this.lockedEdge.setLocked();
+                    this.lockedNode.waitQueue.offer(car);
+                    this.lockedNode.setLocked();
+                    logMessage.append("占用").append(this.lockedEdge.cardNum).append("边和").append(this.lockedNode.cardNum).append("点，并通过");
                 }
             }
         }
@@ -155,7 +167,7 @@ public class TrafficControlImpl implements TrafficControl {
         return false;
     }
 
-    private void tryUnlockEdge(int cardNum) {
+    private void unlockEdge(int cardNum) {
         synchronized (this.lastLockedEdge.cardNum) {
             Car myself = this.lastLockedEdge.waitQueue.poll();
             if (myself.getAGVNum() != car.getAGVNum()) {
@@ -187,7 +199,7 @@ public class TrafficControlImpl implements TrafficControl {
         }
     }
 
-    private void tryUnlockNode(StringBuilder logMessage) {
+    private void unlockNode(StringBuilder logMessage) {
         if (this.lockedNode != null && this.lockedNode.isLocked()) {
             synchronized (this.lockedNode.cardNum) {
                 Car myself = this.lockedNode.waitQueue.poll();
@@ -212,12 +224,70 @@ public class TrafficControlImpl implements TrafficControl {
         }
     }
 
-    public void setRouteNodeNumArray(List<Integer> routeNodeNumArray) {
-        this.routeNodeNumArray = routeNodeNumArray;
+    public void setRouteNodeList(List<Integer> routeNodeList) {
+        if (this.routeNodeList == null) {
+            this.routeNodeList = new LinkedList<>();
+        }
+        this.routeNodeList.clear();
+        this.routeNodeList.addAll(routeNodeList);
+        this.routeNodeList.removeFirst();
         if (isStopToWait(car.getReadCardNum(), true)) {
             car.sendMessageToAGV(Command.STOP.getCommand());
             log.info("命令" + car.getAGVNum() + "AGV停下来");
         }
+    }
+
+    private boolean isDeadlock(int cardNum){
+        List<Integer> lockLoop = new ArrayList<>(5);
+        lockLoop.add(cardNum);
+        lockLoop.add(lockedEdge.cardNum);
+        Car carOnLockedEdge = this.lockedEdge.waitQueue.peek();
+        List<Integer> route = carOnLockedEdge.getTrafficControl().getRouteNodeList();
+        Edge nextLockedEdge = null;
+        if (route.size() >= 2) {
+            nextLockedEdge = Common.calculateEdge(route.get(0),route.get(1), graph);
+        }
+
+        if (nextLockedEdge != null && nextLockedEdge.isLocked()
+                && nextLockedEdge.waitQueue.peek().getAGVNum() != carOnLockedEdge.getAGVNum()) {
+            lockLoop.add(nextLockedEdge.cardNum);
+            Car carOnNextLockedEdge = nextLockedEdge.waitQueue.peek();
+            List<Integer> routeNext = carOnNextLockedEdge.getTrafficControl().getRouteNodeList();
+            Edge nextNextLockedEdge = null;
+            if (routeNext.size() >= 2) {
+                nextNextLockedEdge = Common.calculateEdge(routeNext.get(0),routeNext.get(1), graph);
+            }
+
+            if (nextNextLockedEdge != null && nextNextLockedEdge.isLocked()
+                    && nextNextLockedEdge.waitQueue.peek().getAGVNum() != carOnNextLockedEdge.getAGVNum()) {
+                lockLoop.add(nextNextLockedEdge.cardNum);
+                Car carOnNextNextLockedEdge = nextNextLockedEdge.waitQueue.peek();
+                List<Integer> routeNextNext = carOnNextNextLockedEdge.getTrafficControl().getRouteNodeList();
+                Edge next3LockedEdge = null;
+                if (routeNextNext.size() >= 2) {
+                    next3LockedEdge = Common.calculateEdge(routeNextNext.get(0),routeNextNext.get(1), graph);
+                }
+
+                if (next3LockedEdge != null && next3LockedEdge.isLocked()
+                        && next3LockedEdge.waitQueue.peek().getAGVNum() != carOnNextNextLockedEdge.getAGVNum()) {
+                    lockLoop.add(nextNextLockedEdge.cardNum);
+                }
+            }
+        }
+
+        for (int i = 0; i < lockLoop.size(); i++) {
+            for (int j = i + 1; j <lockLoop.size(); j++) {
+                if (lockLoop.get(i).equals(lockLoop.get(j))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public List<Integer> getRouteNodeList() {
+        return this.routeNodeList;
     }
 
     public Node getLockedNode() {

@@ -16,7 +16,7 @@ public class AStar implements Algorithm {
     @Resource
     private Graph graph;
 
-    public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean isBackToEntrance) {
+    public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean ignoredLocked) {
         Map<Integer, AStarNode> openMap = new HashMap<>();
         Map<Integer, AStarNode> closeMap = new HashMap<>();
 
@@ -37,23 +37,26 @@ public class AStar implements Algorithm {
 
             if (curNodePosition[0] + 1 < graph.getRow()) {
                 int[] nextPosition = new int[]{curNodePosition[0] + 1, curNodePosition[1]};
-                addAndUpdateOpenMap(openMap, closeMap, nextPosition, curNodePosition,curAStarNode, endEdge);
+                addAndUpdateOpenMap(openMap, closeMap, nextPosition, curNodePosition,curAStarNode, endEdge, ignoredLocked);
             }
             if (curNodePosition[0] - 1 >= 0) {
                 int[] nextPosition = new int[]{curNodePosition[0] - 1, curNodePosition[1]};
-                addAndUpdateOpenMap(openMap, closeMap, nextPosition, curNodePosition,curAStarNode, endEdge);
+                addAndUpdateOpenMap(openMap, closeMap, nextPosition, curNodePosition,curAStarNode, endEdge, ignoredLocked);
             }
             if (curNodePosition[1] + 1 < graph.getColumn()) {
                 int[] nextPosition = new int[]{curNodePosition[0], curNodePosition[1] + 1};
-                addAndUpdateOpenMap(openMap, closeMap, nextPosition, curNodePosition,curAStarNode, endEdge);
+                addAndUpdateOpenMap(openMap, closeMap, nextPosition, curNodePosition,curAStarNode, endEdge, ignoredLocked);
             }
             if (curNodePosition[1] - 1 >= 0) {
                 int[] nextPosition = new int[]{curNodePosition[0], curNodePosition[1] - 1};
-                addAndUpdateOpenMap(openMap, closeMap, nextPosition, curNodePosition, curAStarNode, endEdge);
+                addAndUpdateOpenMap(openMap, closeMap, nextPosition, curNodePosition, curAStarNode, endEdge, ignoredLocked);
             }
 
             List<AStarNode> openList = Lists.newArrayList(openMap.values());
             openList.sort(((o1, o2) -> o2.getValueF() - o1.getValueF()));
+            if (openList.size() == 0) {
+                return null;
+            }
             AStarNode lateCloseAStarNode = openList.get(openList.size() - 1);
             lateCloseAStarNodeNum = lateCloseAStarNode.getNodeNum();
             closeMap.put(lateCloseAStarNodeNum, lateCloseAStarNode);
@@ -95,8 +98,13 @@ public class AStar implements Algorithm {
         return path;
     }
 
-    private void addAndUpdateOpenMap(Map<Integer, AStarNode> openMap, Map<Integer, AStarNode> closeMap, int[] nextPosition, int[] curPosition, AStarNode curAStarNode, Edge endEdge){
+    private void addAndUpdateOpenMap(Map<Integer, AStarNode> openMap, Map<Integer, AStarNode> closeMap, int[] nextPosition,
+                                     int[] curPosition, AStarNode curAStarNode, Edge endEdge, boolean ignoredLocked){
         int nodeNum = Common.calculateNodeNum(nextPosition, graph);
+        if (ignoredLocked && Common.calculateEdge(nodeNum, curAStarNode.nodeNum, graph).isLocked()) {
+            return;
+        }
+
         if (!openMap.containsKey(nodeNum) && !closeMap.containsKey(nodeNum)) {
             AStarNode starNode = new AStarNode(nodeNum, curAStarNode);
             int[] parentPosition = Common.calculateNodePosition(curAStarNode.getParentAStarNode().getNodeNum(), graph);

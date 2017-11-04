@@ -7,7 +7,9 @@ import com.xxxtai.express.model.Edge;
 import java.util.List;
 
 public interface TrafficControl {
-    void setRouteNodeNumArray(List<Integer> routeNodeNumArray);
+    void setRouteNodeList(List<Integer> routeNodeList);
+
+    List<Integer> getRouteNodeList();
 
     boolean isStopToWait(int cardNum, boolean f);
 

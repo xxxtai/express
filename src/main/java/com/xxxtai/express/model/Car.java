@@ -48,4 +48,6 @@ public interface Car {
     boolean isOnEntrance();
 
     String getDestination();
+
+    int getStopCardNum();
 }
