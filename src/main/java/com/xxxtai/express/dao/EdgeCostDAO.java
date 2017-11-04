@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface EdgeCostDAO {
     Integer insert(EdgeCost edgeCost);
+    Integer batchInsert(List<EdgeCost> edgeCosts);
     List<EdgeCost> getCostsByEdgeNum(Integer edgeNum);
+    int deleteAll();
 }

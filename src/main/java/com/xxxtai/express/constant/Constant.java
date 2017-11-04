@@ -11,6 +11,7 @@ public class Constant {
     public static final String SPLIT = "2F";///
     public static final String SUB_SPLIT = "2C";//,
     private static final Integer FIX_LENGTH = 2;
+    public static final Integer EDGE_COST_CACHE_NUM = 10;
 
     public static String getContent(String revMessage){
         return revMessage.substring(FIX_LENGTH, revMessage.length() - FIX_LENGTH);

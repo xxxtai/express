@@ -9,12 +9,12 @@
         <result column="cost" property="cost" jdbcType="BIGINT" javaType="java.lang.Long"/>
         <result column="agv_num" property="agvNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
         <result column="start_node_num" property="startNodeNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
-        <result column="end_node_num" property="endNodeNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
-        <result column="target_city_code" property="targetCityCode" jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result column="destination_node_num" property="destinationNodeNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result column="target_city" property="targetCity" jdbcType="VARCHAR" javaType="java.lang.String"/>
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id,create_time,modify_time, edge_num, cost, agv_num, start_node_num, end_node_num,target_city_code
+        id,create_time,modify_time, edge_num, cost, agv_num, start_node_num, destination_node_num,target_city
     </sql>
 
     <select id="getCostsByEdgeNum" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
@@ -27,9 +27,19 @@
     <insert id="insert" parameterType="com.xxxtai.express.model.EdgeCost" >
         INSERT INTO
         edge_cost
-        (create_time, modify_time, edge_num, cost, agv_num, start_node_num, end_node_num,target_city_code)
+        (create_time, modify_time, edge_num, cost, agv_num, start_node_num, destination_node_num,target_city)
         VALUES
-        (#{createTime},  #{modifyTime}, #{edgeNum}, #{cost}, #{agvNum}, #{startNodeNum}, #{endNodeNum}, #{targetCityCode})
+        (#{createTime},  #{modifyTime}, #{edgeNum}, #{cost}, #{agvNum}, #{startNodeNum}, #{destinationNodeNum}, #{targetCity})
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List" >
+        INSERT INTO
+        edge_cost
+        (create_time, modify_time, edge_num, cost, agv_num, start_node_num, destination_node_num,target_city)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.createTime},  #{item.modifyTime}, #{item.edgeNum}, #{item.cost}, #{item.agvNum}, #{item.startNodeNum}, #{item.destinationNodeNum}, #{item.targetCity})
+        </foreach>
     </insert>
 
     <!--<update id="update" parameterType="com.xxxtai.dispatch.domain.StationDO" >-->
@@ -44,11 +54,11 @@
         <!--WHERE station_no = #{stationNo}-->
     <!--</update>-->
 
-    <!--<delete id="delete" parameterType="java.lang.Long" >-->
-        <!--DELETE FROM-->
-        <!--station_info-->
-        <!--WHERE-->
-        <!--station_no = #{stationNo}-->
-    <!--</delete>-->
+    <delete id="deleteAll">
+        DELETE FROM
+        edge_cost
+        WHERE
+        id > 0
+    </delete>
 
 </mapper>

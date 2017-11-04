@@ -1,6 +1,9 @@
 package com.xxxtai.express.controller;
 
+import com.xxxtai.express.constant.City;
 import com.xxxtai.express.constant.Command;
+import com.xxxtai.express.dao.CacheExecutor;
+import com.xxxtai.express.dao.EdgeCostDAO;
 import com.xxxtai.express.model.*;
 import com.xxxtai.express.constant.NodeFunction;
 import com.xxxtai.express.toolKit.Common;
@@ -15,14 +18,19 @@ import java.util.List;
 @Scope("prototype")
 @Slf4j(topic = "develop")
 public class TrafficControlImpl implements TrafficControl {
+    private final long ABNORMAL_COST = 180000;
     private List<Integer> routeNodeNumArray;
     private Node lastLockedNode;
     private Edge lastLockedEdge;
     private Node lockedNode;
     private Edge lockedEdge;
+    private Car car;
+    private long lockedEdgeStartTime;
+    @Resource
+    private CacheExecutor cacheExecutor;
     @Resource
     private Graph graph;
-    private Car car;
+
 
     public boolean isStopToWait(int cardNum, boolean isStart) {
         if (this.routeNodeNumArray == null) {
@@ -37,12 +45,23 @@ public class TrafficControlImpl implements TrafficControl {
             return false;
         }
 
-        if (lastLockedEdge != null && NodeFunction.Junction.equals(graph.getNodeMap().get(cardNum).getFunction())) {
-            try {
-                tryUnlockEdge(cardNum);
-            } catch (Exception e) {
-                log.error("exception: "+car.getAGVNum()+"  cardNum : " + cardNum, e);
+        if (NodeFunction.Junction.equals(graph.getNodeMap().get(cardNum).getFunction())) {
+            if (lastLockedEdge != null ) {
+                long cost = System.currentTimeMillis() - lockedEdgeStartTime;
+                if (cost < ABNORMAL_COST && cost > 0) {
+                    EdgeCost edgeCost = new EdgeCost().setEdgeNum(lastLockedEdge.cardNum).setAgvNum(car.getAGVNum()).setCost(cost)
+                            .setStartNodeNum(0).setDestinationNodeNum(((AGVCar)car).getStopCardNum())
+                            .setTargetCity(car.getDestination() == null ? "null" : car.getDestination());
+                    cacheExecutor.batchInsert(edgeCost);
+                }
+
+                try {
+                    tryUnlockEdge(cardNum);
+                } catch (Exception e) {
+                    log.error("exception: "+car.getAGVNum()+"  cardNum : " + cardNum, e);
+                }
             }
+            lockedEdgeStartTime = System.currentTimeMillis();
             return false;
         } else if (NodeFunction.Parking.equals(graph.getNodeMap().get(cardNum).getFunction())) {
             if (!isStart) {

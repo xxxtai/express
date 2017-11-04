@@ -5,59 +5,65 @@ public class EdgeCost extends Base {
     private Long cost;
     private Integer agvNum;
     private Integer startNodeNum;
-    private Integer endNodeNum;
-    private Long targetCityCode;
+    private Integer destinationNodeNum;
+    private String targetCity;
 
     public Integer getEdgeNum() {
         return edgeNum;
     }
 
-    public void setEdgeNum(Integer edgeNum) {
+    public EdgeCost setEdgeNum(Integer edgeNum) {
         this.edgeNum = edgeNum;
+        return this;
     }
 
     public Long getCost() {
         return cost;
     }
 
-    public void setCost(Long cost) {
+    public EdgeCost setCost(Long cost) {
         this.cost = cost;
+        return this;
     }
 
     public Integer getAgvNum() {
         return agvNum;
     }
 
-    public void setAgvNum(Integer agvNum) {
+    public EdgeCost setAgvNum(Integer agvNum) {
         this.agvNum = agvNum;
+        return this;
     }
 
     public Integer getStartNodeNum() {
         return startNodeNum;
     }
 
-    public void setStartNodeNum(Integer startNodeNum) {
+    public EdgeCost setStartNodeNum(Integer startNodeNum) {
         this.startNodeNum = startNodeNum;
+        return this;
     }
 
-    public Integer getEndNodeNum() {
-        return endNodeNum;
+    public Integer getDestinationNodeNum() {
+        return destinationNodeNum;
     }
 
-    public void setEndNodeNum(Integer endNodeNum) {
-        this.endNodeNum = endNodeNum;
+    public EdgeCost setDestinationNodeNum(Integer destinationNodeNum) {
+        this.destinationNodeNum = destinationNodeNum;
+        return this;
     }
 
-    public Long getTargetCityCode() {
-        return targetCityCode;
+    public String getTargetCity() {
+        return targetCity;
     }
 
-    public void setTargetCityCode(Long targetCityCode) {
-        this.targetCityCode = targetCityCode;
+    public EdgeCost setTargetCity(String targetCity) {
+        this.targetCity = targetCity;
+        return this;
     }
 
     @Override
     public String toString(){
-        return String.format("edgeNum:%s, agvNum:%s, cost:%s, startNodeNum:%s, endNodeNum:%s, targetCityCode:%s", this.edgeNum, this.agvNum, this.cost,this.startNodeNum, this.endNodeNum, this.targetCityCode);
+        return String.format("edgeNum:%s, agvNum:%s, cost:%s, startNodeNum:%s, destinationNodeNum:%s, targetCity:%s", this.edgeNum, this.agvNum, this.cost,this.startNodeNum, this.destinationNodeNum, this.targetCity);
     }
 }
