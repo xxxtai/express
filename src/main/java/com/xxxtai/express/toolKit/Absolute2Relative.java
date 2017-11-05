@@ -7,8 +7,7 @@ import com.xxxtai.express.model.*;
 import java.util.List;
 
 public class Absolute2Relative {
-    private Absolute2Relative() {
-    }
+    private Absolute2Relative() {}
 
     public static String convert(Graph graph, Path path) {
         List<Integer> route = path.getRoute();
@@ -63,7 +62,7 @@ public class Absolute2Relative {
                         System.out.print(route.get(i + 1) + "的命令左/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.TURN_LEFT.getValue()));
                     }
-                } else if (graph.getNodeMap().get(route.get(i)).x > graph.getNodeMap().get(route.get(i + 1)).x) {//leftleftleftleftleftleft
+                } else if (graph.getNodeMap().get(route.get(i)).x > graph.getNodeMap().get(route.get(i + 1)).x) {
                     if (graph.getNodeMap().get(route.get(i + 2)).y > graph.getNodeMap().get(route.get(i + 1)).y) {
                         //左
                         System.out.print(route.get(i + 1) + "的命令左/");
@@ -81,14 +80,17 @@ public class Absolute2Relative {
             }
         }
 
-
-        for (Node node : graph.getNodeArray()) {
-            if (node.cardNum == path.endNodeNum) {
-                path.setStopNodeNum(node.cardNum);
-            }
+        if (Constant.USE_SERIAL) {
+            buffer.append(graph.getCardNumMap().get(path.getEndNodeNum())).append(Constant.SUB_SPLIT);
+        } else {
+            buffer.append(path.getEndNodeNum()).append(Constant.SUB_SPLIT);
         }
 
-        buffer.append(graph.getCardNumMap().get(path.getStopNodeNum()));
+        if (path.isBackwards()) {
+            buffer.append(Constant.BACKWARD);
+        } else {
+            buffer.append(Constant.FORWARD);
+        }
         buffer.append(Constant.SUFFIX);
 
         return buffer.toString();
@@ -98,7 +100,11 @@ public class Absolute2Relative {
         StringBuilder reString = new StringBuilder();
         for (Edge edge : graph.getEdgeArray()) {
             if ((edge.startNode.cardNum == startNode && edge.endNode.cardNum == endNode) || (edge.endNode.cardNum == startNode && edge.startNode.cardNum == endNode)) {
-                reString.append(graph.getCardNumMap().get(edge.cardNum));
+                if (Constant.USE_SERIAL) {
+                    reString.append(graph.getCardNumMap().get(edge.cardNum));
+                } else {
+                    reString.append(edge.cardNum);
+                }
             }
         }
         reString.append(Constant.SUB_SPLIT).append(Common.toHexString(command)).append(Constant.SPLIT);

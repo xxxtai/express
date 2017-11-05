@@ -17,6 +17,28 @@ public class AStar implements Algorithm {
     private Graph graph;
 
     public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean ignoredLocked) {
+        Path forwardPath = find(startEdge, endEdge, ignoredLocked);
+
+        Edge oppositeStartEdge = new Edge(startEdge.endNode, startEdge.startNode, startEdge.realDistance, startEdge.cardNum);
+        Path backwardPath = find(oppositeStartEdge, endEdge, ignoredLocked);
+
+        if (forwardPath != null && backwardPath != null) {
+            if (forwardPath.getCost() <= backwardPath.getCost()) {
+                return forwardPath;
+            } else {
+                backwardPath.setBackwards(true);
+                return backwardPath;
+            }
+        } else if (forwardPath != null) {
+            return forwardPath;
+        } else if (backwardPath != null) {
+            backwardPath.setBackwards(true);
+            return backwardPath;
+        }
+        return null;
+    }
+
+    private Path find(Edge startEdge, Edge endEdge, boolean ignoredLocked) {
         Map<Integer, AStarNode> openMap = new HashMap<>();
         Map<Integer, AStarNode> closeMap = new HashMap<>();
 
@@ -76,6 +98,9 @@ public class AStar implements Algorithm {
         }
         path.setEndNodeNum(endEdge.cardNum);
         AStarNode pStarNode = closeMap.get(endEdgeStartNode);
+        if (pStarNode.getParentAStarNode() == null) {
+            return null;
+        }
         int[] curPosition = Common.calculateNodePosition(pStarNode.getNodeNum(), graph);
         int[] prePosition = Common.calculateNodePosition(pStarNode.getParentAStarNode().getNodeNum(), graph);
         int[] endPosition = Common.calculateNodePosition(endEdgeEndNode, graph);

@@ -129,7 +129,7 @@ public class TrafficControlImpl implements TrafficControl {
                         return true;
                     } else {
                         //deadlock
-                        log.error("deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!");
+                        log.error(car.getAGVNum() + "AGV deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!");
                         Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(car.getStopCardNum()), true);
 
                         if (path != null) {

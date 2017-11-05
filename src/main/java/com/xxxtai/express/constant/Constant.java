@@ -10,8 +10,11 @@ public class Constant {
     public static final String HEART_PREFIX = "7E";//!
     public static final String SPLIT = "2F";///
     public static final String SUB_SPLIT = "2C";//,
+    public static final String BACKWARD = "BA";
+    public static final String FORWARD = "FA";
     private static final Integer FIX_LENGTH = 2;
     public static final Integer EDGE_COST_CACHE_NUM = 10;
+    public static final boolean USE_SERIAL = true;
 
     public static String getContent(String revMessage){
         return revMessage.substring(FIX_LENGTH, revMessage.length() - FIX_LENGTH);

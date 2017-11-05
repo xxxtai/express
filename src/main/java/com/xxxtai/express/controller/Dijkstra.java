@@ -71,7 +71,7 @@ public class Dijkstra implements Algorithm {
             uArray.get(indexMin).setRemove();
             removedCount++;
 
-            int tempStart = sArray.get(sArray.size() - 1).endNodeNum;
+            int tempStart = sArray.get(sArray.size() - 1).getEndNodeNum();
             for (int i = 0; i < size; i++) {
                 for (Edge edge : graph.getEdgeArray()) {
                     if ((edge.startNode.cardNum == tempStart && edge.endNode.cardNum == (i + 1))
@@ -89,7 +89,7 @@ public class Dijkstra implements Algorithm {
 
         Path returnPath = null;
         for (Path aSArray : sArray) {
-            if (aSArray.endNodeNum == endEdge.cardNum) {
+            if (aSArray.getEndNodeNum() == endEdge.cardNum) {
                 returnPath = aSArray;
                 ArrayList<Integer> tempArray = new ArrayList<>(returnPath.getRoute());
                 returnPath.getRoute().clear();

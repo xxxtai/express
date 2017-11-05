@@ -52,11 +52,16 @@ public class CommunicationWithAGV implements Runnable {
                 String[] c = content.split(Constant.SPLIT);
                 if (revMessage.startsWith(Constant.CARD_PREFIX)) {
                     int cardNum;
-                    if (c[0].length() % 2 == 0) {
-                        cardNum = graph.getSerialNumMap().get(c[0]);
+                    if (Constant.USE_SERIAL) {
+                        if (c[0].length() % 2 == 0) {
+                            cardNum = graph.getSerialNumMap().get(c[0]);
+                        } else {
+                            cardNum = graph.getSerialNumMap().get("0" + c[0]);
+                        }
                     } else {
-                        cardNum = graph.getSerialNumMap().get("0" + c[0]);
+                        cardNum = Integer.parseInt(c[0]);
                     }
+
                     if (cardNum != 0) {
 //                        car.sendMessageToAGV(Command.STOP.getCommand());
                         this.car.setReceiveCardNum(cardNum);
