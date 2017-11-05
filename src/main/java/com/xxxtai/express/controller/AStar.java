@@ -85,6 +85,10 @@ public class AStar implements Algorithm {
             openMap.remove(lateCloseAStarNodeNum);
         }
 
+        if (ignoredLocked && closeMap.size() == 2 && graph.getEdgeMap().get(endEdge.cardNum).isLocked()) {
+            return null;
+        }
+
         Path path = new Path();
         path.setStopNodeNum(endEdge.cardNum);
         int endEdgeStartNode = 0;

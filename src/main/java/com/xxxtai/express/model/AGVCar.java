@@ -63,11 +63,14 @@ public class AGVCar implements Car {
     }
 
     public void setReceiveCardNum(int cardNum) {
+        if (cardNum == readCardNum) {
+            return;
+        }
         this.readCardNum = cardNum;
         Edge edge = null;
         Node node = graph.getNodeMap().get(this.lastReadCardNum);
         if (node != null) {
-            edge = graph.getEdgeMap().get(cardNum);
+            edge = graph.getEdgeMap().get(this.readCardNum);
         }
 
         if (node != null && edge != null) {
@@ -78,13 +81,13 @@ public class AGVCar implements Car {
             }
         }
         this.lastReadCardNum = this.readCardNum;
-        if (cardNum == this.stopCardNum) {
+        if (this.readCardNum == this.stopCardNum) {
             Node n = graph.getNodeMap().get(this.stopCardNum);
             this.position.x = n.x;
             this.position.y = n.y;
             this.state = State.STOP;
         }
-        if (trafficControl.isStopToWait(cardNum, false)) {
+        if (trafficControl.isStopToWait(this.readCardNum, false)) {
             sendMessageToAGV(Command.STOP.getCommand());
             log.info("命令" + this.AGVNum + "AGV停下来");
         }

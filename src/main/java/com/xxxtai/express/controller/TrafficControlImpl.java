@@ -44,10 +44,10 @@ public class TrafficControlImpl implements TrafficControl {
             return false;
         }
 
-        if (lastLockedNode != null && cardNum == lastLockedNode.cardNum) {
-            log.warn(this.car.getAGVNum() + "AGV receive cardNum " + cardNum + "but duplicate");
-            return false;
-        }
+//        if (lastLockedNode != null && cardNum == lastLockedNode.cardNum) {
+//            log.warn(this.car.getAGVNum() + "AGV receive cardNum " + cardNum + "but duplicate");
+//            return false;
+//        }
 
         if (NodeFunction.Junction.equals(graph.getNodeMap().get(cardNum).getFunction())) {
             this.routeNodeList.removeFirst();
@@ -55,7 +55,7 @@ public class TrafficControlImpl implements TrafficControl {
                 long cost = System.currentTimeMillis() - lockedEdgeStartTime;
                 if (cost < ABNORMAL_COST && cost > 0) {
                     EdgeCost edgeCost = new EdgeCost().setEdgeNum(lastLockedEdge.cardNum).setAgvNum(car.getAGVNum()).setCost(cost)
-                            .setStartNodeNum(0).setDestinationNodeNum(((AGVCar)car).getStopCardNum())
+                            .setStartNodeNum(0).setDestinationNodeNum(car.getStopCardNum())
                             .setTargetCity(car.getDestination() == null ? "null" : car.getDestination());
                     cacheExecutor.batchInsert(edgeCost);
                 }
@@ -113,7 +113,8 @@ public class TrafficControlImpl implements TrafficControl {
         }
 
         if (nextEdge == null || nextNode == null) {
-            //dao da zhong dian
+            logMessage.append(">>>到达终点");
+            log.info(logMessage.toString());
             return true;
         }
 
