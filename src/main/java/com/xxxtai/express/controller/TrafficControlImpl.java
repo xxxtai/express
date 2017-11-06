@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 @Component
 @Scope("prototype")
@@ -117,27 +118,41 @@ public class TrafficControlImpl implements TrafficControl {
         synchronized (this.lockedNode.cardNum) {
             synchronized (this.lockedEdge.cardNum) {
                 if (this.lockedEdge.isLocked()) {
-                    if (!isDeadlock(cardNum)) {
-                        this.lockedEdge.waitQueue.offer(car);
-                        logMessage.append("等待通过，因为").append(lockedEdge.cardNum).append("边被").append(lockedEdge.waitQueue.peek().getAGVNum()).append("AGV占用");
-                        log.info(logMessage.toString());
-                        car.setExecutiveCommand(Command.STOP);
-                        return;
-                    } else {
-                        log.error(car.getAGVNum() + "AGV deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!");
-                        Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(car.getStopCardNum()), true);
+                    car.setExecutiveCommand(Command.STOP);
+                    this.lockedEdge.waitQueue.offer(car);
+                    logMessage.append("等待通过，因为").append(lockedEdge.cardNum).append("边被").append(lockedEdge.waitQueue.peek().getAGVNum()).append("AGV占用");
+                    log.info(logMessage.toString());
 
-                        if (path != null) {
-                            String[] routeString = Absolute2Relative.convert(graph, path);
-                            log.info(car.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
-                            car.sendMessageToAGV(routeString[0]);
-                            car.setRouteNodeNumArray(path.getRoute());
-                            return;
+                    List<Integer> lockLoop = isDeadlock(cardNum);
+                    if (lockLoop != null && !lockLoop.isEmpty()) {
+                        log.error(car.getAGVNum() + "AGV deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!");
+
+                        for (Integer lockEdgeNum : lockLoop) {
+                            Car lockCar = graph.getEdgeMap().get(lockEdgeNum).waitQueue.peek();
+                            Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(lockCar.getStopCardNum()), true);
+                            if (path != null) {
+                                String[] routeString = Absolute2Relative.convert(graph, path);
+                                log.info(lockCar.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
+                                lockCar.sendMessageToAGV(routeString[0]);
+                                lockCar.setRouteNodeNumArray(path.getRoute());
+
+                                Queue<Car> lockCarInWaitQueue = lockCar.getTrafficControl().getLockedEdge().waitQueue;
+                                int queueSize = lockCarInWaitQueue.size();
+                                for (int i = 0; i < queueSize; i++) {
+                                    Car carTemp = lockCarInWaitQueue.poll();
+                                    if (carTemp.getAGVNum() != lockCar.getAGVNum()) {
+                                        lockCarInWaitQueue.offer(carTemp);
+                                    }
+                                }
+
+
+
+                                return;
+                            }
                         }
-                        log.error(car.getAGVNum() + "AGV 无路可走！无路可走！无路可走！");
-                        car.setExecutiveCommand(Command.STOP);
-                        return;
+                        log.error("AGV 无路可走！无路可走！无路可走！");
                     }
+                    return;
                 } else if (this.lockedNode.isLocked()) {
                     this.lockedEdge.waitQueue.offer(car);
                     this.lockedEdge.setLocked();
@@ -163,7 +178,7 @@ public class TrafficControlImpl implements TrafficControl {
         synchronized (this.lastLockedEdge.cardNum) {
             Car myself = this.lastLockedEdge.waitQueue.poll();
             if (myself.getAGVNum() != car.getAGVNum()) {
-                log.error(" 不应该出现的情况！ " + car.getAGVNum() + "AGV通过交汇点准备解除lockedEdge,但是该AGV不在waitQueue顶端");
+                log.error(" 不应该出现的情况！ " + car.getAGVNum() + "AGV通过交汇点准备解除lastLockedEdge,但是该AGV不在waitQueue顶端");
             }
 
             if (!this.lastLockedEdge.waitQueue.isEmpty()) {
@@ -200,12 +215,12 @@ public class TrafficControlImpl implements TrafficControl {
                 }
                 if (!this.lockedNode.waitQueue.isEmpty()) {
                     Car carTmp = this.lockedNode.waitQueue.peek();
-                    if (carTmp.getTrafficControl().getLockedEdge().isLocked() &&
-                            carTmp.getTrafficControl().getLockedEdge().waitQueue.peek().getAGVNum() == carTmp.getAGVNum()) {
+                    if (carTmp.getTrafficControl().getLastLockedEdge().isLocked() &&
+                            carTmp.getTrafficControl().getLastLockedEdge().waitQueue.peek().getAGVNum() == carTmp.getAGVNum()) {
                         carTmp.setExecutiveCommand(Command.FORWARD);
                         logMessage.append(" >>> 解除占用").append(this.lockedNode.cardNum).append("点 >>> ").append(carTmp.getAGVNum()).append("AGV前进占用 >>>");
                     } else {
-                        log.error("不应该出现的情况！ {}AGV没有锁住{}边，就想通过！", carTmp.getAGVNum(), carTmp.getTrafficControl().getLockedEdge().cardNum);
+                        log.error("不应该出现的情况！ {}AGV没有锁住{}边，就想通过！", carTmp.getAGVNum(), carTmp.getTrafficControl().getLastLockedEdge().cardNum);
                     }
                 } else {
                     logMessage.append(" >>> ").append(this.lockedNode.cardNum).append("点完全被解除占用 >>>");
@@ -226,7 +241,7 @@ public class TrafficControlImpl implements TrafficControl {
         isStopToWait(car.getReadCardNum(), true);
     }
 
-    private boolean isDeadlock(int cardNum){
+    private List<Integer> isDeadlock(int cardNum){
         List<Integer> lockLoop = new ArrayList<>(5);
         lockLoop.add(cardNum);
         lockLoop.add(lockedEdge.cardNum);
@@ -267,11 +282,11 @@ public class TrafficControlImpl implements TrafficControl {
         for (int i = 0; i < lockLoop.size(); i++) {
             for (int j = i + 1; j <lockLoop.size(); j++) {
                 if (lockLoop.get(i).equals(lockLoop.get(j))) {
-                    return true;
+                    return lockLoop.subList(i, j);
                 }
             }
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -283,8 +298,12 @@ public class TrafficControlImpl implements TrafficControl {
         return this.lockedNode;
     }
 
-    public Edge getLockedEdge() {
+    public Edge getLastLockedEdge() {
         return this.lastLockedEdge;
+    }
+
+    public Edge getLockedEdge() {
+        return this.lockedEdge;
     }
 
     @Override

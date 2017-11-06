@@ -15,6 +15,8 @@ public interface TrafficControl {
 
     Node getLockedNode();
 
+    Edge getLastLockedEdge();
+
     Edge getLockedEdge();
 
     void setCar(Car car);
