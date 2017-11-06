@@ -129,23 +129,17 @@ public class TrafficControlImpl implements TrafficControl {
                         log.info(logMessage.toString());
                         return true;
                     } else {
-                        //deadlock
                         log.error(car.getAGVNum() + "AGV deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!");
                         Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(car.getStopCardNum()), true);
 
                         if (path != null) {
-                            System.out.println();
-                            System.out.print(car.getAGVNum() + "AGVRoute:");
-                            for (Integer n : path.getRoute()) {
-                                System.out.print(n + "/");
-                            }
-                            System.out.print("--relative：");
-                            String routeString = Absolute2Relative.convert(graph, path);
-                            System.out.println(routeString);
-                            car.sendMessageToAGV(routeString);
+                            String[] routeString = Absolute2Relative.convert(graph, path);
+                            log.info(car.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
+                            car.sendMessageToAGV(routeString[0]);
                             car.setRouteNodeNumArray(path.getRoute());
                             return false;
                         }
+                        log.error(car.getAGVNum() + "AGV 无路可走！无路可走！无路可走！");
                         return true;
                     }
                 } else if (this.lockedNode.isLocked()) {

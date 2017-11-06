@@ -86,6 +86,8 @@ public class AGVCar implements Car {
             this.position.x = n.x;
             this.position.y = n.y;
             this.state = State.STOP;
+            this.onDuty = false;
+            this.destination = null;
         }
         if (trafficControl.isStopToWait(this.readCardNum, false)) {
             sendMessageToAGV(Command.STOP.getCommand());
@@ -174,8 +176,10 @@ public class AGVCar implements Car {
             this.position.y = n.y;
             this.state = State.STOP;
         } else if (state == State.UNLOADED.getValue()) {
-            this.onDuty = false;
-            this.destination = null;
+            if (this.readCardNum == this.stopCardNum) {
+                this.onDuty = false;
+                this.destination = null;
+            }
         }
     }
 

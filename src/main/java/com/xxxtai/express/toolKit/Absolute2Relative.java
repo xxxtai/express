@@ -9,8 +9,9 @@ import java.util.List;
 public class Absolute2Relative {
     private Absolute2Relative() {}
 
-    public static String convert(Graph graph, Path path) {
+    public static String[] convert(Graph graph, Path path) {
         List<Integer> route = path.getRoute();
+        StringBuilder relative = new StringBuilder();
         StringBuilder buffer = new StringBuilder();
         buffer.append(Constant.ROUTE_PREFIX);
 
@@ -19,31 +20,29 @@ public class Absolute2Relative {
                 if (graph.getNodeMap().get(route.get(i)).y < graph.getNodeMap().get(route.get(i + 1)).y) {//down
                     if (graph.getNodeMap().get(route.get(i + 2)).x > graph.getNodeMap().get(route.get(i + 1)).x) {
                         //左1
-                        System.out.print(route.get(i + 1) + "的命令左");
+                        relative.append(route.get(i + 1)).append("的命令左");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.TURN_LEFT.getValue()));
                     } else if (graph.getNodeMap().get(route.get(i + 2)).x == graph.getNodeMap().get(route.get(i + 1)).x) {
                         //前3
-                        System.out.print(route.get(i + 1) + "的命令前/");
+                        relative.append(route.get(i + 1)).append("的命令前/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.GO_AHEAD.getValue()));
                     } else {
                         //右2
-                        System.out.print(route.get(i + 1) + "的命令右/");
+                        relative.append(route.get(i + 1)).append("的命令右/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.TURN_RIGHT.getValue()));
                     }
                 } else if (graph.getNodeMap().get(route.get(i)).y > graph.getNodeMap().get(route.get(i + 1)).y) {//up
                     if (graph.getNodeMap().get(route.get(i + 2)).x > graph.getNodeMap().get(route.get(i + 1)).x) {
                         //右
-                        System.out.print(route.get(i + 1) + "的命令右/");
-                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 2));
+                        relative.append(route.get(i + 1)).append("的命令右/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.TURN_RIGHT.getValue()));
                     } else if (graph.getNodeMap().get(route.get(i + 2)).x == graph.getNodeMap().get(route.get(i + 1)).x) {
                         //前
-                        System.out.print(route.get(i + 1) + "的命令前/");
-                        //System.out.println(commandString(graph, route.get(i), route.get(i+1), 3));
+                        relative.append(route.get(i + 1)).append("的命令前/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.GO_AHEAD.getValue()));
                     } else {
                         //左
-                        System.out.print(route.get(i + 1) + "的命令左/");
+                        relative.append(route.get(i + 1)).append("的命令左/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.TURN_LEFT.getValue()));
                     }
                 }
@@ -51,29 +50,29 @@ public class Absolute2Relative {
                 if (graph.getNodeMap().get(route.get(i)).x < graph.getNodeMap().get(route.get(i + 1)).x) {//right
                     if (graph.getNodeMap().get(route.get(i + 2)).y > graph.getNodeMap().get(route.get(i + 1)).y) {
                         //右
-                        System.out.print(route.get(i + 1) + "的命令右/");
+                        relative.append(route.get(i + 1)).append("的命令右/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.TURN_RIGHT.getValue()));
                     } else if (graph.getNodeMap().get(route.get(i + 2)).y == graph.getNodeMap().get(route.get(i + 1)).y) {
                         //前
-                        System.out.print(route.get(i + 1) + "的命令前/");
+                        relative.append(route.get(i + 1)).append("的命令前/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.GO_AHEAD.getValue()));
                     } else {
                         //左
-                        System.out.print(route.get(i + 1) + "的命令左/");
+                        relative.append(route.get(i + 1)).append("的命令左/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.TURN_LEFT.getValue()));
                     }
                 } else if (graph.getNodeMap().get(route.get(i)).x > graph.getNodeMap().get(route.get(i + 1)).x) {
                     if (graph.getNodeMap().get(route.get(i + 2)).y > graph.getNodeMap().get(route.get(i + 1)).y) {
                         //左
-                        System.out.print(route.get(i + 1) + "的命令左/");
+                        relative.append(route.get(i + 1)).append("的命令左/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.TURN_LEFT.getValue()));
                     } else if (graph.getNodeMap().get(route.get(i + 2)).y == graph.getNodeMap().get(route.get(i + 1)).y) {
                         //前
-                        System.out.print(route.get(i + 1) + "的命令前/");
+                        relative.append(route.get(i + 1)).append("的命令前/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.GO_AHEAD.getValue()));
                     } else {
                         //右
-                        System.out.print(route.get(i + 1) + "的命令右/");
+                        relative.append(route.get(i + 1)).append("的命令右/");
                         buffer.append(commandString(graph, route.get(i), route.get(i + 1), Command.TURN_RIGHT.getValue()));
                     }
                 }
@@ -93,7 +92,7 @@ public class Absolute2Relative {
         }
         buffer.append(Constant.SUFFIX);
 
-        return buffer.toString();
+        return new String[]{buffer.toString(), relative.toString()};
     }
 
     private static String commandString(Graph graph, int startNode, int endNode, int command) {
