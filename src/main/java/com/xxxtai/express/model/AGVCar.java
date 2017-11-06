@@ -21,8 +21,12 @@ public class AGVCar implements Car {
     private boolean finishEdge;
     private State state = State.STOP;
     private int count_3s;
+    private int count_1s;
     private int lastReadCardNum;
     private static final int FORWARD_PIX = 7;
+    private boolean firstlyExecutiveCommand = true;
+    private @Getter @Setter
+    Command executiveCommand;
 
     private @Getter @Setter
     String destination;
@@ -89,10 +93,8 @@ public class AGVCar implements Car {
             this.onDuty = false;
             this.destination = null;
         }
-        if (trafficControl.isStopToWait(this.readCardNum, false)) {
-            sendMessageToAGV(Command.STOP.getCommand());
-            log.info("命令" + this.AGVNum + "AGV停下来");
-        }
+
+        trafficControl.isStopToWait(this.readCardNum, false);
     }
 
     public void stepByStep() {
@@ -134,6 +136,26 @@ public class AGVCar implements Car {
         } else {
             this.count_3s++;
         }
+
+        if (this.count_1s == 20) {
+            this.count_1s = 0;
+            if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
+                    && !this.firstlyExecutiveCommand) {
+                sendMessageToAGV(executiveCommand.getCommand());
+                log.info("111111111111111111111111111111111111111111111111111" + executiveCommand.getDescription());
+            }
+        } else {
+            this.count_1s++;
+        }
+
+        if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
+                && this.firstlyExecutiveCommand) {
+            sendMessageToAGV(executiveCommand.getCommand());
+            this.firstlyExecutiveCommand = false;
+        } else if (this.executiveCommand != null && this.executiveCommand.getValue() == this.state.getValue()
+                && !this.firstlyExecutiveCommand) {
+            this.firstlyExecutiveCommand = true;
+        }
     }
 
     private void setAtEdge(Edge edge) {
@@ -141,7 +163,7 @@ public class AGVCar implements Car {
         this.position.x = this.atEdge.startNode.x;
         this.position.y = this.atEdge.startNode.y;
         this.finishEdge = false;
-        this.state = State.FORWARD;
+//        this.state = State.FORWARD;
         judgeOrientation();
     }
 

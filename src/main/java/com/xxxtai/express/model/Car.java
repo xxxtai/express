@@ -1,5 +1,6 @@
 package com.xxxtai.express.model;
 
+import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.controller.CommunicationWithAGV;
 import com.xxxtai.express.controller.TrafficControl;
 import com.xxxtai.express.constant.Orientation;
@@ -50,4 +51,6 @@ public interface Car {
     String getDestination();
 
     int getStopCardNum();
+
+    void setExecutiveCommand(Command command);
 }

@@ -11,7 +11,7 @@ public interface TrafficControl {
 
     List<Integer> getRouteNodeList();
 
-    boolean isStopToWait(int cardNum, boolean f);
+    void isStopToWait(int cardNum, boolean f);
 
     Node getLockedNode();
 
