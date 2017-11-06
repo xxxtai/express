@@ -131,11 +131,6 @@ public class TrafficControlImpl implements TrafficControl {
                             Car lockCar = graph.getEdgeMap().get(lockEdgeNum).waitQueue.peek();
                             Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(lockCar.getStopCardNum()), true);
                             if (path != null) {
-                                String[] routeString = Absolute2Relative.convert(graph, path);
-                                log.info(lockCar.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
-                                lockCar.sendMessageToAGV(routeString[0]);
-                                lockCar.setRouteNodeNumArray(path.getRoute());
-
                                 Queue<Car> lockCarInWaitQueue = lockCar.getTrafficControl().getLockedEdge().waitQueue;
                                 int queueSize = lockCarInWaitQueue.size();
                                 for (int i = 0; i < queueSize; i++) {
@@ -145,8 +140,10 @@ public class TrafficControlImpl implements TrafficControl {
                                     }
                                 }
 
-
-
+                                String[] routeString = Absolute2Relative.convert(graph, path);
+                                log.info(lockCar.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
+                                lockCar.sendMessageToAGV(routeString[0]);
+                                lockCar.setRouteNodeNumArray(path.getRoute());
                                 return;
                             }
                         }
@@ -252,29 +249,38 @@ public class TrafficControlImpl implements TrafficControl {
             nextLockedEdge = Common.calculateEdge(route.get(0),route.get(1), graph);
         }
 
-        if (nextLockedEdge != null && nextLockedEdge.isLocked()
-                && nextLockedEdge.waitQueue.peek().getAGVNum() != carOnLockedEdge.getAGVNum()) {
-            lockLoop.add(nextLockedEdge.cardNum);
-            Car carOnNextLockedEdge = nextLockedEdge.waitQueue.peek();
-            List<Integer> routeNext = carOnNextLockedEdge.getTrafficControl().getRouteNodeList();
-            Edge nextNextLockedEdge = null;
-            if (routeNext.size() >= 2) {
-                nextNextLockedEdge = Common.calculateEdge(routeNext.get(0),routeNext.get(1), graph);
-            }
+        if (nextLockedEdge != null) {
+            synchronized (nextLockedEdge.cardNum) {
+                if (nextLockedEdge.isLocked() && nextLockedEdge.waitQueue.peek().getAGVNum() != carOnLockedEdge.getAGVNum()) {
+                    lockLoop.add(nextLockedEdge.cardNum);
+                    Car carOnNextLockedEdge = nextLockedEdge.waitQueue.peek();
+                    List<Integer> routeNext = carOnNextLockedEdge.getTrafficControl().getRouteNodeList();
+                    Edge nextNextLockedEdge = null;
+                    if (routeNext.size() >= 2) {
+                        nextNextLockedEdge = Common.calculateEdge(routeNext.get(0),routeNext.get(1), graph);
+                    }
 
-            if (nextNextLockedEdge != null && nextNextLockedEdge.isLocked()
-                    && nextNextLockedEdge.waitQueue.peek().getAGVNum() != carOnNextLockedEdge.getAGVNum()) {
-                lockLoop.add(nextNextLockedEdge.cardNum);
-                Car carOnNextNextLockedEdge = nextNextLockedEdge.waitQueue.peek();
-                List<Integer> routeNextNext = carOnNextNextLockedEdge.getTrafficControl().getRouteNodeList();
-                Edge next3LockedEdge = null;
-                if (routeNextNext.size() >= 2) {
-                    next3LockedEdge = Common.calculateEdge(routeNextNext.get(0),routeNextNext.get(1), graph);
-                }
+                    if (nextNextLockedEdge != null) {
+                        synchronized (nextNextLockedEdge.cardNum) {
+                            if (nextNextLockedEdge.isLocked() && nextNextLockedEdge.waitQueue.peek().getAGVNum() != carOnNextLockedEdge.getAGVNum()) {
+                                lockLoop.add(nextNextLockedEdge.cardNum);
+                                Car carOnNextNextLockedEdge = nextNextLockedEdge.waitQueue.peek();
+                                List<Integer> routeNextNext = carOnNextNextLockedEdge.getTrafficControl().getRouteNodeList();
+                                Edge next3LockedEdge = null;
+                                if (routeNextNext.size() >= 2) {
+                                    next3LockedEdge = Common.calculateEdge(routeNextNext.get(0),routeNextNext.get(1), graph);
+                                }
 
-                if (next3LockedEdge != null && next3LockedEdge.isLocked()
-                        && next3LockedEdge.waitQueue.peek().getAGVNum() != carOnNextNextLockedEdge.getAGVNum()) {
-                    lockLoop.add(nextNextLockedEdge.cardNum);
+                                if (next3LockedEdge != null) {
+                                    synchronized (next3LockedEdge.cardNum) {
+                                        if (next3LockedEdge.isLocked() && next3LockedEdge.waitQueue.peek().getAGVNum() != carOnNextNextLockedEdge.getAGVNum()) {
+                                            lockLoop.add(nextNextLockedEdge.cardNum);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
