@@ -208,7 +208,7 @@ public class TrafficControlImpl implements TrafficControl {
             synchronized (this.lockedNode.cardNum) {
                 Car myself = this.lockedNode.waitQueue.poll();
                 if (myself.getAGVNum() != car.getAGVNum()) {
-                    log.error("不应该出现的情况！ {}AGV通过停车点准备解除lockedNode,但是该AGV不在waitQueue顶端", car.getAGVNum());
+                    log.error("不应该出现的情况！ {}AGV通过停车点准备解除{}lockedNode,但是该AGV不在waitQueue顶端", car.getAGVNum(), this.lockedNode.cardNum);
                 }
                 if (!this.lockedNode.waitQueue.isEmpty()) {
                     Car carTmp = this.lockedNode.waitQueue.peek();
@@ -222,8 +222,8 @@ public class TrafficControlImpl implements TrafficControl {
                 } else {
                     logMessage.append(" >>> ").append(this.lockedNode.cardNum).append("点完全被解除占用 >>>");
                     this.lockedNode.unlock();
-                    this.lockedNode = null;
                 }
+                this.lockedNode = null;
             }
         }
     }
