@@ -43,7 +43,7 @@ public class CommunicationWithAGV implements Runnable {
         setup();
 
         while (true) {
-            if (!connectedTest(4500)) {
+            if (!connectedTest(7500)) {
                 break;
             }
 

@@ -245,8 +245,10 @@ public class TrafficControlImpl implements TrafficControl {
         Car carOnLockedEdge = this.lockedEdge.waitQueue.peek();
         List<Integer> route = carOnLockedEdge.getTrafficControl().getRouteNodeList();
         Edge nextLockedEdge = null;
-        if (route.size() >= 2) {
+        if (route.size() > 2) {
             nextLockedEdge = Common.calculateEdge(route.get(0),route.get(1), graph);
+        } else if (route.size() == 2) {
+            nextLockedEdge = graph.getEdgeMap().get(route.get(1));
         }
 
         if (nextLockedEdge != null) {
