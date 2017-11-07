@@ -17,7 +17,6 @@ import javax.annotation.Resource;
 
 @Slf4j(topic = "develop")
 public class AGVCar implements Car {
-    private Point position = new Point(-200, -200);
     private boolean finishEdge;
     private State state = State.STOP;
     private int count_3s;
@@ -25,6 +24,8 @@ public class AGVCar implements Car {
     private int lastReadCardNum;
     private static final int FORWARD_PIX = 7;
     private boolean firstlyExecutiveCommand = true;
+    private @Setter
+    Point position = new Point(-200, -200);
     private @Getter @Setter
     Command executiveCommand;
 
@@ -140,7 +141,7 @@ public class AGVCar implements Car {
         if (this.count_1s == 20) {
             this.count_1s = 0;
             if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
-                    && !this.firstlyExecutiveCommand) {
+                    && !this.state.equals(State.COLLIED) && !this.firstlyExecutiveCommand) {
                 sendMessageToAGV(executiveCommand.getCommand());
                 log.info("111111111111111111111111111111111111111111111111111" + executiveCommand.getDescription());
             }
@@ -149,7 +150,7 @@ public class AGVCar implements Car {
         }
 
         if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
-                && this.firstlyExecutiveCommand) {
+                && !this.state.equals(State.COLLIED) && this.firstlyExecutiveCommand) {
             sendMessageToAGV(executiveCommand.getCommand());
             this.firstlyExecutiveCommand = false;
         } else if (this.executiveCommand != null && this.executiveCommand.getValue() == this.state.getValue()
@@ -189,20 +190,13 @@ public class AGVCar implements Car {
         }
     }
 
-    public void setState(int state) {
-        if (state == State.FORWARD.getValue()) {
-            this.state = State.FORWARD;
-        } else if (state == State.STOP.getValue() && atEdge != null) {
-            Node n = graph.getNodeMap().get(this.atEdge.cardNum);
-            this.position.x = n.x;
-            this.position.y = n.y;
-            this.state = State.STOP;
-        } else if (state == State.UNLOADED.getValue()) {
-            if (this.readCardNum == this.stopCardNum) {
-                this.onDuty = false;
-                this.destination = null;
-            }
-        }
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    @Override
+    public State getState() {
+        return this.state;
     }
 
     public void setRouteNodeNumArray(List<Integer> arrayList) {

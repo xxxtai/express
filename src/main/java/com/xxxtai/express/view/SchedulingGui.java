@@ -1,11 +1,13 @@
 package com.xxxtai.express.view;
 
+import com.xxxtai.express.constant.State;
 import com.xxxtai.express.controller.DispatchingAGV;
 import com.xxxtai.express.model.Car;
 import com.xxxtai.express.model.Edge;
 import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.model.Node;
 import com.xxxtai.express.toolKit.Common;
+import org.springframework.jca.cci.CciOperationNotSupportedException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -19,6 +21,7 @@ public abstract class SchedulingGui extends JPanel{
     private static final long serialVersionUID = 1L;
     private RoundButton settingGuiBtn;
     private RoundButton drawingGuiBtn;
+    private JLabel stateLabel;
     @Resource
     private DrawingGraph drawingGraph;
     @Resource
@@ -43,9 +46,10 @@ public abstract class SchedulingGui extends JPanel{
         drawingGuiBtn = new RoundButton("制图界面");
         drawingGuiBtn.setBounds(2 * screenSize.width / 3, 0, screenSize.width / 3, screenSize.height / 20);
 
-        JLabel stateLabel = new JLabel();
-        stateLabel.setBounds(0, 22 * screenSize.height / 25, screenSize.width, screenSize.height / 25);
-        stateLabel.setFont(new Font("宋体", Font.BOLD, 25));
+        stateLabel = new JLabel();
+        stateLabel.setBounds(0, 24 * screenSize.height / 26, screenSize.width, screenSize.height / 26);
+        stateLabel.setFont(new Font("宋体", Font.BOLD, 20));
+        stateLabel.setForeground(Color.RED);
 
         this.setLayout(null);
         this.add(schedulingGuiBtn);
@@ -58,6 +62,11 @@ public abstract class SchedulingGui extends JPanel{
             for (Car car : AGVArray) {
                 car.stepByStep();
                 car.heartBeat();
+                if (car.getState().equals(State.COLLIED)) {
+                    if (!stateLabel.getText().contains(car.getAGVNum() + "AGV")) {
+                        stateLabel.setText(stateLabel.getText() + car.getAGVNum() + "AGV碰撞！");
+                    }
+                }
             }
         });
         executors = Executors.newFixedThreadPool(2);

@@ -6,7 +6,8 @@ public enum State {
     FORWARD(1, "前进"),
     STOP(2, "停止"),
     BACKWARD(3, "后退"),
-    UNLOADED(4, "卸货完成");
+    UNLOADED(4, "卸货完成"),
+    COLLIED(5, "相撞");
 
     private @Getter
     Integer value;

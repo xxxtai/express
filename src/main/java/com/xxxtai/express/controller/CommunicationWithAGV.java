@@ -1,16 +1,18 @@
 package com.xxxtai.express.controller;
 
-
-import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.constant.Constant;
+import com.xxxtai.express.constant.State;
+import com.xxxtai.express.model.AGVCar;
 import com.xxxtai.express.model.Car;
 import com.xxxtai.express.model.Graph;
+import com.xxxtai.express.model.Node;
 import com.xxxtai.express.toolKit.Common;
 import com.xxxtai.express.toolKit.ReaderWriter;
 import com.xxxtai.express.view.SchedulingGui;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Resource;
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -63,11 +65,24 @@ public class CommunicationWithAGV implements Runnable {
                     }
 
                     if (cardNum != 0) {
-//                        car.sendMessageToAGV(Command.STOP.getCommand());
                         this.car.setReceiveCardNum(cardNum);
                     }
                 } else if (revMessage.startsWith(Constant.STATE_PREFIX)) {
-                    this.car.setState(Integer.parseInt(c[0], 16));
+                    int stateValue = Integer.parseInt(c[0], 16);
+                    if (stateValue == State.FORWARD.getValue()) {
+                        this.car.setState(State.FORWARD);
+                    } else if (stateValue == State.STOP.getValue() && this.car.getAtEdge() != null) {
+                        Node n = graph.getNodeMap().get(this.car.getAtEdge().cardNum);
+                        ((AGVCar)this.car).setPosition(new Point(n.x, n.y));
+                        this.car.setState(State.STOP);
+                    } else if (stateValue == State.UNLOADED.getValue()) {
+                        if (this.car.getReadCardNum() == this.car.getStopCardNum()) {
+                            ((AGVCar)this.car).setOnDuty(false);
+                            ((AGVCar)this.car).setDestination(null);
+                        }
+                    } else if (stateValue == State.COLLIED.getValue()) {
+                        this.car.setState(State.COLLIED);
+                    }
                 }
             }
            Common.delay(20);
