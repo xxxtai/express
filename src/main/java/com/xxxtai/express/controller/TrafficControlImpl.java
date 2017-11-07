@@ -243,35 +243,21 @@ public class TrafficControlImpl implements TrafficControl {
         lockLoop.add(cardNum);
         lockLoop.add(lockedEdge.cardNum);
         Car carOnLockedEdge = this.lockedEdge.waitQueue.peek();
-        List<Integer> route = carOnLockedEdge.getTrafficControl().getRouteNodeList();
-        Edge nextLockedEdge = null;
-        if (route.size() > 2) {
-            nextLockedEdge = Common.calculateEdge(route.get(0),route.get(1), graph);
-        } else if (route.size() == 2) {
-            nextLockedEdge = graph.getEdgeMap().get(route.get(1));
-        }
+        Edge nextLockedEdge = carOnLockedEdge.getTrafficControl().getLockedEdge();
 
         if (nextLockedEdge != null) {
             synchronized (nextLockedEdge.cardNum) {
                 if (nextLockedEdge.isLocked() && nextLockedEdge.waitQueue.peek().getAGVNum() != carOnLockedEdge.getAGVNum()) {
                     lockLoop.add(nextLockedEdge.cardNum);
                     Car carOnNextLockedEdge = nextLockedEdge.waitQueue.peek();
-                    List<Integer> routeNext = carOnNextLockedEdge.getTrafficControl().getRouteNodeList();
-                    Edge nextNextLockedEdge = null;
-                    if (routeNext.size() >= 2) {
-                        nextNextLockedEdge = Common.calculateEdge(routeNext.get(0),routeNext.get(1), graph);
-                    }
+                    Edge nextNextLockedEdge = carOnNextLockedEdge.getTrafficControl().getLockedEdge();
 
                     if (nextNextLockedEdge != null) {
                         synchronized (nextNextLockedEdge.cardNum) {
                             if (nextNextLockedEdge.isLocked() && nextNextLockedEdge.waitQueue.peek().getAGVNum() != carOnNextLockedEdge.getAGVNum()) {
                                 lockLoop.add(nextNextLockedEdge.cardNum);
                                 Car carOnNextNextLockedEdge = nextNextLockedEdge.waitQueue.peek();
-                                List<Integer> routeNextNext = carOnNextNextLockedEdge.getTrafficControl().getRouteNodeList();
-                                Edge next3LockedEdge = null;
-                                if (routeNextNext.size() >= 2) {
-                                    next3LockedEdge = Common.calculateEdge(routeNextNext.get(0),routeNextNext.get(1), graph);
-                                }
+                                Edge next3LockedEdge = carOnNextNextLockedEdge.getTrafficControl().getLockedEdge();
 
                                 if (next3LockedEdge != null) {
                                     synchronized (next3LockedEdge.cardNum) {
