@@ -83,7 +83,7 @@ public class DrawingGraph {
         }
     }
 
-    public void drawingAGV(Graphics g, ArrayList<Car> AGVArray, JPanel panel) {
+    public void drawingAGV(Graphics g, List<Car> AGVArray, JPanel panel) {
         g.setFont(new Font("Dialog", Font.BOLD, 25));
         for (Car car : AGVArray) {
             Image leftImage;

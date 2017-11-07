@@ -130,8 +130,11 @@ public class AStar implements Algorithm {
     private void addAndUpdateOpenMap(Map<Integer, AStarNode> openMap, Map<Integer, AStarNode> closeMap, int[] nextPosition,
                                      int[] curPosition, AStarNode curAStarNode, Edge endEdge, boolean ignoredLocked){
         int nodeNum = Common.calculateNodeNum(nextPosition, graph);
-        if (ignoredLocked && Common.calculateEdge(nodeNum, curAStarNode.nodeNum, graph).isLocked()) {
-            return;
+        if (ignoredLocked) {
+            Edge edge = Common.calculateEdge(nodeNum, curAStarNode.nodeNum, graph);
+            if (edge.isLocked() || graph.getEntranceMap().containsKey(edge.cardNum)) {
+                return;
+            }
         }
 
         if (!openMap.containsKey(nodeNum) && !closeMap.containsKey(nodeNum)) {

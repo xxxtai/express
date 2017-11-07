@@ -1,11 +1,8 @@
 package com.xxxtai.express.model;
 
-import com.xxxtai.express.constant.Command;
-import com.xxxtai.express.constant.Constant;
+import com.xxxtai.express.constant.*;
 import com.xxxtai.express.controller.CommunicationWithAGV;
 import com.xxxtai.express.controller.TrafficControl;
-import com.xxxtai.express.constant.Orientation;
-import com.xxxtai.express.constant.State;
 import com.xxxtai.express.toolKit.Common;
 import lombok.Getter;
 import lombok.Setter;
@@ -72,19 +69,22 @@ public class AGVCar implements Car {
             return;
         }
         this.readCardNum = cardNum;
-        Edge edge = null;
         Node node = graph.getNodeMap().get(this.lastReadCardNum);
-        if (node != null) {
-            edge = graph.getEdgeMap().get(this.readCardNum);
-        }
-
-        if (node != null && edge != null) {
+        if (node != null && node.getFunction().equals(NodeFunction.Junction)) {
+            Edge edge = graph.getEdgeMap().get(this.readCardNum);
+            this.position.x = edge.CARD_POSITION.x;
+            this.position.y = edge.CARD_POSITION.y;
             if (edge.startNode.cardNum.equals(node.cardNum)) {
                 setAtEdge(edge);
             } else if (edge.endNode.cardNum.equals(node.cardNum)) {
                 setAtEdge(new Edge(edge.endNode, edge.startNode, edge.realDistance, edge.cardNum));
             }
+        } else {
+            Node node1 = graph.getNodeMap().get(this.readCardNum);
+            this.position.x = node1.x;
+            this.position.y = node1.y;
         }
+
         this.lastReadCardNum = this.readCardNum;
         if (this.readCardNum == this.stopCardNum) {
             Node n = graph.getNodeMap().get(this.stopCardNum);
@@ -99,35 +99,35 @@ public class AGVCar implements Car {
     }
 
     public void stepByStep() {
-        if (!finishEdge && atEdge != null && (state == State.FORWARD || state == State.BACKWARD)) {
-            if (atEdge.startNode.x == atEdge.endNode.x) {
-                if (atEdge.startNode.y < atEdge.endNode.y) {
-                    if (this.position.y < atEdge.endNode.y) {
-                        this.position.y += FORWARD_PIX;
-                    } else {
-                        finishEdge = true;
-                    }
-                } else if (atEdge.startNode.y > atEdge.endNode.y) {
-                    if (this.position.y > atEdge.endNode.y) {
-                        this.position.y -= FORWARD_PIX;
-                    } else {
-                        finishEdge = true;
-                    }
-                }
-            } else if (atEdge.startNode.y == atEdge.endNode.y) {
-                if (atEdge.startNode.x < atEdge.endNode.x) {
-                    if (this.position.x < atEdge.endNode.x)
-                        this.position.x += FORWARD_PIX;
-                    else
-                        finishEdge = true;
-                } else if (atEdge.startNode.x > atEdge.endNode.x) {
-                    if (this.position.x > atEdge.endNode.x)
-                        this.position.x -= FORWARD_PIX;
-                    else
-                        finishEdge = true;
-                }
-            }
-        }
+//        if (!finishEdge && atEdge != null && (state == State.FORWARD || state == State.BACKWARD)) {
+//            if (atEdge.startNode.x == atEdge.endNode.x) {
+//                if (atEdge.startNode.y < atEdge.endNode.y) {
+//                    if (this.position.y < atEdge.endNode.y) {
+//                        this.position.y += FORWARD_PIX;
+//                    } else {
+//                        finishEdge = true;
+//                    }
+//                } else if (atEdge.startNode.y > atEdge.endNode.y) {
+//                    if (this.position.y > atEdge.endNode.y) {
+//                        this.position.y -= FORWARD_PIX;
+//                    } else {
+//                        finishEdge = true;
+//                    }
+//                }
+//            } else if (atEdge.startNode.y == atEdge.endNode.y) {
+//                if (atEdge.startNode.x < atEdge.endNode.x) {
+//                    if (this.position.x < atEdge.endNode.x)
+//                        this.position.x += FORWARD_PIX;
+//                    else
+//                        finishEdge = true;
+//                } else if (atEdge.startNode.x > atEdge.endNode.x) {
+//                    if (this.position.x > atEdge.endNode.x)
+//                        this.position.x -= FORWARD_PIX;
+//                    else
+//                        finishEdge = true;
+//                }
+//            }
+//        }
     }
 
     public void heartBeat() {
@@ -161,10 +161,9 @@ public class AGVCar implements Car {
 
     private void setAtEdge(Edge edge) {
         this.atEdge = edge;
-        this.position.x = this.atEdge.startNode.x;
-        this.position.y = this.atEdge.startNode.y;
+//        this.position.x = this.atEdge.startNode.x;
+//        this.position.y = this.atEdge.startNode.y;
         this.finishEdge = false;
-//        this.state = State.FORWARD;
         judgeOrientation();
     }
 
