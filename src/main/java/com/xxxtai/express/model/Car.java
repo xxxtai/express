@@ -9,7 +9,7 @@ import com.xxxtai.express.constant.Orientation;
 import java.util.List;
 
 public interface Car {
-    void init(int num);
+    void init(int AGVNum, int positionCardNum);
 
     void setReceiveCardNum(int cardNum);
 

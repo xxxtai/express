@@ -59,8 +59,8 @@ public class AGVCar implements Car {
     @Resource
     private Graph graph;
 
-    public void init(int num) {
-        this.AGVNum = num;
+    public void init(int AGVNum, int positionCardNum) {
+        this.AGVNum = AGVNum;
         trafficControl.setCar(this);
     }
 

@@ -3,11 +3,7 @@ package com.xxxtai.express.view;
 import com.xxxtai.express.constant.State;
 import com.xxxtai.express.controller.DispatchingAGV;
 import com.xxxtai.express.model.Car;
-import com.xxxtai.express.model.Edge;
-import com.xxxtai.express.model.Graph;
-import com.xxxtai.express.model.Node;
 import com.xxxtai.express.toolKit.Common;
-import org.springframework.jca.cci.CciOperationNotSupportedException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -76,7 +72,7 @@ public abstract class SchedulingGui extends JPanel{
     public void init() {
         for (int i = 0; i < 10; i++) {
             Car car = getCar();
-            car.init(i + 1);
+            car.init(i + 1, 0);
             AGVArray.add(car);
         }
 

@@ -17,8 +17,8 @@ public class ComGraph implements Graph{
     public static final String PATH_NAME = "C:\\Users\\xxxta\\work\\Graph.xls";
     public static final int EDGE_COST = 10;
     public static final int SWERVE_COST = 20;
-    private int row = 5;
-    private int column = 6;
+    private int row;
+    private int column;
     private @Getter
     Map<Integer, Node> nodeMap;
     private @Getter
@@ -31,6 +31,8 @@ public class ComGraph implements Graph{
     Map<String, Integer> serialNumMap;
     private @Getter
     Map<Integer, String> cardNumMap;
+    private @Getter
+    Map<Integer, Integer> AGVSPosition;
 
     public ComGraph() {
         nodeMap = new HashMap<>();
@@ -39,6 +41,7 @@ public class ComGraph implements Graph{
         serialNumMap = new HashMap<>();
         cardNumMap = new HashMap<>();
         entranceMap = new HashMap<>();
+        AGVSPosition = new HashMap<>();
         importNewGraph(PATH_NAME);
     }
 
@@ -112,6 +115,21 @@ public class ComGraph implements Graph{
                     cardNumMap.put(cardNum, serialNum);
                     serialNumMap.put(serialNum, cardNum);
                 }
+            }
+
+            Sheet sheetAGVSPosition = wb.getSheet("AGVSPosition");
+            if (sheetAGVSPosition != null) {
+                for (int i = 0; i < sheetAGVSPosition.getRows(); i++) {
+                    int AGVNum = Integer.parseInt(sheetAGVSPosition.getCell(0, i).getContents());
+                    int cardNum = Integer.parseInt(sheetAGVSPosition.getCell(1, i).getContents());
+                    AGVSPosition.put(AGVNum, cardNum);
+                }
+            }
+
+            Sheet sheetInformation = wb.getSheet("information");
+            if (sheetInformation != null) {
+                this.row = Integer.parseInt(sheetInformation.getCell(0, 0).getContents());
+                this.column = Integer.parseInt(sheetInformation.getCell(0, 1).getContents());
             }
 
             wb.close();

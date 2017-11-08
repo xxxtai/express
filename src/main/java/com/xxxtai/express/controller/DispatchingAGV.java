@@ -51,7 +51,7 @@ public class DispatchingAGV implements Runnable {
                             graph.getEntranceMap().get(minEntrance).getQueue().offer(car);
                         }
                     } else {
-                        City selectCity = cities[random.nextInt(cities.length - 1)];
+                        City selectCity = cities[random.nextInt(8 - 1)];
                         log.info("派遣AGV" + car.getAGVNum() + "去 " + selectCity.getName() + " 分拣出口");
                         List<Exit> exits = graph.getExitMap().get(selectCity.getCode());
                         Exit selectExit = exits.get(exits.size() - 1 == 0 ? 0 : random.nextInt(exits.size() - 1));
