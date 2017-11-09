@@ -130,7 +130,7 @@ public class TrafficControlImpl implements TrafficControl {
                         }
                         log.error(car.getAGVNum() + "AGV deadlock!!!deadlock!!!deadlock!!! " + builder.toString());
 
-                        if (resolveDeadLock(lockLoop)) {
+                        if (!resolveDeadLock(lockLoop)) {
                             log.error(car.getAGVNum() + "AGV 无路可走！无路可走！无路可走！");
                         }
                     }
@@ -309,6 +309,7 @@ public class TrafficControlImpl implements TrafficControl {
                 lockCarInWaitQueue.offer(carTemp);
             }
         }
+        lockCar.getTrafficControl().setLockedNode(null);
 
         String[] routeString = Absolute2Relative.convert(graph, path);
         log.info(lockCar.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
@@ -323,6 +324,10 @@ public class TrafficControlImpl implements TrafficControl {
 
     public Node getLockedNode() {
         return this.lockedNode;
+    }
+
+    public void setLockedNode(Node node){
+        this.lockedNode = node;
     }
 
     public Edge getLastLockedEdge() {

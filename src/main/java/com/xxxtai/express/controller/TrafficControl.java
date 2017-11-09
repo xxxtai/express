@@ -15,6 +15,8 @@ public interface TrafficControl {
 
     Node getLockedNode();
 
+    void setLockedNode(Node node);
+
     Edge getLastLockedEdge();
 
     Edge getLockedEdge();

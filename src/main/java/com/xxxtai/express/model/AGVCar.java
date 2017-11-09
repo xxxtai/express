@@ -111,7 +111,7 @@ public class AGVCar implements Car {
             if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
                     && !this.state.equals(State.COLLIED) && !this.firstlyExecutiveCommand) {
                 sendMessageToAGV(executiveCommand.getCommand());
-                log.info("111111111111111111111111111111111111111111111111111" + executiveCommand.getDescription());
+                log.info("111111111111111111111111111111111111111111111111111" + this.getAGVNum() + "AGV" + executiveCommand.getDescription());
             }
         } else {
             this.count_1s++;
