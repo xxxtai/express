@@ -2,7 +2,6 @@ package com.xxxtai.express.model;
 
 import com.xxxtai.express.constant.*;
 import com.xxxtai.express.controller.TrafficControl;
-import com.xxxtai.express.netty.CommunicationWithAGVHandler;
 import com.xxxtai.express.toolKit.Common;
 import io.netty.channel.socket.SocketChannel;
 import lombok.Getter;

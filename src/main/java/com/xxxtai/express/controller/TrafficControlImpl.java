@@ -1,5 +1,6 @@
 package com.xxxtai.express.controller;
 
+import com.xxxtai.express.constant.City;
 import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.dao.CacheExecutor;
 import com.xxxtai.express.model.*;
@@ -131,23 +132,32 @@ public class TrafficControlImpl implements TrafficControl {
                             Car lockCar = graph.getEdgeMap().get(lockEdgeNum).waitQueue.peek();
                             Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(lockCar.getStopCardNum()), true);
                             if (path != null) {
-                                Queue<Car> lockCarInWaitQueue = lockCar.getTrafficControl().getLockedEdge().waitQueue;
-                                int queueSize = lockCarInWaitQueue.size();
-                                for (int i = 0; i < queueSize; i++) {
-                                    Car carTemp = lockCarInWaitQueue.poll();
-                                    if (carTemp.getAGVNum() != lockCar.getAGVNum()) {
-                                        lockCarInWaitQueue.offer(carTemp);
-                                    }
-                                }
-
-                                String[] routeString = Absolute2Relative.convert(graph, path);
-                                log.info(lockCar.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
-                                lockCar.sendMessageToAGV(routeString[0]);
-                                lockCar.setRouteNodeNumArray(path.getRoute());
+                                deadLockedCarPath(lockCar, path);
                                 return;
                             }
                         }
-                        log.error("AGV 无路可走！无路可走！无路可走！");
+
+                        for (Integer lockEdgeNum : lockLoop) {
+                            Car lockCar = graph.getEdgeMap().get(lockEdgeNum).waitQueue.peek();
+                            if (lockCar.getDestination() == null) {
+                                continue;
+                            }
+                            List<Exit> exits = graph.getExitMap().get(City.valueOfName(lockCar.getDestination()).getCode());
+                            for (Exit exit : exits) {
+                                for (int exitNum :exit.getExitNodeNums()) {
+                                    if (exitNum == car.getStopCardNum()) {
+                                        continue;
+                                    }
+                                    Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(lockCar.getStopCardNum()), true);
+                                    if (path != null) {
+                                        deadLockedCarPath(lockCar, path);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
+                        log.error(car.getAGVNum() + "AGV 无路可走！无路可走！无路可走！");
                     }
                     return;
                 } else if (this.lockedNode.isLocked()) {
@@ -281,6 +291,22 @@ public class TrafficControlImpl implements TrafficControl {
             }
         }
         return null;
+    }
+
+    private void deadLockedCarPath(Car lockCar, Path path){
+        Queue<Car> lockCarInWaitQueue = lockCar.getTrafficControl().getLockedEdge().waitQueue;
+        int queueSize = lockCarInWaitQueue.size();
+        for (int i = 0; i < queueSize; i++) {
+            Car carTemp = lockCarInWaitQueue.poll();
+            if (carTemp.getAGVNum() != lockCar.getAGVNum()) {
+                lockCarInWaitQueue.offer(carTemp);
+            }
+        }
+
+        String[] routeString = Absolute2Relative.convert(graph, path);
+        log.info(lockCar.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
+        lockCar.sendMessageToAGV(routeString[0]);
+        lockCar.setRouteNodeNumArray(path.getRoute());
     }
 
     @Override
