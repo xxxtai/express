@@ -1,9 +1,10 @@
 package com.xxxtai.express.model;
 
 import com.xxxtai.express.constant.*;
-import com.xxxtai.express.controller.CommunicationWithAGV;
 import com.xxxtai.express.controller.TrafficControl;
+import com.xxxtai.express.netty.CommunicationWithAGVHandler;
 import com.xxxtai.express.toolKit.Common;
+import io.netty.channel.socket.SocketChannel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +15,10 @@ import javax.annotation.Resource;
 
 @Slf4j(topic = "develop")
 public class AGVCar implements Car {
-    private boolean finishEdge;
     private State state = State.STOP;
     private int count_3s;
     private int count_1s;
     private int lastReadCardNum;
-    private static final int FORWARD_PIX = 7;
     private boolean firstlyExecutiveCommand = true;
     private @Setter
     Point position = new Point(-200, -200);
@@ -27,13 +26,13 @@ public class AGVCar implements Car {
     Command executiveCommand;
 
     private @Getter @Setter
+    SocketChannel socketChannel;
+
+    private @Getter @Setter
     String destination;
 
     private @Getter
     int stopCardNum;
-
-    private @Setter
-    CommunicationWithAGV communicationWithAGV;
 
     private @Getter
     Orientation orientation = Orientation.LEFT;
@@ -98,37 +97,7 @@ public class AGVCar implements Car {
         trafficControl.isStopToWait(this.readCardNum, false);
     }
 
-    public void stepByStep() {
-//        if (!finishEdge && atEdge != null && (state == State.FORWARD || state == State.BACKWARD)) {
-//            if (atEdge.startNode.x == atEdge.endNode.x) {
-//                if (atEdge.startNode.y < atEdge.endNode.y) {
-//                    if (this.position.y < atEdge.endNode.y) {
-//                        this.position.y += FORWARD_PIX;
-//                    } else {
-//                        finishEdge = true;
-//                    }
-//                } else if (atEdge.startNode.y > atEdge.endNode.y) {
-//                    if (this.position.y > atEdge.endNode.y) {
-//                        this.position.y -= FORWARD_PIX;
-//                    } else {
-//                        finishEdge = true;
-//                    }
-//                }
-//            } else if (atEdge.startNode.y == atEdge.endNode.y) {
-//                if (atEdge.startNode.x < atEdge.endNode.x) {
-//                    if (this.position.x < atEdge.endNode.x)
-//                        this.position.x += FORWARD_PIX;
-//                    else
-//                        finishEdge = true;
-//                } else if (atEdge.startNode.x > atEdge.endNode.x) {
-//                    if (this.position.x > atEdge.endNode.x)
-//                        this.position.x -= FORWARD_PIX;
-//                    else
-//                        finishEdge = true;
-//                }
-//            }
-//        }
-    }
+    public void stepByStep() {}
 
     public void heartBeat() {
         if (this.count_3s == 60) {
@@ -161,9 +130,6 @@ public class AGVCar implements Car {
 
     private void setAtEdge(Edge edge) {
         this.atEdge = edge;
-//        this.position.x = this.atEdge.startNode.x;
-//        this.position.y = this.atEdge.startNode.y;
-        this.finishEdge = false;
         judgeOrientation();
     }
 
@@ -184,8 +150,8 @@ public class AGVCar implements Car {
     }
 
     public void sendMessageToAGV(String message) {
-        if (this.communicationWithAGV != null) {
-            this.communicationWithAGV.writeHexString(message);
+        if (this.socketChannel != null) {
+            this.socketChannel.writeAndFlush(message);
         }
     }
 
@@ -202,11 +168,6 @@ public class AGVCar implements Car {
         this.stopCardNum = arrayList.get(arrayList.size() - 1);
         this.trafficControl.setRouteNodeList(arrayList);
         this.onDuty = true;
-    }
-
-    @Override
-    public Runnable getCommunicationRunnable() {
-        return communicationWithAGV;
     }
 
     public int getX() {

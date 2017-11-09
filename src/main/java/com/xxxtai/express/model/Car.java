@@ -5,6 +5,8 @@ import com.xxxtai.express.constant.State;
 import com.xxxtai.express.controller.CommunicationWithAGV;
 import com.xxxtai.express.controller.TrafficControl;
 import com.xxxtai.express.constant.Orientation;
+import com.xxxtai.express.netty.CommunicationWithAGVHandler;
+import io.netty.channel.socket.SocketChannel;
 
 import java.util.List;
 
@@ -23,7 +25,9 @@ public interface Car {
 
     int getY();
 
-    void setCommunicationWithAGV(CommunicationWithAGV communicationWithAGV);
+    void setSocketChannel(SocketChannel socketChannel);
+
+    SocketChannel getSocketChannel();
 
     void sendMessageToAGV(String route);
 
@@ -40,8 +44,6 @@ public interface Car {
     long getLastCommunicationTime();
 
     void setLastCommunicationTime(long time);
-
-    Runnable getCommunicationRunnable();
 
     TrafficControl getTrafficControl();
 

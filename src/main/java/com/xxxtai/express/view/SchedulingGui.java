@@ -1,8 +1,8 @@
 package com.xxxtai.express.view;
 
 import com.xxxtai.express.constant.State;
-import com.xxxtai.express.controller.DispatchingAGV;
 import com.xxxtai.express.model.Car;
+import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.toolKit.Common;
 
 import javax.annotation.PostConstruct;
@@ -10,8 +10,6 @@ import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public abstract class SchedulingGui extends JPanel{
     private static final long serialVersionUID = 1L;
@@ -21,13 +19,9 @@ public abstract class SchedulingGui extends JPanel{
     @Resource
     private DrawingGraph drawingGraph;
     @Resource
-    private Runnable monitorServerSocketRunnable;
-    @Resource
-    private DispatchingAGV dispatchingAGV;
+    private Graph graph;
     public static final ArrayList<Car> AGVArray = new ArrayList<>();
     private Timer timer;
-    private ExecutorService executors;
-
 
     public SchedulingGui() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -56,7 +50,6 @@ public abstract class SchedulingGui extends JPanel{
         timer = new Timer(50, e -> {
             repaint();
             for (Car car : AGVArray) {
-//                car.stepByStep();
                 car.heartBeat();
                 if (car.getState().equals(State.COLLIED)) {
                     if (!stateLabel.getText().contains(car.getAGVNum() + "AGV")) {
@@ -65,20 +58,17 @@ public abstract class SchedulingGui extends JPanel{
                 }
             }
         });
-        executors = Executors.newFixedThreadPool(2);
     }
 
     @PostConstruct
     public void init() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < graph.getAGVSPosition().size(); i++) {
             Car car = getCar();
             car.init(i + 1, 0);
             AGVArray.add(car);
         }
 
         timer.start();
-        executors.execute(monitorServerSocketRunnable);
-		executors.execute(dispatchingAGV);
     }
 
     @Override

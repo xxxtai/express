@@ -1,8 +1,12 @@
 package com.xxxtai.express;
 
+import com.xxxtai.express.controller.DispatchingAGV;
+import com.xxxtai.express.netty.NettyServerBootstrap;
 import com.xxxtai.express.view.DrawingGui;
 import com.xxxtai.express.view.SchedulingGui;
 import com.xxxtai.express.view.SettingGui;
+import io.netty.channel.Channel;
+import io.netty.channel.socket.SocketChannel;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
@@ -12,6 +16,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class Main extends JFrame {
@@ -22,6 +28,12 @@ public class Main extends JFrame {
     private SettingGui settingGui;
     @Resource
     private DrawingGui graphingGui;
+    @Resource
+    private DispatchingAGV dispatchingAGV;
+    @Resource
+    private NettyServerBootstrap nettyServerBootstrap;
+
+    private static Map<Integer, SocketChannel> nettyChannelMap;
 
     public Main() {
         super("AGV快递分拣系统");
@@ -38,14 +50,28 @@ public class Main extends JFrame {
         });
     }
 
+    public static Map<Integer, SocketChannel> getNettyChannelMap() {
+        return nettyChannelMap;
+    }
+
+    public static void setNettyChannelMap(Map<Integer, SocketChannel> nettyChannelMap) {
+        Main.nettyChannelMap = nettyChannelMap;
+    }
+
     private void init() {
         graphingGui.getGuiInstance(Main.this, schedulingGui, settingGui);
         settingGui.getGuiInstance(Main.this, schedulingGui, graphingGui);
         schedulingGui.getGuiInstance(Main.this, settingGui, graphingGui);
-
         this.getContentPane().add(schedulingGui);
         this.repaint();
         this.validate();
+
+        try {
+            nettyServerBootstrap.bind(8899);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        new Thread(dispatchingAGV).start();
     }
 
     private void exit() {
@@ -65,6 +91,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/beans.xml");
         Main main = context.getBean(Main.class);
+        nettyChannelMap = new ConcurrentHashMap<>();
         main.init();
     }
 }

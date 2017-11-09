@@ -90,7 +90,7 @@ public class DrawingGraph {
             Image rightImage;
             Image upImage;
             Image downImage;
-            if (car.getCommunicationRunnable() == null) {
+            if (car.getSocketChannel() == null) {
                 leftImage = leftImageR;
                 rightImage = rightImageR;
                 upImage = upImageR;
