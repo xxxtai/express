@@ -74,7 +74,7 @@ public abstract class SchedulingGui extends JPanel{
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        drawingGraph.drawingMap(g, DrawingGraph.Style.EXPRESS);
+        drawingGraph.drawingMap(g, DrawingGraph.Style.EXPRESS, false);
         drawingGraph.drawingAGV(g, AGVArray, this);
     }
 

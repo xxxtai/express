@@ -109,7 +109,7 @@ public class DrawingGui extends JPanel{
     public void paint(Graphics g) {
         super.paint(g);
         if (isImportGraph)
-            drawingGraph.drawingMap(g, DrawingGraph.Style.EXPRESS);
+            drawingGraph.drawingMap(g, DrawingGraph.Style.EXPRESS, false);
     }
 
     private void importExistGraph() {

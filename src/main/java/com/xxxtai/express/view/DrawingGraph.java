@@ -36,7 +36,7 @@ public class DrawingGraph {
         downImageR = tool.createImage(getClass().getResource("/images/downImage2.png"));
     }
 
-    public void drawingMap(Graphics g, Style style) {
+    public void drawingMap(Graphics g, Style style, boolean showNums) {
         ((Graphics2D) g).setStroke(new BasicStroke(6.0f));
         g.setColor(Color.BLACK);
 
@@ -62,7 +62,9 @@ public class DrawingGraph {
                 g.setColor(Color.blue);
             }
             g.setFont(new Font("宋体", Font.BOLD, 15));
-            g.drawString(String.valueOf(node.cardNum), node.x + 10, node.y - 10);
+            if (showNums) {
+                g.drawString(String.valueOf(node.cardNum), node.x + 10, node.y - 10);
+            }
         }
 
         for (List<Exit> list : graph.getExitMap().values()) {

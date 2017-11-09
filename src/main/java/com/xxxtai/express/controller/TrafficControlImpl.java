@@ -1,5 +1,6 @@
 package com.xxxtai.express.controller;
 
+import com.google.common.collect.Lists;
 import com.xxxtai.express.constant.City;
 import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.dao.CacheExecutor;
@@ -12,10 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 @Component
 @Scope("prototype")
@@ -126,38 +124,15 @@ public class TrafficControlImpl implements TrafficControl {
 
                     List<Integer> lockLoop = isDeadlock(cardNum);
                     if (lockLoop != null && !lockLoop.isEmpty()) {
-                        log.error(car.getAGVNum() + "AGV deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!deadlock!!!");
-
+                        StringBuilder builder = new StringBuilder();
                         for (Integer lockEdgeNum : lockLoop) {
-                            Car lockCar = graph.getEdgeMap().get(lockEdgeNum).waitQueue.peek();
-                            Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(lockCar.getStopCardNum()), true);
-                            if (path != null) {
-                                deadLockedCarPath(lockCar, path);
-                                return;
-                            }
+                            builder.append(lockEdgeNum).append("/");
                         }
+                        log.error(car.getAGVNum() + "AGV deadlock!!!deadlock!!!deadlock!!! " + builder.toString());
 
-                        for (Integer lockEdgeNum : lockLoop) {
-                            Car lockCar = graph.getEdgeMap().get(lockEdgeNum).waitQueue.peek();
-                            if (lockCar.getDestination() == null) {
-                                continue;
-                            }
-                            List<Exit> exits = graph.getExitMap().get(City.valueOfName(lockCar.getDestination()).getCode());
-                            for (Exit exit : exits) {
-                                for (int exitNum :exit.getExitNodeNums()) {
-                                    if (exitNum == car.getStopCardNum()) {
-                                        continue;
-                                    }
-                                    Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(lockCar.getStopCardNum()), true);
-                                    if (path != null) {
-                                        deadLockedCarPath(lockCar, path);
-                                        return;
-                                    }
-                                }
-                            }
+                        if (resolveDeadLock(lockLoop)) {
+                            log.error(car.getAGVNum() + "AGV 无路可走！无路可走！无路可走！");
                         }
-
-                        log.error(car.getAGVNum() + "AGV 无路可走！无路可走！无路可走！");
                     }
                     return;
                 } else if (this.lockedNode.isLocked()) {
@@ -291,6 +266,38 @@ public class TrafficControlImpl implements TrafficControl {
             }
         }
         return null;
+    }
+
+    private boolean resolveDeadLock(List<Integer> lockLoop){
+        for (Integer lockEdgeNum : lockLoop) {
+            Car lockCar = graph.getEdgeMap().get(lockEdgeNum).waitQueue.peek();
+            List<Path> paths = Lists.newArrayList();
+            if (lockCar.getDestination() == null) {
+                for (Entrance entrance : graph.getEntranceMap().values()) {
+                    Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(entrance.getCardNum()), true);
+                    if (path != null) {
+                        paths.add(path);
+                    }
+                }
+            } else {
+                List<Exit> exits = graph.getExitMap().get(City.valueOfName(lockCar.getDestination()).getCode());
+                for (Exit exit : exits) {
+                    for (int exitNum :exit.getExitNodeNums()) {
+                        Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(exitNum), true);
+                        if (path != null) {
+                            paths.add(path);
+                        }
+                    }
+                }
+            }
+
+            if (!paths.isEmpty()) {
+                paths.sort(Comparator.comparingInt(Path::getCost));
+                deadLockedCarPath(lockCar, paths.get(0));
+                return true;
+            }
+        }
+        return false;
     }
 
     private void deadLockedCarPath(Car lockCar, Path path){
