@@ -111,14 +111,14 @@ public class Dijkstra implements Algorithm {
             edge.setRemoved();
             removeEdge = edge;
             if (isBackToEntrance) {
-                if (graph.getEntranceMap().get(endNodeCardNum).getDirection().equals(Entrance.Direction.DOWN)) {
+                if (graph.getEntranceMap().get(endNodeCardNum).getDirection().equals(Entrance.Direction.RIGHT)) {
                     if (edge.startNode.getY() < edge.endNode.getY()) {
                         ((ComGraph)graph).addEdge(edge.startNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     } else {
                         ((ComGraph)graph).addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     }
                     return removeEdge;
-                } else if (graph.getEntranceMap().get(endNodeCardNum).getDirection().equals(Entrance.Direction.UP)){
+                } else if (graph.getEntranceMap().get(endNodeCardNum).getDirection().equals(Entrance.Direction.LEFT)){
                     if (edge.startNode.getY() < edge.endNode.getY()) {
                         ((ComGraph)graph).addEdge(edge.endNode.cardNum, endNodeCardNum, edge.realDistance / 2, 0);
                     } else {

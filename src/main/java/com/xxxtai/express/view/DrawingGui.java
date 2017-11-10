@@ -15,14 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import static com.xxxtai.express.controller.Dijkstra.MAXINT;
 
@@ -35,6 +35,7 @@ public class DrawingGui extends JPanel{
     private RoundButton settingGuiBtn;
     private RoundButton drawingGuiBtn;
     private RoundButton importGraphBtn;
+    private RoundButton reflectGraphBtn;
     private MyTextField rowField;
     private MyTextField columnField;
     private MyTextField realDistanceField;
@@ -69,18 +70,23 @@ public class DrawingGui extends JPanel{
         confirmBtn.setBounds(5 * screenSize.width / 12, 6 * screenSize.height / 15, screenSize.width / 6, screenSize.height / 20);
         confirmBtn.addActionListener(e -> createNewGraph(screenSize));
 
-        importGraphBtn = new RoundButton("导入地图");
-        importGraphBtn.setBounds(10 * screenSize.width / 12, 13 * screenSize.height / 15, screenSize.width / 9, screenSize.height / 20);
+        importGraphBtn = new RoundButton("导入");
+        importGraphBtn.setBounds(12 * screenSize.width / 15, 23 * screenSize.height / 25, screenSize.width / 15, screenSize.height / 22);
         importGraphBtn.addActionListener(e -> importExistGraph());
 
-        confirmAddExitBtn = new RoundButton("确认添加");
-        confirmAddExitBtn.setBounds(10 * screenSize.width / 12, 14 * screenSize.height / 15, screenSize.width / 9, screenSize.height / 20);
+        confirmAddExitBtn = new RoundButton("确认");
+        confirmAddExitBtn.setBounds(13 * screenSize.width / 15, 23 * screenSize.height / 25, screenSize.width / 15, screenSize.height / 22);
         confirmAddExitBtn.addActionListener(e -> writeExcel(graph));
+
+        reflectGraphBtn = new RoundButton("修改");
+        reflectGraphBtn.setBounds(14 * screenSize.width / 15, 23 * screenSize.height / 25, screenSize.width / 15, screenSize.height / 22);
+        reflectGraphBtn.addActionListener(e -> reflectGraph());
 
         this.setLayout(null);
         this.add(schedulingGuiBtn);
         this.add(settingGuiBtn);
         this.add(drawingGuiBtn);
+        this.add(reflectGraphBtn);
         this.add(columnField);
         this.add(realDistanceField);
         this.add(rowField);
@@ -122,6 +128,7 @@ public class DrawingGui extends JPanel{
         this.add(drawingGuiBtn);
         this.add(confirmAddExitBtn);
         this.add(importGraphBtn);
+        this.add(reflectGraphBtn);
     }
 
     private void addExit(MouseEvent e, String cityName) {
@@ -236,6 +243,30 @@ public class DrawingGui extends JPanel{
     public void getGuiInstance(JFrame main, JPanel schedulingGui, JPanel settingGui) {
         schedulingGuiBtn.addActionListener(e -> Common.changePanel(main, schedulingGui));
         settingGuiBtn.addActionListener(e -> Common.changePanel(main, settingGui));
+    }
+
+    private void reflectGraph(){
+        int X = graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
+        isImportGraph = false;
+        Map<Integer, Node> newNodeMap = new HashMap<>();
+        for (Node node : graph.getNodeMap().values()) {
+            if (node.x < X || (graph.getEntranceMap().containsKey(node.cardNum) && graph.getEntranceMap().get(node.cardNum).getDirection().equals(Entrance.Direction.LEFT))) {
+                newNodeMap.put(node.cardNum, new Node(node.cardNum, node.x - 100, node.y, node.getFunction()));
+            } else if (node.x > X || (graph.getEntranceMap().containsKey(node.cardNum) && graph.getEntranceMap().get(node.cardNum).getDirection().equals(Entrance.Direction.RIGHT))){
+                newNodeMap.put(node.cardNum, new Node(node.cardNum, node.x + 100, node.y, node.getFunction()));
+            }
+        }
+        graph.setNodeMap(newNodeMap);
+
+        Map<Integer, Edge> newEdgeMap = new HashMap<>();
+        for (Edge edge : graph.getEdgeArray()) {
+            newEdgeMap.put(edge.cardNum, new Edge(graph.getNodeMap().get(edge.startNode.cardNum), graph.getNodeMap().get(edge.endNode.cardNum),
+                    edge.realDistance, edge.cardNum));
+        }
+        graph.setEdgeMap(newEdgeMap);
+
+        writeExcel(graph);
+        isImportGraph = true;
     }
 
 

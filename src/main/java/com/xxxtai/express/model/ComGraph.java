@@ -4,6 +4,7 @@ import com.xxxtai.express.constant.NodeFunction;
 import jxl.Sheet;
 import jxl.Workbook;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -19,9 +20,9 @@ public class ComGraph implements Graph{
     public static final int SWERVE_COST = 20;
     private int row;
     private int column;
-    private @Getter
+    private @Getter @Setter
     Map<Integer, Node> nodeMap;
-    private @Getter
+    private @Getter @Setter
     Map<Integer, Edge> edgeMap;
     private @Getter
     Map<Long, List<Exit>> exitMap;
@@ -97,9 +98,9 @@ public class ComGraph implements Graph{
                     int direction = Integer.parseInt(sheetEntrance.getCell(1, i).getContents());
                     Entrance.Direction direct;
                     if(direction == 1){
-                        direct = Entrance.Direction.UP;
+                        direct = Entrance.Direction.RIGHT;
                     }else if (direction == 2){
-                        direct = Entrance.Direction.DOWN;
+                        direct = Entrance.Direction.LEFT;
                     }else {
                         direct = Entrance.Direction.NULL;
                     }

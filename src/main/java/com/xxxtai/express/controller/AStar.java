@@ -6,12 +6,14 @@ import com.xxxtai.express.model.Edge;
 import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.model.Path;
 import com.xxxtai.express.toolKit.Common;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.*;
 
 @Component
+@Slf4j(topic = "develop")
 public class AStar implements Algorithm {
     @Resource
     private Graph graph;

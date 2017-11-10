@@ -51,18 +51,20 @@ public class DispatchingAGV implements Runnable {
                             graph.getEntranceMap().get(minEntrance).getQueue().offer(car);
                         }
                     } else {
-                        City selectCity = cities[random.nextInt(8 - 1)];
+                        City selectCity = cities[random.nextInt(cities.length - 1)];
                         log.info("派遣AGV" + car.getAGVNum() + "去 " + selectCity.getName() + " 分拣出口");
-                        List<Exit> exits = graph.getExitMap().get(selectCity.getCode());
-                        Exit selectExit = exits.get(exits.size() - 1 == 0 ? 0 : random.nextInt(exits.size() - 1));
-                        int selectedExitNode = selectExit.getExitNodeNums()[random.nextInt(3)];
-                        Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(selectedExitNode), true);
-                        if (path != null) {
-                            String[] routeString = Absolute2Relative.convert(graph, path);
-                            log.info(car.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
-                            car.sendMessageToAGV(routeString[0]);
-                            car.setRouteNodeNumArray(path.getRoute());
-                            ((AGVCar) car).setDestination(selectCity.getName());
+                        if (graph.getExitMap().containsKey(selectCity.getCode())) {
+                            List<Exit> exits = graph.getExitMap().get(selectCity.getCode());
+                            Exit selectExit = exits.get(exits.size() - 1 == 0 ? 0 : random.nextInt(exits.size() - 1));
+                            int selectedExitNode = selectExit.getExitNodeNums()[random.nextInt(3)];
+                            Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(selectedExitNode), true);
+                            if (path != null) {
+                                String[] routeString = Absolute2Relative.convert(graph, path);
+                                log.info(car.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
+                                car.sendMessageToAGV(routeString[0]);
+                                car.setRouteNodeNumArray(path.getRoute());
+                                ((AGVCar) car).setDestination(selectCity.getName());
+                            }
                         }
                     }
                 }

@@ -6,7 +6,9 @@ import java.util.Map;
 
 public interface Graph {
     Map<Integer, Node> getNodeMap();
+    void setNodeMap(Map<Integer, Node> nodeMap);
     Map<Integer, Edge> getEdgeMap();
+    void setEdgeMap(Map<Integer, Edge> edgeMap);
     Map<Long, List<Exit>> getExitMap();
     Map<Integer, Entrance> getEntranceMap();
     Map<String, Integer> getSerialNumMap();
