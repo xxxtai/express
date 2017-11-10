@@ -261,7 +261,7 @@ public class DrawingGui extends JPanel{
         Map<Integer, Edge> newEdgeMap = new HashMap<>();
         for (Edge edge : graph.getEdgeArray()) {
             newEdgeMap.put(edge.cardNum, new Edge(graph.getNodeMap().get(edge.startNode.cardNum), graph.getNodeMap().get(edge.endNode.cardNum),
-                    edge.realDistance, edge.cardNum));
+                    graph.getNodeMap().get(edge.cardNum), edge.realDistance));
         }
         graph.setEdgeMap(newEdgeMap);
 

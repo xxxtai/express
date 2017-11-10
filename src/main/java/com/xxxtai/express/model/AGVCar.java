@@ -75,7 +75,7 @@ public class AGVCar implements Car {
             if (edge.startNode.cardNum.equals(node.cardNum)) {
                 setAtEdge(edge);
             } else if (edge.endNode.cardNum.equals(node.cardNum)) {
-                setAtEdge(new Edge(edge.endNode, edge.startNode, edge.realDistance, edge.cardNum));
+                setAtEdge(new Edge(edge.endNode, edge.startNode, graph.getNodeMap().get(edge.cardNum), edge.realDistance));
             }
         } else {
             Node node1 = graph.getNodeMap().get(this.readCardNum);

@@ -14,17 +14,13 @@ public class Edge {
     private boolean remove;
     private boolean locked;
 
-    public Edge(Node startNode, Node endNode, int distance, int cardNum) {
+    public Edge(Node startNode, Node endNode, Node midNode, int distance) {
         this.startNode = startNode;
         this.endNode = endNode;
         this.realDistance = distance;
-        this.cardNum = cardNum;
+        this.cardNum = midNode.cardNum;
         this.waitQueue = new LinkedList<>();
-        if (this.startNode.x == this.endNode.x) {
-            this.CARD_POSITION = new Point(this.startNode.x, (this.startNode.y + this.endNode.y) / 2);
-        } else {
-            this.CARD_POSITION = new Point((this.startNode.x + this.endNode.x) / 2, this.startNode.y);
-        }
+        this.CARD_POSITION = new Point(midNode.x, midNode.y);
     }
 
     public boolean isRemove() {

@@ -21,7 +21,7 @@ public class AStar implements Algorithm {
     public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean ignoredLocked) {
         Path forwardPath = find(startEdge, endEdge, ignoredLocked);
 
-        Edge oppositeStartEdge = new Edge(startEdge.endNode, startEdge.startNode, startEdge.realDistance, startEdge.cardNum);
+        Edge oppositeStartEdge = new Edge(startEdge.endNode, startEdge.startNode, graph.getNodeMap().get(startEdge.cardNum), startEdge.realDistance);
         Path backwardPath = find(oppositeStartEdge, endEdge, ignoredLocked);
 
         if (forwardPath != null && backwardPath != null) {
