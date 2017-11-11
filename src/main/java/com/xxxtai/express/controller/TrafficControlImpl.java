@@ -57,6 +57,12 @@ public class TrafficControlImpl implements TrafficControl {
 
                 try {
                     unlockEdge(cardNum);
+                    if (graph.getEntranceMap().containsKey(this.lockedEdge.cardNum)) {
+                        StringBuilder logMessage = new StringBuilder();
+                        logMessage.append(car.getAGVNum()).append("AGV receive cardNum:").append(cardNum);
+                        unlockNode(logMessage);
+                        log.info(logMessage.toString());
+                    }
                 } catch (Exception e) {
                     log.error("exception: "+car.getAGVNum()+"  cardNum : " + cardNum, e);
                 }
@@ -136,20 +142,35 @@ public class TrafficControlImpl implements TrafficControl {
                     }
                     return;
                 } else if (this.lockedNode.isLocked()) {
-                    this.lockedEdge.waitQueue.offer(car);
-                    this.lockedEdge.setLocked();
-                    this.lockedNode.waitQueue.offer(car);
-                    logMessage.append("占用").append(lockedEdge.cardNum).append("边,等待通过，因为").append(lockedNode.getCardNum()).append("点被").append(lockedNode.waitQueue.peek().getAGVNum()).append("AGV占用");
-                    log.info(logMessage.toString());
-                    car.setExecutiveCommand(Command.STOP);
-                    return;
+                    if (graph.getEntranceMap().containsKey(this.lockedEdge.cardNum)) {
+                        this.lockedNode.waitQueue.offer(car);
+                        logMessage.append("等待去往分拣边，因为").append(lockedNode.getCardNum()).append("点被").append(lockedNode.waitQueue.peek().getAGVNum()).append("AGV占用");
+                        log.info(logMessage.toString());
+                        car.setExecutiveCommand(Command.STOP);
+                        return;
+                    } else {
+                        this.lockedEdge.waitQueue.offer(car);
+                        this.lockedEdge.setLocked();
+                        this.lockedNode.waitQueue.offer(car);
+                        logMessage.append("占用").append(lockedEdge.cardNum).append("边,等待通过，因为").append(lockedNode.getCardNum()).append("点被").append(lockedNode.waitQueue.peek().getAGVNum()).append("AGV占用");
+                        log.info(logMessage.toString());
+                        car.setExecutiveCommand(Command.STOP);
+                        return;
+                    }
                 } else {
-                    this.lockedEdge.waitQueue.offer(car);
-                    this.lockedEdge.setLocked();
-                    this.lockedNode.waitQueue.offer(car);
-                    this.lockedNode.setLocked();
-                    car.setExecutiveCommand(Command.FORWARD);
-                    logMessage.append("占用").append(this.lockedEdge.cardNum).append("边和").append(this.lockedNode.cardNum).append("点，并通过");
+                    if (graph.getEntranceMap().containsKey(this.lockedEdge.cardNum)) {
+                        this.lockedNode.waitQueue.offer(car);
+                        this.lockedNode.setLocked();
+                        car.setExecutiveCommand(Command.FORWARD);
+                        logMessage.append("占用").append(this.lockedEdge.cardNum).append("点， 去往分拣边");
+                    } else {
+                        this.lockedEdge.waitQueue.offer(car);
+                        this.lockedEdge.setLocked();
+                        this.lockedNode.waitQueue.offer(car);
+                        this.lockedNode.setLocked();
+                        car.setExecutiveCommand(Command.FORWARD);
+                        logMessage.append("占用").append(this.lockedEdge.cardNum).append("边和").append(this.lockedNode.cardNum).append("点，并通过");
+                    }
                 }
             }
         }
@@ -157,6 +178,9 @@ public class TrafficControlImpl implements TrafficControl {
     }
 
     private void unlockEdge(int cardNum) {
+        if (graph.getEntranceMap().containsKey(this.lastLockedEdge.cardNum)) {
+            return;
+        }
         synchronized (this.lastLockedEdge.cardNum) {
             Car myself = this.lastLockedEdge.waitQueue.poll();
             if (myself.getAGVNum() != car.getAGVNum()) {
@@ -197,8 +221,9 @@ public class TrafficControlImpl implements TrafficControl {
                 }
                 if (!this.lockedNode.waitQueue.isEmpty()) {
                     Car carTmp = this.lockedNode.waitQueue.peek();
-                    if (carTmp.getTrafficControl().getLastLockedEdge().isLocked() &&
-                            carTmp.getTrafficControl().getLastLockedEdge().waitQueue.peek().getAGVNum() == carTmp.getAGVNum()) {
+                    Edge carTmpLockedEdge = carTmp.getTrafficControl().getLastLockedEdge();
+                    if ((carTmpLockedEdge.isLocked() && carTmpLockedEdge.waitQueue.peek().getAGVNum() == carTmp.getAGVNum()) ||
+                            (graph.getEntranceMap().containsKey(carTmpLockedEdge.cardNum))) {
                         carTmp.setExecutiveCommand(Command.FORWARD);
                         logMessage.append(" >>> 解除占用").append(this.lockedNode.cardNum).append("点 >>> ").append(carTmp.getAGVNum()).append("AGV前进占用 >>>");
                     } else {

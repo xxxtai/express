@@ -109,17 +109,18 @@ public class AGVCar implements Car {
         if (this.count_1s == 20) {
             this.count_1s = 0;
             if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
-                    && !this.state.equals(State.COLLIED) && !this.firstlyExecutiveCommand) {
+                    && !this.state.equals(State.COLLIED) && !this.state.equals(State.INFRARED_ANOMALY) && !this.firstlyExecutiveCommand) {
                 sendMessageToAGV(executiveCommand.getCommand());
-                log.info("--------------------------------------------  " + this.getAGVNum() + "AGV" + executiveCommand.getDescription());
+                log.info("--------------------------------------------  让" + this.getAGVNum() + "AGV" + executiveCommand.getDescription());
             }
         } else {
             this.count_1s++;
         }
 
         if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
-                && !this.state.equals(State.COLLIED) && this.firstlyExecutiveCommand) {
+                && !this.state.equals(State.COLLIED) && !this.state.equals(State.INFRARED_ANOMALY) && this.firstlyExecutiveCommand) {
             sendMessageToAGV(executiveCommand.getCommand());
+            log.info("让" + this.getAGVNum() + "AGV " + executiveCommand.getDescription());
             this.firstlyExecutiveCommand = false;
         } else if (this.executiveCommand != null && this.executiveCommand.getValue() == this.state.getValue()
                 && !this.firstlyExecutiveCommand) {

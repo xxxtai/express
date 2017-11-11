@@ -7,7 +7,8 @@ public enum State {
     STOP(2, "停止"),
     BACKWARD(3, "后退"),
     UNLOADED(4, "卸货完成"),
-    COLLIED(5, "相撞");
+    COLLIED(5, "相撞"),
+    INFRARED_ANOMALY(6, "红外异常");
 
     private @Getter
     Integer value;

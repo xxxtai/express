@@ -38,7 +38,7 @@ public class DispatchingAGV implements Runnable {
         Random random = new Random();
         int X = graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
         while (true) {
-            Common.delay(1000);
+            Common.delay(3000);
             for (Car car : SchedulingGui.AGVArray) {
                 if (car.getAtEdge() != null && !car.isOnDuty()) {
                     if (!graph.getEntranceMap().containsKey(car.getReadCardNum())) {
@@ -52,10 +52,10 @@ public class DispatchingAGV implements Runnable {
                                 break;
                             }
                         }
-                        log.info("派遣车辆" + car.getAGVNum() + "去" + minMissionCountEntrance + "分拣入口");
                         Path path = minMissionCountEntrance == null? null : algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(minMissionCountEntrance), true, false);
 
                         if (path != null) {
+                            log.info("派遣" + car.getAGVNum() + "AGV去" + minMissionCountEntrance + "分拣入口");
                             String[] routeString = Absolute2Relative.convert(graph, path);
                             log.info(car.getAGVNum() + "AGVRoute--relative：" + routeString[1]);
                             car.sendMessageToAGV(routeString[0]);
@@ -77,6 +77,7 @@ public class DispatchingAGV implements Runnable {
                             }
                         }
                         if (pathList.size() > 0) {
+                            log.info("派遣" + car.getAGVNum() + "AGV去" + cityName + "分拣出口");
                             pathList.sort(Comparator.comparingInt(Path::getCost));
                             String[] routeString = Absolute2Relative.convert(graph, pathList.get(0));
                             log.info(car.getAGVNum() + "AGVRoute--relative:" + routeString[1]);

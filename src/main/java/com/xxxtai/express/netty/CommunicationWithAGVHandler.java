@@ -24,6 +24,12 @@ public class CommunicationWithAGVHandler extends SimpleChannelInboundHandler<Str
     private Graph graph;
 
     @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        ctx.fireExceptionCaught(cause);
+        log.error(this.car + "AGV exception:" + cause);
+    }
+
+    @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info(this.car.getAGVNum() + "AGV inactive!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         this.car.setSocketChannel(null);
@@ -31,12 +37,12 @@ public class CommunicationWithAGVHandler extends SimpleChannelInboundHandler<Str
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, String msg) throws Exception {
-//        log.info("netty rec:" + msg);
+
         if (this.car == null && this.socketChannel == null) {
             setup(ctx, msg);
             return;
         }
-
+        log.info(this.car.getAGVNum() + "AGV netty rec:" + msg);
         this.car.setLastCommunicationTime(System.currentTimeMillis());
         String content = Constant.getContent(msg);
         String[] c = content.split(Constant.SPLIT);
@@ -53,7 +59,11 @@ public class CommunicationWithAGVHandler extends SimpleChannelInboundHandler<Str
             }
 
             if (cardNum != 0) {
-                this.car.setReceiveCardNum(cardNum);
+                try {
+                    this.car.setReceiveCardNum(cardNum);
+                } catch (Exception e) {
+                    log.error("Exception:" , e);
+                }
             }
         } else if (msg.startsWith(Constant.STATE_PREFIX)) {
             int stateValue = Integer.parseInt(c[0], 16);
