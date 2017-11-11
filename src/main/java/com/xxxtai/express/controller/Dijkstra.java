@@ -21,7 +21,7 @@ public class Dijkstra implements Algorithm {
         size = graph.getNodeArray().size();
     }
 
-    public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean isBackToEntrance) {
+    public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean isBackToEntrance, boolean resolveDeadlock) {
         Edge removeEdge = changeEdgeArray(endEdge.cardNum, isBackToEntrance);
 
         boolean adjoin = false;

@@ -18,11 +18,15 @@ public class AStar implements Algorithm {
     @Resource
     private Graph graph;
 
-    public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean ignoredLocked) {
+    public synchronized Path findRoute(Edge startEdge, Edge endEdge, boolean ignoredLocked, boolean resolveDeadlock) {
+
         Path forwardPath = find(startEdge, endEdge, ignoredLocked);
 
-        Edge oppositeStartEdge = new Edge(startEdge.endNode, startEdge.startNode, graph.getNodeMap().get(startEdge.cardNum), startEdge.realDistance);
-        Path backwardPath = find(oppositeStartEdge, endEdge, ignoredLocked);
+        Path backwardPath = null;
+        if (resolveDeadlock) {
+            Edge oppositeStartEdge = new Edge(startEdge.endNode, startEdge.startNode, graph.getNodeMap().get(startEdge.cardNum), startEdge.realDistance);
+            backwardPath = find(oppositeStartEdge, endEdge, ignoredLocked);
+        }
 
         if (forwardPath != null && backwardPath != null) {
             if (forwardPath.getCost() <= backwardPath.getCost()) {

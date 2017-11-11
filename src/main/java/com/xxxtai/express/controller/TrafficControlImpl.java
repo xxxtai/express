@@ -273,17 +273,21 @@ public class TrafficControlImpl implements TrafficControl {
             Car lockCar = graph.getEdgeMap().get(lockEdgeNum).waitQueue.peek();
             List<Path> paths = Lists.newArrayList();
             if (lockCar.getDestination() == null) {
+                int X = graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
                 for (Entrance entrance : graph.getEntranceMap().values()) {
-                    Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(entrance.getCardNum()), true);
-                    if (path != null) {
-                        paths.add(path);
+                    if ((car.getX() < X && entrance.getDirection().equals(Entrance.Direction.RIGHT))||
+                            (car.getX() > X && entrance.getDirection().equals(Entrance.Direction.LEFT))) {
+                        Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(entrance.getCardNum()), true, true);
+                        if (path != null) {
+                            paths.add(path);
+                        }
                     }
                 }
             } else {
                 List<Exit> exits = graph.getExitMap().get(City.valueOfName(lockCar.getDestination()).getCode());
                 for (Exit exit : exits) {
                     for (int exitNum :exit.getExitNodeNums()) {
-                        Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(exitNum), true);
+                        Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(exitNum), true, true);
                         if (path != null) {
                             paths.add(path);
                         }

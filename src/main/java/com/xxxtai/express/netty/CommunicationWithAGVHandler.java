@@ -25,7 +25,8 @@ public class CommunicationWithAGVHandler extends SimpleChannelInboundHandler<Str
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-
+        log.info(this.car.getAGVNum() + "AGV inactive!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        this.car.setSocketChannel(null);
     }
 
     @Override

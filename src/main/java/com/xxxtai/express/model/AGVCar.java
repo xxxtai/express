@@ -111,7 +111,7 @@ public class AGVCar implements Car {
             if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
                     && !this.state.equals(State.COLLIED) && !this.firstlyExecutiveCommand) {
                 sendMessageToAGV(executiveCommand.getCommand());
-                log.info("111111111111111111111111111111111111111111111111111" + this.getAGVNum() + "AGV" + executiveCommand.getDescription());
+                log.info("--------------------------------------------  " + this.getAGVNum() + "AGV" + executiveCommand.getDescription());
             }
         } else {
             this.count_1s++;
@@ -151,6 +151,8 @@ public class AGVCar implements Car {
     public void sendMessageToAGV(String message) {
         if (this.socketChannel != null) {
             this.socketChannel.writeAndFlush(message);
+        } else {
+            log.info(this.getAGVNum() + "AGV socketChannel null");
         }
     }
 
