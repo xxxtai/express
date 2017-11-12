@@ -18,21 +18,8 @@
 			</list>
 		</property>
 	</bean>
-	
-	<!--<bean id="monitorServerSocketRunnable" class="com.xxxtai.express.controller.ServerSocket">-->
-		<!--<lookup-method name="getCommunicationWithAGV" bean="communicationWithAGV"/>-->
-		<!--<lookup-method name="getCommunicationWithQRScan" bean="communicationWithQRScan"/>-->
-	<!--</bean>-->
-	
-	<!--<bean id="communicationWithAGV" class="com.xxxtai.express.controller.CommunicationWithAGV"-->
-		<!--scope="prototype">-->
-	<!--</bean>-->
 
 	<bean id="communicationWithAGVHandler" class="com.xxxtai.express.netty.CommunicationWithAGVHandler" scope="prototype"/>
-
-	<bean id="communicationWithQRScan" class="com.xxxtai.express.controller.CommunicationWithQRScan"
-		  scope="prototype">
-	</bean>
 	
 	<bean id="schedulingGui" class="com.xxxtai.express.view.SchedulingGui" >
 		<lookup-method name="getCar" bean="car"/>

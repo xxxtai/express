@@ -2,10 +2,8 @@ package com.xxxtai.express.model;
 
 import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.constant.State;
-import com.xxxtai.express.controller.CommunicationWithAGV;
 import com.xxxtai.express.controller.TrafficControl;
 import com.xxxtai.express.constant.Orientation;
-import com.xxxtai.express.netty.CommunicationWithAGVHandler;
 import io.netty.channel.socket.SocketChannel;
 
 import java.util.List;
