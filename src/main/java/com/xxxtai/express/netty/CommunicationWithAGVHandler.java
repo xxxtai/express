@@ -36,8 +36,8 @@ public class CommunicationWithAGVHandler extends SimpleChannelInboundHandler<Str
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, String msg) throws Exception {
-
+    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+        log.info(msg);
         if (this.car == null && this.socketChannel == null) {
             setup(ctx, msg);
             return;

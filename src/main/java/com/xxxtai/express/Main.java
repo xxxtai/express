@@ -65,13 +65,8 @@ public class Main extends JFrame {
         this.getContentPane().add(schedulingGui);
         this.repaint();
         this.validate();
-
-        try {
-            nettyServerBootstrap.bind(8899);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         new Thread(dispatchingAGV).start();
+        nettyServerBootstrap.bind(8899);
     }
 
     private void exit() {

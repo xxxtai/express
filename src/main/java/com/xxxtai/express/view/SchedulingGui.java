@@ -68,10 +68,10 @@ public abstract class SchedulingGui extends JPanel{
             AGVArray.add(car);
         }
 
-//        graph.getEdgeMap().get(171).setLocked();
-//        graph.getEdgeMap().get(184).setLocked();
-//        graph.getEdgeMap().get(197).setLocked();
-//        graph.getEdgeMap().get(210).setLocked();
+        graph.getEdgeMap().get(171).setLocked();
+        graph.getEdgeMap().get(184).setLocked();
+        graph.getEdgeMap().get(197).setLocked();
+        graph.getEdgeMap().get(210).setLocked();
 
         timer.start();
     }
