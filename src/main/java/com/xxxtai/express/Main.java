@@ -1,6 +1,7 @@
 package com.xxxtai.express;
 
 import com.xxxtai.express.controller.DispatchingAGV;
+import com.xxxtai.express.controller.ResolveDeadLock;
 import com.xxxtai.express.netty.NettyServerBootstrap;
 import com.xxxtai.express.view.DrawingGui;
 import com.xxxtai.express.view.SchedulingGui;
@@ -15,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Timer;
 
 @Component
 @Slf4j(topic = "develop")
@@ -30,6 +32,8 @@ public class Main extends JFrame {
     private DispatchingAGV dispatchingAGV;
     @Resource
     private NettyServerBootstrap nettyServerBootstrap;
+    @Resource
+    private ResolveDeadLock resolveDeadLock;
 
     public Main() {
         super("AGV快递分拣系统");
@@ -54,6 +58,7 @@ public class Main extends JFrame {
         this.repaint();
         this.validate();
         new Thread(dispatchingAGV).start();
+        new Timer().schedule(resolveDeadLock, 1000);
         nettyServerBootstrap.bind(8899);
     }
 

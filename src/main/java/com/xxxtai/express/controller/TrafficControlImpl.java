@@ -31,8 +31,8 @@ public class TrafficControlImpl implements TrafficControl {
     private CacheExecutor cacheExecutor;
     @Resource
     private Graph graph;
-    @Resource(name = "AStar")
-    private Algorithm algorithm;
+    @Resource
+    private ResolveDeadLock resolveDeadLock;
 
 
 
@@ -138,6 +138,13 @@ public class TrafficControlImpl implements TrafficControl {
 
                         if (!resolveDeadLock(lockLoop)) {
                             log.error(car.getAGVNum() + "AGV 无路可走！无路可走！无路可走！");
+                            for (Integer edgeNum : lockLoop) {
+                                try {
+                                    resolveDeadLock.getDeadLockEdgeList().put(edgeNum);
+                                } catch (InterruptedException e) {
+                                    log.error("resolve dead lock put exception:", e);
+                                }
+                            }
                         }
                     }
                     return;
@@ -295,55 +302,12 @@ public class TrafficControlImpl implements TrafficControl {
 
     private boolean resolveDeadLock(List<Integer> lockLoop){
         for (Integer lockEdgeNum : lockLoop) {
-            Car lockCar = graph.getEdgeMap().get(lockEdgeNum).waitQueue.peek();
-            List<Path> paths = Lists.newArrayList();
-            if (lockCar.getDestination() == null) {
-                int X = graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
-                for (Entrance entrance : graph.getEntranceMap().values()) {
-                    if ((car.getX() < X && entrance.getDirection().equals(Entrance.Direction.RIGHT))||
-                            (car.getX() > X && entrance.getDirection().equals(Entrance.Direction.LEFT))) {
-                        Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(entrance.getCardNum()), true, true);
-                        if (path != null) {
-                            paths.add(path);
-                        }
-                    }
-                }
-            } else {
-                List<Exit> exits = graph.getExitMap().get(City.valueOfName(lockCar.getDestination()).getCode());
-                for (Exit exit : exits) {
-                    for (int exitNum :exit.getExitNodeNums()) {
-                        Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(exitNum), true, true);
-                        if (path != null) {
-                            paths.add(path);
-                        }
-                    }
-                }
-            }
-
-            if (!paths.isEmpty()) {
-                paths.sort(Comparator.comparingInt(Path::getCost));
-                deadLockedCarPath(lockCar, paths.get(0));
+            boolean result = resolveDeadLock.resolveDeadLock(lockEdgeNum);
+            if (result) {
                 return true;
             }
         }
         return false;
-    }
-
-    private void deadLockedCarPath(Car lockCar, Path path){
-        Queue<Car> lockCarInWaitQueue = lockCar.getTrafficControl().getLockedEdge().waitQueue;
-        int queueSize = lockCarInWaitQueue.size();
-        for (int i = 0; i < queueSize; i++) {
-            Car carTemp = lockCarInWaitQueue.poll();
-            if (carTemp.getAGVNum() != lockCar.getAGVNum()) {
-                lockCarInWaitQueue.offer(carTemp);
-            }
-        }
-        lockCar.getTrafficControl().setLockedNode(null);
-
-        String[] routeString = Absolute2Relative.convert(graph, path);
-        log.info(lockCar.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
-        lockCar.sendMessageToAGV(routeString[0]);
-        lockCar.setRouteNodeNumArray(path.getRoute());
     }
 
     @Override
