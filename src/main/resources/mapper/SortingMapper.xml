@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxxtai.express.dao.SortingDAO" >
+    <resultMap id="BaseResultMap" type="com.xxxtai.express.model.Sorting" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+        <result column="features" property="features" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        <result column="total_time" property="totalTime" jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result column="total_quantity" property="totalQuantity" jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result column="per_hour" property="perHour" jdbcType="BIGINT" javaType="java.lang.Long"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,create_time,modify_time, features, total_time, total_quantity, per_hour
+    </sql>
+
+    <insert id="insert" parameterType="com.xxxtai.express.model.Sorting" >
+        INSERT INTO
+        sorting
+        (create_time,modify_time, features, total_time, total_quantity, per_hour)
+        VALUES
+        (#{createTime},  #{modifyTime}, #{features}, #{totalTime}, #{totalQuantity}, #{perHour})
+    </insert>
+
+</mapper>

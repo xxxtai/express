@@ -5,6 +5,7 @@
         <id column="id" property="id" jdbcType="BIGINT" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+        <result column="features" property="features" jdbcType="VARCHAR" javaType="java.lang.String"/>
         <result column="edge_num" property="edgeNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
         <result column="cost" property="cost" jdbcType="BIGINT" javaType="java.lang.Long"/>
         <result column="agv_num" property="agvNum" jdbcType="INTEGER" javaType="java.lang.Integer"/>
@@ -14,7 +15,7 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id,create_time,modify_time, edge_num, cost, agv_num, start_node_num, destination_node_num,target_city
+        id,create_time,modify_time, features, edge_num, cost, agv_num, start_node_num, destination_node_num,target_city
     </sql>
 
     <select id="getCostsByEdgeNum" parameterType="java.lang.Integer" resultMap="BaseResultMap" >

@@ -83,6 +83,11 @@ public class DrawingGraph {
             g.setColor(Color.GRAY);
             g.fillRect(node.x - 20, node.y - 20, 40, 40);
         }
+
+        for (Entrance entrance : graph.getEntranceMap().values()) {
+            Node node = graph.getNodeMap().get(entrance.getCardNum());
+            g.drawString(String.valueOf(entrance.getMissionCount()), node.x, node.y - 20);
+        }
     }
 
     public void drawingAGV(Graphics g, List<Car> AGVArray, JPanel panel) {

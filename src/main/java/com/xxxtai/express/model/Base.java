@@ -6,6 +6,7 @@ public abstract class Base {
     private Long id;
     private Timestamp createTime;
     private Timestamp modifyTime;
+    private String features;
 
     public Long getId() {
         return id;
@@ -29,5 +30,13 @@ public abstract class Base {
 
     public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public String getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(String feature) {
+        this.features = feature;
     }
 }

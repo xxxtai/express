@@ -1,7 +1,8 @@
 package com.xxxtai.express.controller;
 
 import com.google.common.collect.Lists;
-import com.xxxtai.express.constant.City;
+import com.google.gson.Gson;
+import com.xxxtai.express.dao.SortingDAO;
 import com.xxxtai.express.model.*;
 import com.xxxtai.express.toolKit.Absolute2Relative;
 import com.xxxtai.express.toolKit.Common;
@@ -20,15 +21,17 @@ import java.util.Random;
 @Component
 @Slf4j(topic = "develop")
 public class DispatchingAGV implements Runnable {
+    private long startTime;
     @Resource
     private Graph graph;
     @Resource(name = "AStar")
     private Algorithm algorithm;
-
-    public DispatchingAGV() {}
+    @Resource
+    private SortingDAO sortingDAO;
 
     @Override
     public void run() {
+        startTime = System.currentTimeMillis();
         Long[] cities = new Long[graph.getExitMap().size()];
         int i = 0;
         for (Long code : graph.getExitMap().keySet()) {
@@ -89,5 +92,18 @@ public class DispatchingAGV implements Runnable {
                 }
             }
         }
+    }
+
+    public void saveSorting(){
+        Sorting sorting = new Sorting();
+        long count = 0;
+        for (Entrance entrance : graph.getEntranceMap().values()) {
+            count += entrance.getMissionCount();
+        }
+        sorting.setTotalQuantity(count);
+        sorting.setTotalTime((System.currentTimeMillis() - startTime)/1000);
+        sorting.setPerHour(count * 3600 / sorting.getTotalTime());
+        sorting.setFeatures(new Gson().toJson(graph.getEntranceMap().values()));
+        sortingDAO.insert(sorting);
     }
 }
