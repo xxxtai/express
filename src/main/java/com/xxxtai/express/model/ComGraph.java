@@ -66,13 +66,11 @@ public class ComGraph implements Graph{
             Sheet sheetEdges = wb.getSheet("edges");
             if (sheetEdges != null) {
                 for (int i = 0; i < sheetEdges.getRows(); i++) {
-
-                    this.addEdge(
-                            Integer.parseInt(sheetEdges.getCell(0, i).getContents()),
-                            Integer.parseInt(sheetEdges.getCell(1, i).getContents()),
-                            Integer.parseInt(sheetEdges.getCell(2, i).getContents()),
-                            Integer.parseInt(sheetEdges.getCell(3, i).getContents())
-                    );
+                    int startNodeNum = Integer.parseInt(sheetEdges.getCell(0, i).getContents());
+                    int endNodeNum = Integer.parseInt(sheetEdges.getCell(1, i).getContents());
+                    int dis = Integer.parseInt(sheetEdges.getCell(2, i).getContents());
+                    int cardNum = Integer.parseInt(sheetEdges.getCell(3, i).getContents());
+                    this.edgeMap.put(cardNum, new Edge(this.nodeMap.get(startNodeNum), this.nodeMap.get(endNodeNum), this.nodeMap.get(cardNum), dis));
                 }
             }
 

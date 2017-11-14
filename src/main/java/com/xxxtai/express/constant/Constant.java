@@ -13,7 +13,7 @@ public class Constant {
     public static final String BACKWARD = "BA";
     public static final String FORWARD = "FA";
     private static final Integer FIX_LENGTH = 2;
-    public static final Integer EDGE_COST_CACHE_NUM = 10;
+    public static final Integer EDGE_COST_CACHE_NUM = 100;
     public static final boolean USE_SERIAL = false;
 
     public static String getContent(String revMessage){

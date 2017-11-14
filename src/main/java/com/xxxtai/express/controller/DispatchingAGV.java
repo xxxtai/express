@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -45,25 +46,28 @@ public class DispatchingAGV implements Runnable {
             for (Car car : SchedulingGui.AGVArray) {
                 if (car.getAtEdge() != null && !car.isOnDuty()) {
                     if (!graph.getEntranceMap().containsKey(car.getReadCardNum())) {
-                        Integer minMissionCountEntrance = null;
-                        List<Entrance> entranceList = Lists.newArrayList(graph.getEntranceMap().values());
-                        entranceList.sort(Comparator.comparingInt(Entrance::getMissionCount));
-                        for (Entrance entrance : entranceList) {
+                        Entrance minDisEntrance = null;
+                        int minDis = Integer.MAX_VALUE;
+                        for (Entrance entrance : graph.getEntranceMap().values()) {
                             if ((car.getX() < X && entrance.getDirection().equals(Entrance.Direction.RIGHT))||
                                     (car.getX() > X && entrance.getDirection().equals(Entrance.Direction.LEFT))) {
-                                minMissionCountEntrance = entrance.getCardNum();
-                                break;
+                                int tmpDis = Math.abs(car.getX() - graph.getNodeMap().get(entrance.getCardNum()).getX())
+                                        + Math.abs(car.getY() - graph.getNodeMap().get(entrance.getCardNum()).getY());
+                                if (tmpDis < minDis) {
+                                    minDis = tmpDis;
+                                    minDisEntrance = entrance;
+                                }
                             }
                         }
-                        Path path = minMissionCountEntrance == null? null : algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(minMissionCountEntrance), true, false);
+                        Path path = minDisEntrance == null? null : algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(minDisEntrance.getCardNum()), true, false);
 
                         if (path != null) {
-                            log.info("派遣" + car.getAGVNum() + "AGV去" + minMissionCountEntrance + "分拣入口");
+                            log.info("派遣" + car.getAGVNum() + "AGV去" + minDisEntrance.getCardNum() + "分拣入口");
                             String[] routeString = Absolute2Relative.convert(graph, path);
                             log.info(car.getAGVNum() + "AGVRoute--relative：" + routeString[1]);
                             car.sendMessageToAGV(routeString[0]);
                             car.setRouteNodeNumArray(path.getRoute());
-                            graph.getEntranceMap().get(minMissionCountEntrance).missionCountIncrease();
+                            minDisEntrance.missionCountIncrease();
                         }
                     } else {
                         Long selectCityCode = cities[random.nextInt(cities.length - 1)];

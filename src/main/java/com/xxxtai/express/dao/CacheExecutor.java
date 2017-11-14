@@ -2,12 +2,14 @@ package com.xxxtai.express.dao;
 
 import com.xxxtai.express.constant.Constant;
 import com.xxxtai.express.model.EdgeCost;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Vector;
 
 @Component
+@Slf4j(topic = "develop")
 public class CacheExecutor {
     @Resource
     private EdgeCostDAO edgeCostDAO;
