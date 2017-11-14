@@ -19,7 +19,6 @@ public enum City {
     XIAMEN("厦门", 361000),
     CHENGDU("成都", 610000),
     WUHAN("武汉", 430000),
-    HAERBIN("哈尔滨", 150000),
     SHENYANG("沈阳", 110000),
     XIAN("西安", 710000),
     CHANGCHUN("长春", 130000),
@@ -31,7 +30,6 @@ public enum City {
     DONGGUAN("东莞", 523000),
     WUXI("无锡", 214000),
     YANTAI("烟台", 261400),
-//    TAIYUAN("太原", 030000),
     NANCHANG("南昌", 330000),
     NULL("城市不存在", 0);
 

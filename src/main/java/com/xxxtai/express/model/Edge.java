@@ -14,6 +14,19 @@ public class Edge {
     private boolean remove;
     private boolean locked;
 
+    public Edge(Node startNode, Node endNode, int cardNum, int distance) {
+        this.startNode = startNode;
+        this.endNode = endNode;
+        this.realDistance = distance;
+        this.cardNum = cardNum;
+        this.waitQueue = new LinkedList<>();
+        if (this.startNode.x == this.endNode.x) {
+            this.CARD_POSITION = new Point(this.startNode.x, (this.startNode.y + this.endNode.y) / 2);
+        } else {
+            this.CARD_POSITION = new Point((this.startNode.x + this.endNode.x) / 2, this.startNode.y);
+        }
+    }
+
     public Edge(Node startNode, Node endNode, Node midNode, int distance) {
         this.startNode = startNode;
         this.endNode = endNode;

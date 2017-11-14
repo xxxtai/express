@@ -155,7 +155,7 @@ public class ComGraph implements Graph{
     }
 
     public void addEdge(int strNodeNum, int endNodeNum, int dis, int cardNum) {
-        edgeMap.put(cardNum, new Edge(this.nodeMap.get(strNodeNum), this.nodeMap.get(endNodeNum), this.nodeMap.get(cardNum), dis));
+        edgeMap.put(cardNum, new Edge(this.nodeMap.get(strNodeNum), this.nodeMap.get(endNodeNum), cardNum, dis));
     }
 
     public void getNewGraph() {

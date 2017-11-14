@@ -99,12 +99,12 @@ public class AGVCar implements Car {
     public void stepByStep() {}
 
     public void heartBeat() {
-        if (this.count_3s == 60) {
-            this.count_3s = 0;
-            sendMessageToAGV(Constant.HEART_PREFIX + Common.toHexString(this.AGVNum) + Constant.SUFFIX);
-        } else {
-            this.count_3s++;
-        }
+//        if (this.count_3s == 60) {
+//            this.count_3s = 0;
+//            sendMessageToAGV(Constant.HEART_PREFIX + Common.toHexString(this.AGVNum) + Constant.SUFFIX);
+//        } else {
+//            this.count_3s++;
+//        }
 
         if (this.count_1s == 20) {
             this.count_1s = 0;

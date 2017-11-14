@@ -246,7 +246,13 @@ public class DrawingGui extends JPanel{
     }
 
     private void reflectGraph(){
-        int X = graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
+        int X = 0;
+        if (graph.getEntranceMap().isEmpty()) {
+            log.error("没有分拣入口");
+            return;
+        } else {
+            X = graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
+        }
         isImportGraph = false;
         Map<Integer, Node> newNodeMap = new HashMap<>();
         for (Node node : graph.getNodeMap().values()) {

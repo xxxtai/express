@@ -39,7 +39,7 @@ public class DispatchingAGV implements Runnable {
             i++;
         }
         Random random = new Random();
-        int X = graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
+        int X = graph.getEntranceMap().isEmpty()? 0 : graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
         while (true) {
             Common.delay(4000);
             for (Car car : SchedulingGui.AGVArray) {
