@@ -3,6 +3,7 @@ package com.xxxtai.express.model;
 import com.xxxtai.express.constant.*;
 import com.xxxtai.express.controller.TrafficControl;
 import com.xxxtai.express.toolKit.Common;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.socket.SocketChannel;
 import lombok.Getter;
 import lombok.Setter;
@@ -151,9 +152,17 @@ public class AGVCar implements Car {
 
     public void sendMessageToAGV(String message) {
         if (this.socketChannel != null) {
-            this.socketChannel.writeAndFlush(message);
+            ChannelFuture channelFuture = null;
+            try {
+                channelFuture = this.socketChannel.writeAndFlush(message).sync();
+            } catch (InterruptedException e) {
+                log.info(this.getAGVNum() + "AGV writeAndFlush InterruptedException:",e);
+            }
+            if (channelFuture == null || !channelFuture.isSuccess()) {
+                log.info(this.getAGVNum() + "AGV writeAndFlush message:" + message + " failed 失败，！！！！！！！！！！！！！！！！！！！！！！！！");
+            }
         } else {
-            log.info(this.getAGVNum() + "AGV socketChannel null");
+            log.info(this.getAGVNum() + "AGV socketChannel null message:" + message+ "  ！！！！！！！！！！！！！！！！！！！！！！！！！");
         }
     }
 

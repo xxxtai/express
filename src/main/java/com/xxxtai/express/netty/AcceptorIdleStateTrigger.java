@@ -17,8 +17,7 @@ public class AcceptorIdleStateTrigger extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.READER_IDLE) {
-                log.info("idle exception !!!!!!-------!!!!!!");
-                ctx.channel().close();
+                throw new Exception("idle exception");
             }
         } else {
             super.userEventTriggered(ctx, evt);

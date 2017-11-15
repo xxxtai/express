@@ -24,8 +24,8 @@ public class CommunicationWithAGVHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        ctx.fireExceptionCaught(cause);
-        log.error(this.car + "AGV exception:" + cause);
+        cause.printStackTrace();
+        ctx.close();
     }
 
     @Override
