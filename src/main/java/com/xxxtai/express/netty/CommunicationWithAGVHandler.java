@@ -6,10 +6,9 @@ import com.xxxtai.express.model.AGVCar;
 import com.xxxtai.express.model.Car;
 import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.model.Node;
-import com.xxxtai.express.toolKit.ReaderWriter;
 import com.xxxtai.express.view.SchedulingGui;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.SocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +16,7 @@ import javax.annotation.Resource;
 import java.awt.*;
 
 @Slf4j(topic = "develop")
-public class CommunicationWithAGVHandler extends SimpleChannelInboundHandler<String> {
+public class CommunicationWithAGVHandler extends ChannelInboundHandlerAdapter {
     private Car car;
     private SocketChannel socketChannel;
     @Resource
@@ -30,13 +29,8 @@ public class CommunicationWithAGVHandler extends SimpleChannelInboundHandler<Str
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info(this.car.getAGVNum() + "AGV inactive!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        this.car.setSocketChannel(null);
-    }
-
-    @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object object) throws Exception {
+        String msg = (String) object;
         log.info(msg);
         if (this.car == null && this.socketChannel == null) {
             setup(ctx, msg);
