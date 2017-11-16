@@ -32,12 +32,11 @@ public class CommunicationWithAGVHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object object) throws Exception {
         String msg = (String) object;
-        log.info(msg);
         if (this.car == null && this.socketChannel == null) {
             setup(ctx, msg);
             return;
         }
-        log.info(this.car.getAGVNum() + "AGV netty rec:" + msg);
+        log.debug(this.car.getAGVNum() + "AGV netty rec:" + msg);
         String[] contents = msg.split(Constant.SUFFIX);
         for (String content : contents){
             String[] c = content.substring(Constant.FIX_LENGTH, content.length()).split(Constant.SPLIT);
