@@ -19,8 +19,13 @@ import java.awt.*;
 public class CommunicationWithAGVHandler extends ChannelInboundHandlerAdapter {
     private Car car;
     private SocketChannel socketChannel;
+    private StringBuilder holdMessage;
     @Resource
     private Graph graph;
+
+    public CommunicationWithAGVHandler(){
+        this.holdMessage = new StringBuilder();
+    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -32,12 +37,37 @@ public class CommunicationWithAGVHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object object) throws Exception {
         String msg = (String) object;
-        if (this.car == null && this.socketChannel == null) {
+        if (msg.contains("Heart") || msg.contains("beat")) {
+            return;
+        }
+        if (this.car == null || this.socketChannel == null) {
             setup(ctx, msg);
             return;
         }
         log.debug(this.car.getAGVNum() + "AGV netty rec:" + msg);
-        String[] contents = msg.split(Constant.SUFFIX);
+        String[] contents;
+        if (!msg.endsWith(Constant.SUFFIX)) {
+            if (!msg.contains(Constant.SUFFIX)) {
+                holdMessage.append(msg);
+                log.info(this.car.getAGVNum() + "AGV hold message:" + holdMessage.toString());
+                return;
+            } else {
+                String[] holdContents = msg.split(Constant.SUFFIX);
+                int holdLength = holdContents.length;
+                contents = new String[holdLength - 1];
+                System.arraycopy(holdContents, 0, contents, 0, holdLength - 1);
+                holdMessage.append(holdContents[holdLength - 1]);
+                log.info(this.car.getAGVNum() + "AGV hold message:" + holdMessage.toString());
+            }
+        } else {
+            if (holdMessage.length() > 0) {
+                log.info(this.car.getAGVNum() + "AGV hold message complete:" + holdMessage.toString());
+                contents = holdMessage.append(msg).toString().split(Constant.SUFFIX);
+                holdMessage.setLength(0);
+            } else {
+                contents = msg.split(Constant.SUFFIX);
+            }
+        }
         for (String content : contents){
             String[] c = content.substring(Constant.FIX_LENGTH, content.length()).split(Constant.SPLIT);
             if (content.startsWith(Constant.CARD_PREFIX)) {
