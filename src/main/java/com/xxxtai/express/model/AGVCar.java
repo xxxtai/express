@@ -11,56 +11,33 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Timer;
 import javax.annotation.Resource;
 
 @Slf4j(topic = "develop")
 public class AGVCar implements Car {
     private State state = State.STOP;
-    private int count_3s;
-    private int count_1s;
     private int lastReadCardNum;
-    private boolean firstlyExecutiveCommand = true;
-    private @Setter
-    Point position = new Point(-200, -200);
-    private @Getter @Setter
-    Command executiveCommand;
-
-    private @Getter @Setter
-    SocketChannel socketChannel;
-
-    private @Getter @Setter
-    String destination;
-
-    private @Getter
-    int stopCardNum;
-
-    private @Getter
-    Orientation orientation = Orientation.LEFT;
-
-    private @Getter
-    int AGVNum;
-
-    private @Getter
-    int readCardNum;
-
-    private @Getter
-    Edge atEdge;
-
-    private @Getter @Setter
-    boolean onDuty;
-
-    private @Getter @Setter
-    long lastCommunicationTime;
-
+    private @Setter Point position = new Point(-200, -200);
+    private @Getter @Setter Command executiveCommand;
+    private @Getter @Setter SocketChannel socketChannel;
+    private @Getter @Setter String destination;
+    private @Getter int stopCardNum;
+    private @Getter Orientation orientation = Orientation.LEFT;
+    private @Getter int AGVNum;
+    private @Getter int readCardNum;
+    private @Getter Edge atEdge;
+    private @Getter @Setter boolean onDuty;
+    private @Getter @Setter long lastCommunicationTime;
     @Resource
-    private @Getter
-    TrafficControl trafficControl;
+    private @Getter TrafficControl trafficControl;
     @Resource
     private Graph graph;
 
     public void init(int AGVNum, int positionCardNum) {
         this.AGVNum = AGVNum;
         trafficControl.setCar(this);
+        new Timer().schedule(new ExeCommandTask(this), 0, 30);
     }
 
     public void setReceiveCardNum(int cardNum) {
@@ -99,36 +76,6 @@ public class AGVCar implements Car {
 
     public void stepByStep() {}
 
-    public void heartBeat() {
-//        if (this.count_3s == 60) {
-//            this.count_3s = 0;
-//            sendMessageToAGV(Constant.HEART_PREFIX + Common.toHexString(this.AGVNum) + Constant.SUFFIX);
-//        } else {
-//            this.count_3s++;
-//        }
-
-        if (this.count_1s == 20) {
-            this.count_1s = 0;
-            if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
-                    && !this.state.equals(State.COLLIED) && !this.state.equals(State.INFRARED_ANOMALY) && !this.firstlyExecutiveCommand) {
-                sendMessageToAGV(executiveCommand.getCommand());
-                log.info("--------------------------------------------  让" + this.getAGVNum() + "AGV" + executiveCommand.getDescription());
-            }
-        } else {
-            this.count_1s++;
-        }
-
-        if (this.executiveCommand != null && this.executiveCommand.getValue() != this.state.getValue()
-                && !this.state.equals(State.COLLIED) && !this.state.equals(State.INFRARED_ANOMALY) && this.firstlyExecutiveCommand) {
-            sendMessageToAGV(executiveCommand.getCommand());
-            log.info("让" + this.getAGVNum() + "AGV " + executiveCommand.getDescription());
-            this.firstlyExecutiveCommand = false;
-        } else if (this.executiveCommand != null && this.executiveCommand.getValue() == this.state.getValue()
-                && !this.firstlyExecutiveCommand) {
-            this.firstlyExecutiveCommand = true;
-        }
-    }
-
     private void setAtEdge(Edge edge) {
         this.atEdge = edge;
         judgeOrientation();
@@ -160,6 +107,8 @@ public class AGVCar implements Car {
             }
             if (channelFuture == null || !channelFuture.isSuccess()) {
                 log.info(this.getAGVNum() + "AGV writeAndFlush message:" + message + " failed 失败，！！！！！！！！！！！！！！！！！！！！！！！！");
+            } else {
+                log.debug(this.getAGVNum() + "AGV express send message " + message);
             }
         } else {
             log.info(this.getAGVNum() + "AGV socketChannel null message:" + message+ "  ！！！！！！！！！！！！！！！！！！！！！！！！！");

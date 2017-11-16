@@ -50,7 +50,6 @@ public abstract class SchedulingGui extends JPanel{
         timer = new Timer(50, e -> {
             repaint();
             for (Car car : AGVArray) {
-                car.heartBeat();
                 if (car.getState().equals(State.COLLIED)) {
                     if (!stateLabel.getText().contains(car.getAGVNum() + "AGV")) {
                         stateLabel.setText(stateLabel.getText() + car.getAGVNum() + "AGV碰撞！");

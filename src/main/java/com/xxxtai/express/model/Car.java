@@ -15,7 +15,7 @@ public interface Car {
 
     void stepByStep();
 
-    void heartBeat();
+    Command getExecutiveCommand();
 
     Orientation getOrientation();
 
