@@ -25,6 +25,7 @@ public class CommunicationWithAGVHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
+        log.error(this.car.getAGVNum() + "AGV channel exceptionCaught！！！！！！！！！！！！！！！！！！！！！！！！");
         ctx.close();
     }
 
@@ -37,43 +38,44 @@ public class CommunicationWithAGVHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         log.info(this.car.getAGVNum() + "AGV netty rec:" + msg);
-        this.car.setLastCommunicationTime(System.currentTimeMillis());
-        String content = Constant.getContent(msg);
-        String[] c = content.split(Constant.SPLIT);
-        if (msg.startsWith(Constant.CARD_PREFIX)) {
-            int cardNum;
-            if (Constant.USE_SERIAL) {
-                if (c[0].length() % 2 == 0) {
-                    cardNum = graph.getSerialNumMap().get(c[0]);
+        String[] contents = msg.split(Constant.SUFFIX);
+        for (String content : contents){
+            String[] c = content.substring(Constant.FIX_LENGTH, content.length()).split(Constant.SPLIT);
+            if (content.startsWith(Constant.CARD_PREFIX)) {
+                int cardNum;
+                if (Constant.USE_SERIAL) {
+                    if (c[0].length() % 2 == 0) {
+                        cardNum = graph.getSerialNumMap().get(c[0]);
+                    } else {
+                        cardNum = graph.getSerialNumMap().get("0" + c[0]);
+                    }
                 } else {
-                    cardNum = graph.getSerialNumMap().get("0" + c[0]);
+                    cardNum = Integer.parseInt(c[0]);
                 }
-            } else {
-                cardNum = Integer.parseInt(c[0]);
-            }
 
-            if (cardNum != 0) {
-                try {
-                    this.car.setReceiveCardNum(cardNum);
-                } catch (Exception e) {
-                    log.error("Exception:" , e);
+                if (cardNum != 0) {
+                    try {
+                        this.car.setReceiveCardNum(cardNum);
+                    } catch (Exception e) {
+                        log.error("Exception:" , e);
+                    }
                 }
-            }
-        } else if (msg.startsWith(Constant.STATE_PREFIX)) {
-            int stateValue = Integer.parseInt(c[0], 16);
-            if (stateValue == State.FORWARD.getValue()) {
-                this.car.setState(State.FORWARD);
-            } else if (stateValue == State.STOP.getValue() && this.car.getAtEdge() != null) {
-                Node n = graph.getNodeMap().get(this.car.getAtEdge().cardNum);
-                ((AGVCar)this.car).setPosition(new Point(n.x, n.y));
-                this.car.setState(State.STOP);
-            } else if (stateValue == State.UNLOADED.getValue()) {
-                if (this.car.getReadCardNum() == this.car.getStopCardNum()) {
-                    ((AGVCar)this.car).setOnDuty(false);
-                    ((AGVCar)this.car).setDestination(null);
+            } else if (content.startsWith(Constant.STATE_PREFIX)) {
+                int stateValue = Integer.parseInt(c[0], 16);
+                if (stateValue == State.FORWARD.getValue()) {
+                    this.car.setState(State.FORWARD);
+                } else if (stateValue == State.STOP.getValue() && this.car.getAtEdge() != null) {
+                    Node n = graph.getNodeMap().get(this.car.getAtEdge().cardNum);
+                    ((AGVCar)this.car).setPosition(new Point(n.x, n.y));
+                    this.car.setState(State.STOP);
+                } else if (stateValue == State.UNLOADED.getValue()) {
+                    if (this.car.getReadCardNum() == this.car.getStopCardNum()) {
+                        ((AGVCar)this.car).setOnDuty(false);
+                        ((AGVCar)this.car).setDestination(null);
+                    }
+                } else if (stateValue == State.COLLIED.getValue()) {
+                    this.car.setState(State.COLLIED);
                 }
-            } else if (stateValue == State.COLLIED.getValue()) {
-                this.car.setState(State.COLLIED);
             }
         }
     }
