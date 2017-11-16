@@ -16,14 +16,14 @@ import javax.annotation.Resource;
 import java.awt.*;
 
 @Slf4j(topic = "develop")
-public class CommunicationWithAGVHandler extends ChannelInboundHandlerAdapter {
+public class CommWithAGVHandler extends ChannelInboundHandlerAdapter {
     private Car car;
     private SocketChannel socketChannel;
     private StringBuilder holdMessage;
     @Resource
     private Graph graph;
 
-    public CommunicationWithAGVHandler(){
+    public CommWithAGVHandler(){
         this.holdMessage = new StringBuilder();
     }
 

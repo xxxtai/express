@@ -33,7 +33,7 @@ public class ResolveDeadLock extends TimerTask {
     public void run() {
         int size = this.deadLockEdgeList.size();
         for (int i = 0; i < size; i++) {
-            int lockEdgeNum = this.deadLockEdgeList.getFirst();
+            int lockEdgeNum = this.deadLockEdgeList.pollFirst();
             boolean result = resolveDeadLock(lockEdgeNum);
             if (!result) {
                 try {

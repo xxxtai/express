@@ -58,7 +58,7 @@ public class Main extends JFrame {
         this.repaint();
         this.validate();
         new Thread(dispatchingAGV).start();
-        new Timer().schedule(resolveDeadLock, 1000);
+        new Timer().schedule(resolveDeadLock, 1000, 1000);
         nettyServerBootstrap.bind(8899);
     }
 
