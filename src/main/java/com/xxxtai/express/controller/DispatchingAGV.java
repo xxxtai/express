@@ -59,15 +59,16 @@ public class DispatchingAGV implements Runnable {
                                 }
                             }
                         }
-                        Path path = minDisEntrance == null? null : algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(minDisEntrance.getCardNum()), true, false);
-
-                        if (path != null) {
-                            log.info("派遣" + car.getAGVNum() + "AGV去" + minDisEntrance.getCardNum() + "分拣入口");
-                            String[] routeString = Absolute2Relative.convert(graph, path);
-                            log.info(car.getAGVNum() + "AGVRoute--relative：" + routeString[1]);
-                            car.sendMessageToAGV(routeString[0]);
-                            car.setRouteNodeNumArray(path.getRoute());
-                            minDisEntrance.missionCountIncrease();
+                        if (minDisEntrance != null) {
+                            Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(minDisEntrance.getCardNum()), true, true);
+                            if (path != null) {
+                                log.info("派遣" + car.getAGVNum() + "AGV去" + minDisEntrance.getCardNum() + "分拣入口");
+                                String[] routeString = Absolute2Relative.convert(graph, path);
+                                log.info(car.getAGVNum() + "AGVRoute--relative：" + routeString[1]);
+                                car.sendMessageToAGV(routeString[0]);
+                                car.setRouteNodeNumArray(path.getRoute());
+                                minDisEntrance.missionCountIncrease();
+                            }
                         }
                     } else {
                         Long selectCityCode = cities[random.nextInt(cities.length - 1)];
