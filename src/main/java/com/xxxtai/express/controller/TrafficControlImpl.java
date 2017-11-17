@@ -129,7 +129,7 @@ public class TrafficControlImpl implements TrafficControl {
                     log.info(logMessage.toString());
 
                     List<Integer> lockLoop = isDeadlock(cardNum);
-                    if (lockLoop != null && !lockLoop.isEmpty()) {
+                    if (lockLoop != null && lockLoop.size() > 1) {
                         StringBuilder builder = new StringBuilder();
                         for (Integer lockEdgeNum : lockLoop) {
                             builder.append(lockEdgeNum).append("/");
