@@ -138,13 +138,7 @@ public class TrafficControlImpl implements TrafficControl {
 
                         if (!resolveDeadLock(lockLoop)) {
                             log.error(car.getAGVNum() + "AGV 无路可走！无路可走！无路可走！");
-                            for (Integer edgeNum : lockLoop) {
-                                try {
-                                    resolveDeadLock.getDeadLockEdgeList().put(edgeNum);
-                                } catch (InterruptedException e) {
-                                    log.error("resolve dead lock put exception:", e);
-                                }
-                            }
+                            this.resolveDeadLock.putLockLoop(lockLoop);
                         }
                     }
                     return;

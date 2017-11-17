@@ -30,17 +30,24 @@ public class ResolveDeadLock extends TimerTask {
     }
 
     @Override
-    public void run() {
-        int size = this.deadLockEdgeList.size();
-        for (int i = 0; i < size; i++) {
-            int lockEdgeNum = this.deadLockEdgeList.pollFirst();
-            boolean result = resolveDeadLock(lockEdgeNum);
-            if (!result) {
-                try {
-                    this.deadLockEdgeList.put(lockEdgeNum);
-                } catch (InterruptedException e) {
-                    log.error("exception:", e);
+    public synchronized void run() {
+        List<Integer> tmpList = Lists.newArrayList();
+        while (!this.deadLockEdgeList.isEmpty()) {
+            Integer lockEdgeNum = this.deadLockEdgeList.pollFirst();
+            if (lockEdgeNum != 0) {
+                tmpList.add(lockEdgeNum);
+            } else {
+                boolean result = false;
+                for (Integer num : tmpList) {
+                    if (resolveDeadLock(num)) {
+                        result = true;
+                        break;
+                    }
                 }
+                if (!result) {
+                    putLockLoop(tmpList);
+                }
+                tmpList.clear();
             }
         }
     }
@@ -96,12 +103,14 @@ public class ResolveDeadLock extends TimerTask {
         lockCar.setRouteNodeNumArray(path.getRoute());
     }
 
-
-    public LinkedBlockingDeque<Integer> getDeadLockEdgeList() {
-        return deadLockEdgeList;
-    }
-
-    public void setDeadLockEdgeList(LinkedBlockingDeque<Integer> deadLockEdgeList) {
-        this.deadLockEdgeList = deadLockEdgeList;
+    public synchronized void putLockLoop(List<Integer> lockLoop){
+        try {
+            for (Integer edgeNum : lockLoop) {
+                this.deadLockEdgeList.put(edgeNum);
+            }
+            this.deadLockEdgeList.put(0);
+        } catch (InterruptedException e) {
+            log.error("exception:", e);
+        }
     }
 }
