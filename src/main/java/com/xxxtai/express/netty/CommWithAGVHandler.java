@@ -7,7 +7,6 @@ import com.xxxtai.express.model.AGVCar;
 import com.xxxtai.express.model.Car;
 import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.model.Node;
-import com.xxxtai.express.view.SchedulingGui;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.SocketChannel;
@@ -31,7 +30,7 @@ public class CommWithAGVHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
-        log.error(this.car.getAGVNum() + "AGV channel exceptionCaught！！！！！！！！！！！！！！！！！！！！！！！！");
+        log.error(this.car.getAGVNum() + "AGV channel exceptionCaught！！！！！！！！！！！！！！！！！", cause);
         ctx.close();
     }
 

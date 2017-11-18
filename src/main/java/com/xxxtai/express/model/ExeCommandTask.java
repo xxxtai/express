@@ -18,8 +18,8 @@ public class ExeCommandTask implements Runnable {
             if (command != null) {
                 if (((state.equals(State.FORWARD) || state.equals(State.UNLOADED)) && command.equals(Command.STOP)) ||
                         (state.equals(State.STOP) && command.equals(Command.FORWARD))){
-                    car.sendMessageToAGV(car.getExecutiveCommand().getCommand());
                     log.info("让" + car.getAGVNum() + "AGV " + car.getExecutiveCommand().getDescription());
+                    car.sendMessageToAGV(car.getExecutiveCommand().getCommand());
                 }
             }
         }

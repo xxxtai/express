@@ -101,7 +101,7 @@ public class AGVCar implements Car {
             ChannelFuture channelFuture = null;
             try {
                 channelFuture = this.socketChannel.writeAndFlush(message).sync();
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 log.info(this.getAGVNum() + "AGV writeAndFlush InterruptedException:",e);
             }
             if (channelFuture == null || !channelFuture.isSuccess()) {
