@@ -1,26 +1,24 @@
 package com.xxxtai.express.view;
 
+import com.xxxtai.express.Main;
 import com.xxxtai.express.constant.State;
 import com.xxxtai.express.model.Car;
-import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.toolKit.Common;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
-public abstract class SchedulingGui extends JPanel{
+@Component
+public class SchedulingGui extends JPanel{
     private static final long serialVersionUID = 1L;
     private RoundButton settingGuiBtn;
     private RoundButton drawingGuiBtn;
     private JLabel stateLabel;
     @Resource
     private DrawingGraph drawingGraph;
-    @Resource
-    private Graph graph;
-    public static final ArrayList<Car> AGVArray = new ArrayList<>();
     private Timer timer;
 
     public SchedulingGui() {
@@ -49,7 +47,7 @@ public abstract class SchedulingGui extends JPanel{
 
         timer = new Timer(50, e -> {
             repaint();
-            for (Car car : AGVArray) {
+            for (Car car : Main.AGVArray) {
                 if (car.getState().equals(State.COLLIED)) {
                     if (!stateLabel.getText().contains(car.getAGVNum() + "AGV")) {
                         stateLabel.setText(stateLabel.getText() + car.getAGVNum() + "AGV碰撞！");
@@ -61,12 +59,6 @@ public abstract class SchedulingGui extends JPanel{
 
     @PostConstruct
     public void init() {
-        for (int i = 0; i < graph.getAGVSPosition().size(); i++) {
-            Car car = getCar();
-            car.init(i + 1, 0);
-            AGVArray.add(car);
-        }
-
         timer.start();
     }
 
@@ -74,12 +66,11 @@ public abstract class SchedulingGui extends JPanel{
     public void paint(Graphics g) {
         super.paint(g);
         drawingGraph.drawingMap(g, DrawingGraph.Style.EXPRESS, true);
-        drawingGraph.drawingAGV(g, AGVArray, this);
+        drawingGraph.drawingAGV(g, Main.AGVArray, this);
     }
 
     public void getGuiInstance(JFrame main, JPanel settingGui, JPanel drawingGui) {
         settingGuiBtn.addActionListener(e -> Common.changePanel(main, settingGui));
         drawingGuiBtn.addActionListener(e -> Common.changePanel(main, drawingGui));
     }
-    public abstract Car getCar();
 }

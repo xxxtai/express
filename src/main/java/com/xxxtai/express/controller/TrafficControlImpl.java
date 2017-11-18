@@ -1,12 +1,9 @@
 package com.xxxtai.express.controller;
 
-import com.google.common.collect.Lists;
-import com.xxxtai.express.constant.City;
 import com.xxxtai.express.constant.Command;
 import com.xxxtai.express.dao.CacheExecutor;
 import com.xxxtai.express.model.*;
 import com.xxxtai.express.constant.NodeFunction;
-import com.xxxtai.express.toolKit.Absolute2Relative;
 import com.xxxtai.express.toolKit.Common;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
@@ -128,8 +125,8 @@ public class TrafficControlImpl implements TrafficControl {
                     logMessage.append("等待通过，因为").append(lockedEdge.cardNum).append("边被").append(lockedEdge.waitQueue.peek().getAGVNum()).append("AGV占用");
                     log.info(logMessage.toString());
 
-                    List<Integer> lockLoop = isDeadlock(cardNum);
-                    if (lockLoop != null && lockLoop.size() > 1) {
+                    List<Integer> lockLoop = getLockLoop(cardNum);
+                    if (lockLoop != null && lockLoop.size() > 1 && lockLoop.contains(cardNum)) {
                         StringBuilder builder = new StringBuilder();
                         for (Integer lockEdgeNum : lockLoop) {
                             builder.append(lockEdgeNum).append("/");
@@ -249,7 +246,7 @@ public class TrafficControlImpl implements TrafficControl {
         isStopToWait(car.getReadCardNum(), true);
     }
 
-    private List<Integer> isDeadlock(int cardNum){
+    private List<Integer> getLockLoop(int cardNum){
         List<Integer> lockLoop = new ArrayList<>(5);
         lockLoop.add(cardNum);
         lockLoop.add(lockedEdge.cardNum);

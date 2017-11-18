@@ -2,6 +2,7 @@ package com.xxxtai.express.controller;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.xxxtai.express.Main;
 import com.xxxtai.express.dao.SortingDAO;
 import com.xxxtai.express.model.*;
 import com.xxxtai.express.toolKit.Absolute2Relative;
@@ -10,6 +11,7 @@ import com.xxxtai.express.view.SchedulingGui;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,6 +25,9 @@ import java.util.Random;
 @Slf4j(topic = "develop")
 public class DispatchingAGV implements Runnable {
     private long startTime;
+    private Random random;
+    private Long[] cities;
+    private int X;
     @Resource
     private Graph graph;
     @Resource(name = "AStar")
@@ -30,69 +35,71 @@ public class DispatchingAGV implements Runnable {
     @Resource
     private SortingDAO sortingDAO;
 
-    @Override
-    public void run() {
+    @PostConstruct
+    public void init(){
         startTime = System.currentTimeMillis();
-        Long[] cities = new Long[graph.getExitMap().size()];
+        cities = new Long[graph.getExitMap().size()];
         int i = 0;
         for (Long code : graph.getExitMap().keySet()) {
             cities[i] = code;
             i++;
         }
-        Random random = new Random();
-        int X = graph.getEntranceMap().isEmpty()? 0 : graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
-        while (true) {
-            Common.delay(3000);
-            for (Car car : SchedulingGui.AGVArray) {
-                if (car.getAtEdge() != null && !car.isOnDuty()) {
-                    if (!graph.getEntranceMap().containsKey(car.getReadCardNum())) {
-                        Entrance minDisEntrance = null;
-                        int minDis = Integer.MAX_VALUE;
-                        for (Entrance entrance : graph.getEntranceMap().values()) {
-                            if ((car.getX() < X && entrance.getDirection().equals(Entrance.Direction.RIGHT))||
-                                    (car.getX() > X && entrance.getDirection().equals(Entrance.Direction.LEFT))) {
-                                int tmpDis = Math.abs(car.getX() - graph.getNodeMap().get(entrance.getCardNum()).getX())
-                                        + Math.abs(car.getY() - graph.getNodeMap().get(entrance.getCardNum()).getY());
-                                if (tmpDis < minDis) {
-                                    minDis = tmpDis;
-                                    minDisEntrance = entrance;
-                                }
-                            }
-                        }
-                        if (minDisEntrance != null) {
-                            Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(minDisEntrance.getCardNum()), true, true);
-                            if (path != null) {
-                                log.info("派遣" + car.getAGVNum() + "AGV去" + minDisEntrance.getCardNum() + "分拣入口");
-                                String[] routeString = Absolute2Relative.convert(graph, path);
-                                log.info(car.getAGVNum() + "AGVRoute--relative：" + routeString[1]);
-                                car.sendMessageToAGV(routeString[0]);
-                                car.setRouteNodeNumArray(path.getRoute());
-                                minDisEntrance.missionCountIncrease();
-                            }
-                        }
-                    } else {
-                        Long selectCityCode = cities[random.nextInt(cities.length - 1)];
-                        List<Exit> exits = graph.getExitMap().get(selectCityCode);
-                        String cityName = exits.get(0).name;
+        random = new Random();
+        X = graph.getEntranceMap().isEmpty()? 0 : graph.getNodeMap().get(graph.getEntranceMap().keySet().iterator().next()).x;
+    }
 
-                        List<Path> pathList = Lists.newArrayList();
-                        for (Exit exit : exits) {
-                            for (int nodeNum : exit.getExitNodeNums()) {
-                                Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(nodeNum), true, false);
-                                if (path != null) {
-                                    pathList.add(path);
-                                }
+    @Override
+    public void run() {
+        Common.delay(3000);
+        for (Car car : Main.AGVArray) {
+            if (car.getAtEdge() != null && !car.isOnDuty()) {
+                if (!graph.getEntranceMap().containsKey(car.getReadCardNum())) {
+                    Entrance minDisEntrance = null;
+                    int minDis = Integer.MAX_VALUE;
+                    for (Entrance entrance : graph.getEntranceMap().values()) {
+                        if ((car.getX() < X && entrance.getDirection().equals(Entrance.Direction.RIGHT))||
+                                (car.getX() > X && entrance.getDirection().equals(Entrance.Direction.LEFT))) {
+                            int tmpDis = Math.abs(car.getX() - graph.getNodeMap().get(entrance.getCardNum()).getX())
+                                    + Math.abs(car.getY() - graph.getNodeMap().get(entrance.getCardNum()).getY());
+                            if (tmpDis < minDis) {
+                                minDis = tmpDis;
+                                minDisEntrance = entrance;
                             }
                         }
-                        if (pathList.size() > 0) {
-                            log.info("派遣" + car.getAGVNum() + "AGV去" + cityName + "分拣出口");
-                            pathList.sort(Comparator.comparingInt(Path::getCost));
-                            String[] routeString = Absolute2Relative.convert(graph, pathList.get(0));
-                            log.info(car.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
+                    }
+                    if (minDisEntrance != null) {
+                        Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(minDisEntrance.getCardNum()), true, true);
+                        if (path != null) {
+                            log.info("派遣" + car.getAGVNum() + "AGV去" + minDisEntrance.getCardNum() + "分拣入口");
+                            String[] routeString = Absolute2Relative.convert(graph, path);
+                            log.info(car.getAGVNum() + "AGVRoute--relative：" + routeString[1]);
                             car.sendMessageToAGV(routeString[0]);
-                            car.setRouteNodeNumArray(pathList.get(0).getRoute());
-                            ((AGVCar) car).setDestination(cityName);
+                            car.setRouteNodeNumArray(path.getRoute());
+                            minDisEntrance.missionCountIncrease();
                         }
+                    }
+                } else {
+                    Long selectCityCode = cities[random.nextInt(cities.length - 1)];
+                    List<Exit> exits = graph.getExitMap().get(selectCityCode);
+                    String cityName = exits.get(0).name;
+
+                    List<Path> pathList = Lists.newArrayList();
+                    for (Exit exit : exits) {
+                        for (int nodeNum : exit.getExitNodeNums()) {
+                            Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(nodeNum), true, false);
+                            if (path != null) {
+                                pathList.add(path);
+                            }
+                        }
+                    }
+                    if (pathList.size() > 0) {
+                        log.info("派遣" + car.getAGVNum() + "AGV去" + cityName + "分拣出口");
+                        pathList.sort(Comparator.comparingInt(Path::getCost));
+                        String[] routeString = Absolute2Relative.convert(graph, pathList.get(0));
+                        log.info(car.getAGVNum() + "AGVRoute--relative:" + routeString[1]);
+                        car.sendMessageToAGV(routeString[0]);
+                        car.setRouteNodeNumArray(pathList.get(0).getRoute());
+                        ((AGVCar) car).setDestination(cityName);
                     }
                 }
             }

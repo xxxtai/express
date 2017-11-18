@@ -20,10 +20,6 @@
 	</bean>
 
 	<bean id="communicationWithAGVHandler" class="com.xxxtai.express.netty.CommWithAGVHandler" scope="prototype"/>
-	
-	<bean id="schedulingGui" class="com.xxxtai.express.view.SchedulingGui" >
-		<lookup-method name="getCar" bean="car"/>
-	</bean>
 
 	<bean id="car" class="com.xxxtai.express.model.AGVCar" scope="prototype">
 	</bean>

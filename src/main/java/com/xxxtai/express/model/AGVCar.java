@@ -37,7 +37,6 @@ public class AGVCar implements Car {
     public void init(int AGVNum, int positionCardNum) {
         this.AGVNum = AGVNum;
         trafficControl.setCar(this);
-        new Timer().schedule(new ExeCommandTask(this), 0, 60);
     }
 
     public void setReceiveCardNum(int cardNum) {

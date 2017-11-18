@@ -2,6 +2,9 @@ package com.xxxtai.express;
 
 import com.xxxtai.express.controller.DispatchingAGV;
 import com.xxxtai.express.controller.ResolveDeadLock;
+import com.xxxtai.express.model.Car;
+import com.xxxtai.express.model.ExeCommandTask;
+import com.xxxtai.express.model.Graph;
 import com.xxxtai.express.netty.NettyServerBootstrap;
 import com.xxxtai.express.view.DrawingGui;
 import com.xxxtai.express.view.SchedulingGui;
@@ -16,12 +19,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Timer;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j(topic = "develop")
 public class Main extends JFrame {
     private static final long serialVersionUID = 1L;
+    public static final ArrayList<Car> AGVArray = new ArrayList<>();
+    @Resource
+    private Graph graph;
     @Resource
     private SchedulingGui schedulingGui;
     @Resource
@@ -34,6 +43,10 @@ public class Main extends JFrame {
     private NettyServerBootstrap nettyServerBootstrap;
     @Resource
     private ResolveDeadLock resolveDeadLock;
+    @Resource
+    private ApplicationContext context;
+    @Resource
+    private ExeCommandTask exeCommandTask;
 
     public Main() {
         super("AGV快递分拣系统");
@@ -50,15 +63,23 @@ public class Main extends JFrame {
         });
     }
 
-    private void init() {
+    private void start() {
+        for (int i = 0; i < graph.getAGVSPosition().size(); i++) {
+            Car car = context.getBean(Car.class);
+            car.init(i + 1, 0);
+            AGVArray.add(car);
+        }
         graphingGui.getGuiInstance(Main.this, schedulingGui, settingGui);
         settingGui.getGuiInstance(Main.this, schedulingGui, graphingGui);
         schedulingGui.getGuiInstance(Main.this, settingGui, graphingGui);
         this.getContentPane().add(schedulingGui);
         this.repaint();
         this.validate();
-        new Thread(dispatchingAGV).start();
-        new Timer().schedule(resolveDeadLock, 1000, 1000);
+
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(4);
+        executorService.scheduleAtFixedRate(exeCommandTask, 0, 50, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(dispatchingAGV, 0, 3000, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(resolveDeadLock, 1000, 1000, TimeUnit.MILLISECONDS);
         nettyServerBootstrap.bind(8899);
     }
 
@@ -81,6 +102,6 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/beans.xml");
         Main main = context.getBean(Main.class);
-        main.init();
+        main.start();
     }
 }

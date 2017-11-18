@@ -1,5 +1,6 @@
 package com.xxxtai.express.netty;
 
+import com.xxxtai.express.Main;
 import com.xxxtai.express.constant.Constant;
 import com.xxxtai.express.constant.State;
 import com.xxxtai.express.model.AGVCar;
@@ -115,7 +116,7 @@ public class CommWithAGVHandler extends ChannelInboundHandlerAdapter {
         builder.append("receive msg:").append(msg);
         if (msg.startsWith(Constant.HEART_PREFIX)) {
             int AGVNum = Integer.parseInt(Constant.getContent(msg), 16);
-            for (Car car : SchedulingGui.AGVArray) {
+            for (Car car : Main.AGVArray) {
                 if (car.getAGVNum() == AGVNum) {
                     this.car = car;
                     this.socketChannel = (SocketChannel) ctx.channel();
