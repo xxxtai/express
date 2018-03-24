@@ -110,16 +110,16 @@ public class DrawingGraph {
             }
             g.setColor(Color.BLACK);
             if (car.getOrientation() == Orientation.LEFT) {
-                int[] args = {-20, -17, 40, 34, 0, 9, -15, -20};
+                int[] args = {-40, -30, 80, 60, 0, 9, -15, -20};
                 draw(g, panel, leftImage, car, args);
             } else if (car.getOrientation() == Orientation.RIGHT) {
-                int[] args = {-20, -17, 40, 34, -10, 9, -15, -20};
+                int[] args = {-40, -30, 80, 60, -10, 9, -15, -20};
                 draw(g, panel, rightImage, car, args);
             } else if (car.getOrientation() == Orientation.UP) {
-                int[] args = {-17, -20, 34, 40, -5, 10, 20, 10};
+                int[] args = {-30, -40, 60, 80, -5, 10, 20, 10};
                 draw(g, panel, upImage, car, args);
             } else if (car.getOrientation() == Orientation.DOWN) {
-                int[] args = {-17, -20, 34, 40, -5, 5, 20, 10};
+                int[] args = {-30, -40, 60, 80, -5, 5, 20, 10};
                 draw(g, panel, downImage, car, args);
             }
         }

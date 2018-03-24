@@ -140,7 +140,7 @@ public class TrafficControlImpl implements TrafficControl {
                     }
                     return;
                 } else if (this.lockedNode.isLocked()) {
-                    if (graph.getEntranceMap().containsKey(this.lockedEdge.cardNum)) {
+                    if (false) {
                         this.lockedNode.waitQueue.offer(car);
                         logMessage.append("等待去往分拣边，因为").append(lockedNode.getCardNum()).append("点被").append(lockedNode.waitQueue.peek().getAGVNum()).append("AGV占用");
                         log.info(logMessage.toString());
@@ -156,7 +156,7 @@ public class TrafficControlImpl implements TrafficControl {
                         return;
                     }
                 } else {
-                    if (graph.getEntranceMap().containsKey(this.lockedEdge.cardNum)) {
+                    if (false) {
                         this.lockedNode.waitQueue.offer(car);
                         this.lockedNode.setLocked();
                         car.setExecutiveCommand(Command.FORWARD);
@@ -176,9 +176,9 @@ public class TrafficControlImpl implements TrafficControl {
     }
 
     private void unlockEdge(int cardNum) {
-        if (graph.getEntranceMap().containsKey(this.lastLockedEdge.cardNum)) {
-            return;
-        }
+//        if (graph.getEntranceMap().containsKey(this.lastLockedEdge.cardNum)) {
+//            return;
+//        }
         synchronized (this.lastLockedEdge.cardNum) {
             Car myself = this.lastLockedEdge.waitQueue.poll();
             if (myself.getAGVNum() != car.getAGVNum()) {

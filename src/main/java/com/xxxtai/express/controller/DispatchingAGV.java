@@ -50,32 +50,26 @@ public class DispatchingAGV implements Runnable {
 
     @Override
     public void run() {
-        Common.delay(3000);
+        Common.delay(2000);
         for (Car car : Main.AGVArray) {
             if (car.getAtEdge() != null && !car.isOnDuty()) {
                 if (!graph.getEntranceMap().containsKey(car.getReadCardNum())) {
-                    Entrance minDisEntrance = null;
-                    int minDis = Integer.MAX_VALUE;
-                    for (Entrance entrance : graph.getEntranceMap().values()) {
-                        if ((car.getX() < X && entrance.getDirection().equals(Entrance.Direction.RIGHT))||
-                                (car.getX() > X && entrance.getDirection().equals(Entrance.Direction.LEFT))) {
-                            int tmpDis = Math.abs(car.getX() - graph.getNodeMap().get(entrance.getCardNum()).getX())
-                                    + Math.abs(car.getY() - graph.getNodeMap().get(entrance.getCardNum()).getY());
-                            if (tmpDis < minDis) {
-                                minDis = tmpDis;
-                                minDisEntrance = entrance;
-                            }
-                        }
+                    Entrance entrance;
+                    if (graph.getEntranceMap().get(36).getMissionCount() < graph.getEntranceMap().get(37).getMissionCount()) {
+                        entrance = graph.getEntranceMap().get(36);
+                    } else {
+                        entrance = graph.getEntranceMap().get(37);
                     }
-                    if (minDisEntrance != null) {
-                        Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(minDisEntrance.getCardNum()), true, true);
+
+                    if (entrance != null) {
+                        Path path = algorithm.findRoute(car.getAtEdge(), graph.getEdgeMap().get(entrance.getCardNum()), true, false);
                         if (path != null) {
-                            log.info("派遣" + car.getAGVNum() + "AGV去" + minDisEntrance.getCardNum() + "分拣入口");
+                            log.info("派遣" + car.getAGVNum() + "AGV去" + entrance.getCardNum() + "分拣入口");
                             String[] routeString = Absolute2Relative.convert(graph, path);
                             log.info(car.getAGVNum() + "AGVRoute--relative：" + routeString[1]);
                             car.sendMessageToAGV(routeString[0]);
                             car.setRouteNodeNumArray(path.getRoute());
-                            minDisEntrance.missionCountIncrease();
+                            entrance.missionCountIncrease();
                         }
                     }
                 } else {

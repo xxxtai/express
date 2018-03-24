@@ -141,6 +141,11 @@ public class AStar implements Algorithm {
             if (edge.isLocked() || graph.getEntranceMap().containsKey(edge.cardNum)) {
                 return;
             }
+            if (endEdge.cardNum == 36 || endEdge.cardNum == 37) {
+                if(edge.cardNum == 19 || edge.cardNum == 27) {
+                    return;
+                }
+            }
         }
 
         if (!openMap.containsKey(nodeNum) && !closeMap.containsKey(nodeNum)) {

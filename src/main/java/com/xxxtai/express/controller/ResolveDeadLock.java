@@ -60,7 +60,7 @@ public class ResolveDeadLock extends TimerTask {
             for (Entrance entrance : graph.getEntranceMap().values()) {
                 if ((lockCar.getX() < X && entrance.getDirection().equals(Entrance.Direction.RIGHT))||
                         (lockCar.getX() > X && entrance.getDirection().equals(Entrance.Direction.LEFT))) {
-                    Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(entrance.getCardNum()), true, true);
+                    Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(entrance.getCardNum()), true, false);
                     if (path != null) {
                         paths.add(path);
                     }
@@ -70,7 +70,7 @@ public class ResolveDeadLock extends TimerTask {
             List<Exit> exits = graph.getExitMap().get(City.valueOfName(lockCar.getDestination()).getCode());
             for (Exit exit : exits) {
                 for (int exitNum :exit.getExitNodeNums()) {
-                    Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(exitNum), true, true);
+                    Path path = algorithm.findRoute(lockCar.getAtEdge(), graph.getEdgeMap().get(exitNum), true, false);
                     if (path != null) {
                         paths.add(path);
                     }
