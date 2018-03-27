@@ -14,7 +14,7 @@ public class Constant {
     public static final String FORWARD = "FA";
     public static final Integer FIX_LENGTH = 1;
     public static final Integer EDGE_COST_CACHE_NUM = 100;
-    public static final boolean USE_SERIAL = false;
+    public static final boolean USE_SERIAL = true;
 
     public static String getContent(String revMessage){
         return revMessage.substring(FIX_LENGTH, revMessage.length() - FIX_LENGTH);

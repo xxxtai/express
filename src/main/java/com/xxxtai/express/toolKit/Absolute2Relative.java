@@ -100,7 +100,7 @@ public class Absolute2Relative {
         for (Edge edge : graph.getEdgeArray()) {
             if ((edge.startNode.cardNum == startNode && edge.endNode.cardNum == endNode) || (edge.endNode.cardNum == startNode && edge.startNode.cardNum == endNode)) {
                 if (Constant.USE_SERIAL) {
-                    reString.append(graph.getCardNumMap().get(edge.cardNum));
+                    reString.append(graph.getCardNumMap().get(endNode));
                 } else {
                     reString.append(edge.cardNum);
                 }

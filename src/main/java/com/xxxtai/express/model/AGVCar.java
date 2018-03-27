@@ -43,6 +43,7 @@ public class AGVCar implements Car {
         if (cardNum == readCardNum) {
             return;
         }
+        log.info(this.AGVNum + "AGV 读取到" + cardNum + "号编码标志");
         this.readCardNum = cardNum;
         Node node = graph.getNodeMap().get(this.lastReadCardNum);
         if (node != null && node.getFunction().equals(NodeFunction.Junction)) {
@@ -100,6 +101,7 @@ public class AGVCar implements Car {
         if (this.socketChannel != null) {
             ChannelFuture channelFuture = null;
             try {
+                log.info(this.AGVNum + "AGV send msg:" + message);
                 channelFuture = this.socketChannel.writeAndFlush(message).sync();
             } catch (Exception e) {
                 log.info(this.getAGVNum() + "AGV writeAndFlush InterruptedException:",e);

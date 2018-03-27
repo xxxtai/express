@@ -33,7 +33,7 @@ public class NettyServerBootstrap {
                     .channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO))
                     .localAddress(new InetSocketAddress(port)).childHandler(new ChannelInitializer<SocketChannel>() {
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new IdleStateHandler(3, 0, 0, TimeUnit.SECONDS));
+//                            ch.pipeline().addLast(new IdleStateHandler(3, 0, 0, TimeUnit.SECONDS));
                             ch.pipeline().addLast(idleStateTrigger);
                             ch.pipeline().addLast(new StringDecoder());
                             ch.pipeline().addLast(new StringEncoder());

@@ -44,7 +44,7 @@ public class CommWithAGVHandler extends ChannelInboundHandlerAdapter {
             setup(ctx, msg);
             return;
         }
-        log.debug(this.car.getAGVNum() + "AGV netty rec:" + msg);
+        log.info(this.car.getAGVNum() + "AGV netty rec:" + msg);
         String[] contents;
         if (!msg.endsWith(Constant.SUFFIX)) {
             if (!msg.contains(Constant.SUFFIX)) {
@@ -71,12 +71,12 @@ public class CommWithAGVHandler extends ChannelInboundHandlerAdapter {
         for (String content : contents){
             String[] c = content.substring(Constant.FIX_LENGTH, content.length()).split(Constant.SPLIT);
             if (content.startsWith(Constant.CARD_PREFIX)) {
-                int cardNum;
+                int cardNum = 0;
                 if (Constant.USE_SERIAL) {
-                    if (c[0].length() % 2 == 0) {
+                    if (graph.getSerialNumMap().containsKey(c[0])) {
                         cardNum = graph.getSerialNumMap().get(c[0]);
                     } else {
-                        cardNum = graph.getSerialNumMap().get("0" + c[0]);
+                        log.info(this.car.getAGVNum() + "AGV 识别错误编码标志！！！");
                     }
                 } else {
                     cardNum = Integer.parseInt(c[0]);
