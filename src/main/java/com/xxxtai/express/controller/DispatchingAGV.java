@@ -58,7 +58,7 @@ public class DispatchingAGV implements Runnable {
                         continue;
                     }
                     Entrance entrance;
-                    if (graph.getEntranceMap().get(36).getMissionCount() < graph.getEntranceMap().get(37).getMissionCount()) {
+                    if (graph.getEntranceMap().get(37).getMissionCount() < graph.getEntranceMap().get(36).getMissionCount()) {
                         entrance = graph.getEntranceMap().get(37);
                     } else {
                         entrance = graph.getEntranceMap().get(36);
