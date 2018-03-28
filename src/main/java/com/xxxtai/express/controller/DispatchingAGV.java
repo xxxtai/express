@@ -50,15 +50,18 @@ public class DispatchingAGV implements Runnable {
 
     @Override
     public void run() {
-        Common.delay(2000);
+        Common.delay(500);
         for (Car car : Main.AGVArray) {
             if (car.getAtEdge() != null && !car.isOnDuty()) {
                 if (!graph.getEntranceMap().containsKey(car.getReadCardNum())) {
+                    if (System.currentTimeMillis() - car.getStopTime() < 3000) {
+                        continue;
+                    }
                     Entrance entrance;
                     if (graph.getEntranceMap().get(36).getMissionCount() < graph.getEntranceMap().get(37).getMissionCount()) {
-                        entrance = graph.getEntranceMap().get(36);
-                    } else {
                         entrance = graph.getEntranceMap().get(37);
+                    } else {
+                        entrance = graph.getEntranceMap().get(36);
                     }
 
                     if (entrance != null) {
@@ -73,6 +76,9 @@ public class DispatchingAGV implements Runnable {
                         }
                     }
                 } else {
+                    if (System.currentTimeMillis() - car.getStopTime() < 1500) {
+                        continue;
+                    }
                     Long selectCityCode = cities[random.nextInt(cities.length - 1)];
                     List<Exit> exits = graph.getExitMap().get(selectCityCode);
                     String cityName = exits.get(0).name;

@@ -56,4 +56,6 @@ public interface Car {
     int getStopCardNum();
 
     void setExecutiveCommand(Command command);
+
+    long getStopTime();
 }

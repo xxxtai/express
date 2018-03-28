@@ -1,5 +1,6 @@
 package com.xxxtai.express.model;
 
+import com.google.common.collect.Lists;
 import com.xxxtai.express.constant.*;
 import com.xxxtai.express.controller.TrafficControl;
 import com.xxxtai.express.toolKit.Common;
@@ -18,11 +19,13 @@ import javax.annotation.Resource;
 public class AGVCar implements Car {
     private State state = State.STOP;
     private int lastReadCardNum;
+    private List<Integer> nodes;
     private @Setter Point position = new Point(-200, -200);
     private @Getter @Setter Command executiveCommand;
     private @Getter @Setter SocketChannel socketChannel;
     private @Getter @Setter String destination;
     private @Getter int stopCardNum;
+    private @Getter long stopTime;
     private @Getter Orientation orientation = Orientation.LEFT;
     private @Getter int AGVNum;
     private @Getter int readCardNum;
@@ -40,6 +43,12 @@ public class AGVCar implements Car {
     }
 
     public void setReceiveCardNum(int cardNum) {
+        if(nodes != null && nodes.size() > 0) {
+            if (cardNum != nodes.get(0)) {
+                return;
+            }
+            nodes.remove(0);
+        }
         if (cardNum == readCardNum) {
             return;
         }
@@ -69,6 +78,7 @@ public class AGVCar implements Car {
             this.state = State.STOP;
             this.onDuty = false;
             this.destination = null;
+            this.stopTime = System.currentTimeMillis();
         }
 
         trafficControl.isStopToWait(this.readCardNum, false);
@@ -126,9 +136,27 @@ public class AGVCar implements Car {
     }
 
     public void setRouteNodeNumArray(List<Integer> arrayList) {
+        nodes = Lists.newArrayList();
+        for (int i = 0; i < arrayList.size() - 1; i++) {
+            int startNode = arrayList.get(i);
+            int endNode = arrayList.get(i + 1);
+            for (Edge edge : graph.getEdgeArray()) {
+                if ((edge.startNode.cardNum == startNode && edge.endNode.cardNum == endNode) || (edge.endNode.cardNum == startNode && edge.startNode.cardNum == endNode)) {
+                    nodes.add(edge.cardNum);
+                }
+            }
+            nodes.add(endNode);
+        }
+        nodes.remove(0);
+        for (Integer u : nodes) {
+            log.info("node:" + u.toString());
+        }
+
         this.stopCardNum = arrayList.get(arrayList.size() - 1);
         this.trafficControl.setRouteNodeList(arrayList);
         this.onDuty = true;
+
+
     }
 
     public int getX() {
