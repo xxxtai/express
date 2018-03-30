@@ -76,7 +76,7 @@ public class CommWithAGVHandler extends ChannelInboundHandlerAdapter {
                     if (graph.getSerialNumMap().containsKey(c[0])) {
                         cardNum = graph.getSerialNumMap().get(c[0]);
                     } else {
-                        log.info(this.car.getAGVNum() + "AGV 识别错误编码标志！！！");
+//                        log.info(this.car.getAGVNum() + "AGV 识别错误编码标志！！！");
                     }
                 } else {
                     cardNum = Integer.parseInt(c[0]);

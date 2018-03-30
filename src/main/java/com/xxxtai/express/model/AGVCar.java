@@ -43,16 +43,28 @@ public class AGVCar implements Car {
     }
 
     public void setReceiveCardNum(int cardNum) {
-        if(nodes != null && nodes.size() > 0) {
-            if (cardNum != nodes.get(0)) {
-                return;
-            }
-            nodes.remove(0);
-        }
         if (cardNum == readCardNum) {
             return;
         }
-        log.info(this.AGVNum + "AGV 读取到" + cardNum + "号编码标志");
+
+        if(nodes != null && nodes.size() > 0) {
+            if (cardNum != nodes.get(0)) {
+                boolean found = false;
+                for (Integer node : nodes) {
+                    if (node == cardNum) {
+                        found = true;
+                    }
+                }
+                if (found) {
+                    log.info(this.AGVNum + "AGV 读取到" + cardNum + "号编码标志，识别编码标志错误，查看是否漏掉读取编码标志！！！！！！");
+                    setExecutiveCommand(Command.STOP);
+                }
+                return;
+            }
+            log.info(this.AGVNum + "AGV 读取到" + cardNum + "号编码标志，正确行驶");
+            nodes.remove(0);
+        }
+
         this.readCardNum = cardNum;
         Node node = graph.getNodeMap().get(this.lastReadCardNum);
         if (node != null && node.getFunction().equals(NodeFunction.Junction)) {
@@ -148,9 +160,6 @@ public class AGVCar implements Car {
             nodes.add(endNode);
         }
         nodes.remove(0);
-        for (Integer u : nodes) {
-            log.info("node:" + u.toString());
-        }
 
         this.stopCardNum = arrayList.get(arrayList.size() - 1);
         this.trafficControl.setRouteNodeList(arrayList);

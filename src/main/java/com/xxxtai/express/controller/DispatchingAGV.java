@@ -54,7 +54,7 @@ public class DispatchingAGV implements Runnable {
         for (Car car : Main.AGVArray) {
             if (car.getAtEdge() != null && !car.isOnDuty()) {
                 if (!graph.getEntranceMap().containsKey(car.getReadCardNum())) {
-                    if (System.currentTimeMillis() - car.getStopTime() < 2000) {
+                    if (System.currentTimeMillis() - car.getStopTime() < 9000) {
                         continue;
                     }
                     Entrance entrance;
@@ -76,7 +76,7 @@ public class DispatchingAGV implements Runnable {
                         }
                     }
                 } else {
-                    if (System.currentTimeMillis() - car.getStopTime() < 6500) {
+                    if (System.currentTimeMillis() - car.getStopTime() < 3000) {
                         continue;
                     }
                     Long selectCityCode = cities[random.nextInt(cities.length - 1)];
