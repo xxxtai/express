@@ -15,12 +15,9 @@ public class DrawingGui extends JPanel{
     private RoundButton schedulingGuiBtn;
     private RoundButton settingGuiBtn;
     private RoundButton drawingGuiBtn;
-    private RoundButton importGraphBtn;
-    private RoundButton reflectGraphBtn;
     private MyTextField rowField;
     private MyTextField columnField;
     private MyTextField realDistanceField;
-    private RoundButton confirmAddExitBtn;
 
     public DrawingGui() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -46,12 +43,9 @@ public class DrawingGui extends JPanel{
         this.add(schedulingGuiBtn);
         this.add(settingGuiBtn);
         this.add(drawingGuiBtn);
-        this.add(reflectGraphBtn);
         this.add(columnField);
         this.add(realDistanceField);
         this.add(rowField);
-        this.add(importGraphBtn);
-        this.add(confirmAddExitBtn);
     }
 
     @Override

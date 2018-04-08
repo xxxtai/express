@@ -23,16 +23,13 @@ public class SchedulingGui extends JPanel{
 
     public SchedulingGui() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        RoundButton schedulingGuiBtn = new RoundButton("调度界面");
-        schedulingGuiBtn.setBounds(0, 0, screenSize.width / 3, screenSize.height / 20);
+        RoundButton schedulingGuiBtn = new RoundButton("监控界面");
+        schedulingGuiBtn.setBounds(0, 0, screenSize.width / 2, screenSize.height / 24);
         schedulingGuiBtn.setForeground(new Color(30, 144, 255));
         schedulingGuiBtn.setBackground(Color.WHITE);
 
-        settingGuiBtn = new RoundButton("设置界面");
-        settingGuiBtn.setBounds(screenSize.width / 3, 0, screenSize.width / 3, screenSize.height / 20);
-
-        drawingGuiBtn = new RoundButton("制图界面");
-        drawingGuiBtn.setBounds(2 * screenSize.width / 3, 0, screenSize.width / 3, screenSize.height / 20);
+        settingGuiBtn = new RoundButton("管理界面");
+        settingGuiBtn.setBounds(screenSize.width / 2, 0, screenSize.width / 2, screenSize.height / 24);
 
         stateLabel = new JLabel();
         stateLabel.setBounds(0, 24 * screenSize.height / 26, screenSize.width, screenSize.height / 26);
@@ -42,7 +39,6 @@ public class SchedulingGui extends JPanel{
         this.setLayout(null);
         this.add(schedulingGuiBtn);
         this.add(settingGuiBtn);
-        this.add(drawingGuiBtn);
         this.add(stateLabel);
 
         timer = new Timer(50, e -> {
@@ -71,6 +67,5 @@ public class SchedulingGui extends JPanel{
 
     public void getGuiInstance(JFrame main, JPanel settingGui, JPanel drawingGui) {
         settingGuiBtn.addActionListener(e -> Common.changePanel(main, settingGui));
-        drawingGuiBtn.addActionListener(e -> Common.changePanel(main, drawingGui));
     }
 }
