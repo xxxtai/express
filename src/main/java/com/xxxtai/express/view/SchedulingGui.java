@@ -41,7 +41,7 @@ public class SchedulingGui extends JPanel{
         this.add(settingGuiBtn);
         this.add(stateLabel);
 
-        timer = new Timer(50, e -> {
+        timer = new Timer(200, e -> {
             repaint();
             for (Car car : Main.AGVArray) {
                 if (car.getState().equals(State.COLLIED)) {
