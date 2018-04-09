@@ -63,7 +63,7 @@ public class DrawingGraph {
             }
             g.setFont(new Font("宋体", Font.BOLD, 15));
             if (showNums) {
-                g.drawString(String.valueOf(node.cardNum), node.x + 10, node.y - 10);
+//                g.drawString(String.valueOf(node.cardNum), node.x + 10, node.y - 10);
             }
         }
 
@@ -86,7 +86,7 @@ public class DrawingGraph {
 
         for (Entrance entrance : graph.getEntranceMap().values()) {
             Node node = graph.getNodeMap().get(entrance.getCardNum());
-            g.drawString(String.valueOf(entrance.getMissionCount()), node.x, node.y - 20);
+//            g.drawString(String.valueOf(entrance.getMissionCount()), node.x, node.y - 20);
         }
     }
 
