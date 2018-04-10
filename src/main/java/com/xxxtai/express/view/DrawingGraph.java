@@ -63,7 +63,7 @@ public class DrawingGraph {
             }
             g.setFont(new Font("宋体", Font.BOLD, 15));
             if (showNums) {
-//                g.drawString(String.valueOf(node.cardNum), node.x + 10, node.y - 10);
+                g.drawString(String.valueOf(node.cardNum), node.x + 10, node.y - 10);
             }
         }
 
