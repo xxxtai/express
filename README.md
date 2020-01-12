@@ -41,7 +41,7 @@ express和simulator都是基于spring开发的swing工程，之间采用netty通
 ![](https://user-gold-cdn.xitu.io/2020/1/12/16f9916c9960ef7e?w=1282&h=716&f=jpeg&s=64952)
 
 # Design and Key Technologies of Multi AGV Logistics Sorting System
-[paper link](https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CMFD&dbname=CMFD201802&filename=1018872311.nh&v=MTg3MTR6Z1Vyek9WRjI2RnJ1L0hOTE5ycEViUElSOGVYMUx1eFlTN0RoMVQzcVRyV00xRnJDVVI3cWZadWR0Rnk= "知网论文地址") 
+[paper link](https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CMFD&dbname=CMFD201802&filename=1018872311.nh&v=MTg3MTR6Z1Vyek9WRjI2RnJ1L0hOTE5ycEViUElSOGVYMUx1eFlTN0RoMVQzcVRyV00xRnJDVVI3cWZadWR0Rnk= "知网论文地址")    If it's not convenient to download, leave an email in issues, and I'll send it to you when I have time
 # Design and Key Technologies of Multi AGV Logistics Sorting System 
 ## ABSTRACT
 The sorting process of China's logistics industry is still at the stage of manual sorting, which has the problems of low sorting efficiency, high labor cost and high error rate. Automated logistics sorting is developing in the direction of intellectualization. AGV (automatic guide car) has the characteristics of high intelligence and high flexibility. Using a large number of AGV to pick up the express package can greatly improve the sorting efficiency, reduce the labor cost and reduce the error rate. The object of this paper is a multi AGV logistics sorting system. On the basis of the design of the multi AGV logistics sorting system, two key technologies of visual navigation, positioning and multi AGV path planning are studied. The main research work of this paper consists of three parts:
