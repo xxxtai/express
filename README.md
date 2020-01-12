@@ -36,4 +36,4 @@ smartcar-vision工程依赖于物理硬件，所以很难运行起来，里面�
 express和simulator都是基于spring开发的swing工程，之间采用netty通信，找到main函数就能运行起来了，先运行express，再运行simulaotr。两个工程运行都需要提供一分地图元数据Excel文件，仓库也为大家准备了一份Graph.xls，大家运行的时候需要在ComGraph文件中修改文件路径。
 
 ## 如果对你有帮助的话就打赏一杯咖啡吧
-![](https://img.alicdn.com/tfs/TB1Hz11tF67gK0jSZPfXXahhFXa-1282-716.jpg)
+![](https://user-gold-cdn.xitu.io/2020/1/12/16f9916c9960ef7e?w=1282&h=716&f=jpeg&s=64952)
