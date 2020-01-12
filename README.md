@@ -8,6 +8,8 @@
 2. 多AGV路径规划方法的研究。多AGV物流分拣系统具有路径网络复杂、AGV数量庞大等特点，基于静态确定网络的传统多AGV路径规划方法不适用于多AGV物流分拣系统。本文针对多AGV物流分拣系统的特点，建立基于动态随机网络的路径规划模型，并对A*算法进行改进，如引入时间变量、考虑转弯耗费、优化OPEN表。最后通过实验对两种路径规划方法进行了分析和对比。
 3. 多AGV物流分拣系统的设计与实现。本文重点阐述了多AGV物流分拣系统的总体设计，根据设计要求制作了快递分拣机器人，并基于Java开发了上位机系统软件，采用C++结合OpenCv编程实现了基于编码标志的视觉导航及定位方法和基于动态随机网络的路径规划方法。
 
+
+
 ## 模块介绍
 本论文的研究对应工程主要分为三块，express（调度系统）、smartcar-vision（分拣机器人）、simulator（大规模机器人模拟系统）。
 ### express 
@@ -37,3 +39,41 @@ express和simulator都是基于spring开发的swing工程，之间采用netty通
 
 ## 如果对你有帮助的话就打赏一杯咖啡吧
 ![](https://user-gold-cdn.xitu.io/2020/1/12/16f9916c9960ef7e?w=1282&h=716&f=jpeg&s=64952)
+
+# Design and Key Technologies of Multi AGV Logistics Sorting System
+[paper link](https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CMFD&dbname=CMFD201802&filename=1018872311.nh&v=MTg3MTR6Z1Vyek9WRjI2RnJ1L0hOTE5ycEViUElSOGVYMUx1eFlTN0RoMVQzcVRyV00xRnJDVVI3cWZadWR0Rnk= "知网论文地址") 
+# Design and Key Technologies of Multi AGV Logistics Sorting System 
+## ABSTRACT
+The sorting process of China's logistics industry is still at the stage of manual sorting, which has the problems of low sorting efficiency, high labor cost and high error rate. Automated logistics sorting is developing in the direction of intellectualization. AGV (automatic guide car) has the characteristics of high intelligence and high flexibility. Using a large number of AGV to pick up the express package can greatly improve the sorting efficiency, reduce the labor cost and reduce the error rate. The object of this paper is a multi AGV logistics sorting system. On the basis of the design of the multi AGV logistics sorting system, two key technologies of visual navigation, positioning and multi AGV path planning are studied. The main research work of this paper consists of three parts:
+1. research and implementation of AGV vision navigation and positioning technology. This paper analyzes the shortcomings of the existing visual navigation and positioning techniques, such as the expensive and inaccurate location of the camera, and proposes a visual navigation and positioning method based on the coded logo for these shortcomings. By this method, AGV can be used to navigate accurately even when the ordinary camera is running at a high speed. And precise positioning.
+2. the research of multi AGV path planning method. The multi AGV logistics sorting system has the characteristics of complex path network and large number of AGV. The traditional multi AGV path planning method based on static determination of network is not suitable for multi AGV logistics sorting system. In this paper, based on the characteristics of multi AGV logistics sorting system, a path planning model based on dynamic random network is established, and the A* algorithm is improved, such as introducing time variables, considering the cost of turning and optimizing the OPEN table. Finally, the two path planning methods are analyzed and compared through experiments.
+3. design and implementation of multi AGV logistics sorting system. This paper focuses on the overall design of the multi AGV logistics sorting system. According to the design requirements, the express sorting robot is made, and the upper computer system software is developed based on the Java. The visual navigation and positioning method based on the coded symbol and the path planning method based on the dynamic random network are realized by using the C++ and OpenCv programming.
+
+
+
+## Module introduction
+The research of this paper is divided into three parts，express、smartcar-vision、simulator。
+### express 
+[github地址](https://github.com/xxxtai/express "github地址")
+
+The scheduling system is the brain of the whole multi AGV logistics sorting system, which is responsible for information co-ordination, scheduling and control of the express sorting robot. Based on Java, swing, spring boot, neety and other technologies, this project implements three path planning algorithms: improved a * algorithm, Dijkstra algorithm, greedy algorithm, and conflict prevention algorithm among multiple robots. Combined with the simulator project, it can simulate the scheduling of large-scale robots。[Large scale robot scheduling simulation](https://v.qq.com/x/page/c3050fw4ria.html)
+
+
+### smartcar-vision
+[github地址](https://github.com/xxxtai/smartcar-vision "github地址")
+
+[Demo robot video](https://v.qq.com/x/page/v30506h0k6r.html "demo机器人视频")
+
+The project is the brain of sorting robot, which realizes visual navigation, machine control and scheduling. Based on C + +, opencv, PID control and other technologies, the project runs on the embedded board of Jason TK1 (in fact, it is a Ubuntu system). Arduino is used for the bottom motor control. The project depends on hardware, with this code only helps to study the implementation of visual navigation, it is difficult to actually run.
+
+### simulator
+[github地址](https://github.com/xxxtai/simulator "github地址")
+
+[Large scale robot scheduling simulation](https://v.qq.com/x/page/c3050fw4ria.html)
+
+A sorting robot is not cheap, so there is no large-scale robot sorting experiment. In order to verify the effectiveness of the algorithm proposed in this paper, the simulation software is developed. This project simulates the physical characteristics of the robot operation, and fully adapts to the scheduling system, which has no special customization.
+
+### How to run
+smartcar-vision Engineering relies on physical hardware, so it's hard to run. The code inside can be used to learn machine vision. Here we mainly talk about how "large scale robot scheduling simulation" works.
+
+Express and simulator are based on spring development of the swing project. Netty communication is used between them. Find the main function and run it. First run express, then run simulator. Both projects need to provide a map metadata excel file, and the warehouse has also prepared a graph.xls for you. When you run, you need to modify the file path in the comgraph file.
