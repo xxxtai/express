@@ -32,6 +32,7 @@
 
 ### 如何运行起来
 smartcar-vision工程依赖于物理硬件，所以很难运行起来，里面代码可以用来学习机器视觉。这里我们主要讲“大规模机器人调度模拟”如何运行起来。
+
 express和simulator都是基于spring开发的swing工程，之间采用netty通信，找到main函数就能运行起来了，先运行express，再运行simulaotr。两个工程运行都需要提供一分地图元数据Excel文件，仓库也为大家准备了一份Graph.xls，大家运行的时候需要在ComGraph文件中修改文件路径。
 
 
