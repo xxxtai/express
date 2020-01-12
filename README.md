@@ -12,17 +12,22 @@
 本论文的研究对应工程主要分为三块，express（调度系统）、smartcar-vision（分拣机器人）、simulator（大规模机器人模拟系统）。
 ### express 
 [github地址](https://github.com/xxxtai/express "github地址")
+
 调度系统是整个多AGV物流分拣系统的大脑，负责信息统筹、调度和控制快递分拣机器人。该工程基于java、swing、spring boot、neety等技术，实现了论文中所述三种路径规划算法：改进A*算法、dijkstra算法、贪婪算法，以及多机器人之间防冲突算法，结合simulator工程可以模拟大规模机器人的调度。[大规模机器人调度模拟](https://v.qq.com/x/page/c3050fw4ria.html)
 
 
 ### smartcar-vision
 [github地址](https://github.com/xxxtai/smartcar-vision "github地址")
+
 [demo机器人视频](https://v.qq.com/x/page/v30506h0k6r.html "demo机器人视频")
+
 该工程是分拣机器人的大脑，实现了视觉导航、机器控制、调度，该工程基于C++、openCV、PID控制等技术，运行在Jeson Tk1嵌入式板（其实就是一个ubuntu系统），底层电机控制使用了Arduino。该工程依赖于硬件，有了这份代码也只有助于研究视觉导航的实现，很难实际运行起来。
 
 ### simulator
 [github地址](https://github.com/xxxtai/simulator "github地址")
+
 [大规模机器人调度模拟](https://v.qq.com/x/page/c3050fw4ria.html)
+
 一台分拣机器人造价不便宜，所以没有大规模机器人分拣实验。为了验证论文提出的算法的有效性，开发了本模拟软件，本工程模拟了机器人运行的物理特性，并完全适配于调度系统，调度系统没有特殊定制。
 
 ### 如何运行起来
