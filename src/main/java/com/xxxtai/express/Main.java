@@ -49,7 +49,7 @@ public class Main extends JFrame {
     private ExeCommandTask exeCommandTask;
 
     public Main() {
-        super("AGV快递分拣系统");
+        super("多AGV物流分拣系统");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

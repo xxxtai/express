@@ -15,8 +15,8 @@ public class MyTextField extends JTextField implements MouseListener {
     public MyTextField(String string) {
         this.setText(string);
         first = true;
-        this.setFont(new Font("ו", Font.BOLD, 30));
-        this.setForeground(Color.LIGHT_GRAY);
+        this.setFont(new Font("宋体", Font.BOLD, 23));
+        this.setForeground(Color.BLACK);
         this.addMouseListener(this);
     }
 
