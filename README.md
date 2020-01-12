@@ -1,6 +1,6 @@
 # 多AGV物流分拣系统的设计
 ## 论文摘要
-[知网论文地址](https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CMFD&dbname=CMFD201802&filename=1018872311.nh&v=MTg3MTR6Z1Vyek9WRjI2RnJ1L0hOTE5ycEViUElSOGVYMUx1eFlTN0RoMVQzcVRyV00xRnJDVVI3cWZadWR0Rnk= "知网论文地址")
+[知网论文地址](https://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CMFD&dbname=CMFD201802&filename=1018872311.nh&v=MTg3MTR6Z1Vyek9WRjI2RnJ1L0hOTE5ycEViUElSOGVYMUx1eFlTN0RoMVQzcVRyV00xRnJDVVI3cWZadWR0Rnk= "知网论文地址")  如果不方便下载，在issues留下邮箱，有空我会发给你
 
 我国物流行业的分拣环节基本还处于人工分拣阶段，存在分拣效率低下、人工成本高、差错率高等问题。自动化物流分拣正朝着智能化方向发展，AGV（自动引导车）具有智能化程度高和灵活性高的特点，应用AGV来分拣快递包裹可以极大地提高分拣效率、降低人工成本和减小差错率。	本文研究的对象是一种多AGV物流分拣系统，在对多AGV物流分拣系统进行设计的基础上，对视觉导航及定位、多AGV路径规划两个关键技术进行了研究。论文主要研究工作包括三个部分：
 
