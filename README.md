@@ -22,6 +22,7 @@
 [github地址](https://github.com/xxxtai/smartcar-vision "github地址")
 
 [demo机器人视频](https://xxxtai-arthas-hot-swap.oss-cn-beijing.aliyuncs.com/moda/d4427af0b2261e1b2fe12b7d5fced3b6.mp4 "demo机器人视频")
+<video src="https://xxxtai-arthas-hot-swap.oss-cn-beijing.aliyuncs.com/moda/d4427af0b2261e1b2fe12b7d5fced3b6.mp4" controls="controls" width="500" height="300">您的浏览器不支持播放该视频！</video>
 
 该工程是分拣机器人的大脑，实现了视觉导航、机器控制、调度，该工程基于C++、openCV、PID控制等技术，运行在Jeson Tk1嵌入式板（其实就是一个ubuntu系统），底层电机控制使用了Arduino。该工程依赖于硬件，有了这份代码也只有助于研究视觉导航的实现，很难实际运行起来。
 
