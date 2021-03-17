@@ -21,15 +21,14 @@
 ### smartcar-vision
 [github地址](https://github.com/xxxtai/smartcar-vision "github地址")
 
-[demo机器人视频](https://xxxtai-arthas-hot-swap.oss-cn-beijing.aliyuncs.com/moda/d4427af0b2261e1b2fe12b7d5fced3b6.mp4 "demo机器人视频")
-<video src="https://xxxtai-arthas-hot-swap.oss-cn-beijing.aliyuncs.com/moda/d4427af0b2261e1b2fe12b7d5fced3b6.mp4" controls="controls" width="500" height="300">您的浏览器不支持播放该视频！</video>
+[demo机器人视频，点击观看](https://xxxtai-arthas-hot-swap.oss-cn-beijing.aliyuncs.com/moda/d4427af0b2261e1b2fe12b7d5fced3b6.mp4 "demo机器人视频")
 
 该工程是分拣机器人的大脑，实现了视觉导航、机器控制、调度，该工程基于C++、openCV、PID控制等技术，运行在Jeson Tk1嵌入式板（其实就是一个ubuntu系统），底层电机控制使用了Arduino。该工程依赖于硬件，有了这份代码也只有助于研究视觉导航的实现，很难实际运行起来。
 
 ### simulator
 [github地址](https://github.com/xxxtai/simulator "github地址")
 
-[大规模机器人调度模拟视频](https://xxxtai-arthas-hot-swap.oss-cn-beijing.aliyuncs.com/moda/7560e2d688531d315c58816c94053f59.mp4)
+[大规模机器人调度模拟视频，点击观看](https://xxxtai-arthas-hot-swap.oss-cn-beijing.aliyuncs.com/moda/7560e2d688531d315c58816c94053f59.mp4)
 
 一台分拣机器人造价不便宜，所以没有使用大规模真实机器人进行分拣实验。为了验证论文提出的算法的有效性，开发了本模拟软件，本工程模拟了机器人运行的物理特性，以及送料系统，使随机生成的快递包裹模拟放置在机器人托盘上，并完全适配于调度系统，调度系统没有特殊定制就可以像调度真实机器人一样调度模拟机器人。
 
